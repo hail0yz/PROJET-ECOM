@@ -1,0 +1,14 @@
+spring.application.name: cart-service
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${CART_SERVICE_DB_PORT:5433}/${CART_SERVICE_DB_NAME:products_db}
+    username: ${CART_SERVICE_DB_PASSWORD:postgres}
+    password: ${CART_SERVICE_DB_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# TODO eureka config
+
+# TODO security config

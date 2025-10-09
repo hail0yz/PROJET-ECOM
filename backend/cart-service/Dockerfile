@@ -1,0 +1,13 @@
+FROM eclipse-temurin:24.0.2_12-jre-noble AS builder
+WORKDIR /builder
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} application.jar
+RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
+
+FROM eclipse-temurin:24.0.2_12-jre-noble
+WORKDIR /application
+COPY --from=builder /builder/extracted/dependencies/ ./
+COPY --from=builder /builder/extracted/spring-boot-loader/ ./
+COPY --from=builder /builder/extracted/snapshot-dependencies/ ./
+COPY --from=builder /builder/extracted/application/ ./
+EXPOSE 8080
