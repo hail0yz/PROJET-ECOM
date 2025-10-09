@@ -12,7 +12,7 @@
 	<artifactId>bookService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bookService</name>
-	<description>source files for product service</description>
+	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
