@@ -1,4 +1,4 @@
-package org.ecom.panier;
+package org.ecom.cart;
 
 import org.springframework.boot.test.context.TestConfiguration;
 
