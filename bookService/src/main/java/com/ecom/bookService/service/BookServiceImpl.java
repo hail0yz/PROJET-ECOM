@@ -22,4 +22,9 @@ public class BookServiceImpl implements BookService {
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
+
+    @Override
+    public List<Book> getAllBooksByTitle(String title) {
+        return bookRepository.findByTitle(title);
+    }
 }

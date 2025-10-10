@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Book> findByCategoryName(CategoryName categoryName) {
+    public List<Book> getByCategoryName(CategoryName categoryName) {
         return categoryRepository.findByCategoryName(categoryName);
     }
 

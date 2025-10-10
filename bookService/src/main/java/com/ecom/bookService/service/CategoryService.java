@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface CategoryService {
     public void saveCategory(Category category);
-    public List<Book> findByCategoryName(CategoryName categoryName);
+    public List<Book> getByCategoryName(CategoryName categoryName);
     public List<Category> getAllCategories();
 }
