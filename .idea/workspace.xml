@@ -56,6 +56,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/payment/src/main/java/com/ecom/payment" />
       <recent name="$PROJECT_DIR$/avis" />
     </key>
   </component>
@@ -90,7 +91,7 @@
       <workItem from="1759484383208" duration="203000" />
       <workItem from="1759491575280" duration="8794000" />
       <workItem from="1759501225753" duration="369000" />
-      <workItem from="1760079272081" duration="6339000" />
+      <workItem from="1760079272081" duration="7754000" />
     </task>
     <servers />
   </component>
