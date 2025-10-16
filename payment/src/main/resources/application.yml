@@ -1,0 +1,14 @@
+spring.application.name: payment-service
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${PAYMENT_SERVICE_DB_PORT:5433}/${PAYMENT_SERVICE_DB_NAME:payment_db}
+    username: ${PAYMENT_SERVICE_DB_PASSWORD:postgres}
+    password: ${PAYMENT_SERVICE_DB_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# TODO eureka config
+
+# TODO security config

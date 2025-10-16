@@ -1,10 +1,15 @@
 package com.ecom.payment.dto;
 
-import com.ecom.payment.entity.Payment;
-import lombok.*;
-
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -15,7 +20,7 @@ public class RefundRequest {
     @NotNull(message="order Id is required")
     private Integer orderId;
 
-    @NotNull(message="Amount is required.");
+    @NotNull(message="Amount is required.")
     @DecimalMin(value="0.01",message="Amount cannot be less than 1ct.")
     private BigDecimal amountRefund;
 

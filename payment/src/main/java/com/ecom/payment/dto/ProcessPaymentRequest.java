@@ -1,10 +1,9 @@
 package com.ecom.payment.dto;
 
 import com.ecom.payment.entity.Payment;
-import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Getter
 @Setter

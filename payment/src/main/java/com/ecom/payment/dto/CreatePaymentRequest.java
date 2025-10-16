@@ -14,11 +14,11 @@ public class CreatePaymentRequest {
     @NotNull (message="order ID is required.")
     private Integer orderID;
 
-    @NotNull(message="Amount is required.");
+    @NotNull(message="Amount is required.")
     @DecimalMin(value="0.01",message="Amount cannot be less than 1ct.")
     private BigDecimal amount;
 
-    @NotBlank(message="Payment method is required.");
+    @NotBlank(message="Payment method is required.")
     private String paymentMethod;
 
     @Email(message="Email is not valid.")
