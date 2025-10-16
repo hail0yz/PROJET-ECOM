@@ -1,4 +1,4 @@
-package service;
+package com.ecom.payment.service;
 
 import java.math.BigDecimal;
 
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentService {
+public class StripePaymentService {
     public PaymentIntent crPaymentIntent(BigDecimal amount, String customerEmail, String description){
         try {
             long amountInCents=amount.multiply(BigDecimal.valueOf(100)).longValue();

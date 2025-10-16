@@ -2,6 +2,8 @@ package com.ecom.payment.dto;
 
 import java.math.BigDecimal;
 
+import com.ecom.payment.entity.PaymentStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +20,7 @@ public class PaymentResponse{
     private Integer orderId;
     private BigDecimal amount;
     private String paymentMethod;
-    //private PaymentStatus status;
+    private PaymentStatus status;
     private String failureReason;
     private String message;
 }
