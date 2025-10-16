@@ -8,6 +8,8 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
 
 jobs:
   backend_build:
