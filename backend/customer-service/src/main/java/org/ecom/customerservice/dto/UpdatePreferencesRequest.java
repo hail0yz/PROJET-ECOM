@@ -1,4 +1,7 @@
 package org.ecom.customerservice.dto;
 
-public class UpdatePreferencesRequest {
+public record UpdatePreferencesRequest(
+    boolean emailNotificationsEnabled,
+    boolean smsNotificationsEnabled
+) {
 }

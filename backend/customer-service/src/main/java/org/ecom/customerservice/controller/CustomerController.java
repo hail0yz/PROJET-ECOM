@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,35 +40,58 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    @Operation(summary = "Get customer profile by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Customer profile retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @GetMapping("/{customerId}/profile")
     public ResponseEntity<CustomerProfileDTO> getCustomerProfile(@PathVariable String customerId) {
         return ResponseEntity.ok(customerService.getCustomerProfile(customerId));
     }
 
+    @Operation(summary = "Get customer preferences by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Customer preferences retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @GetMapping("/{customerId}/preferences")
-    public ResponseEntity<CustomerPreferencesDTO> getCustomerPreferences(@PathVariable String customerId) {
+    public ResponseEntity<CustomerPreferencesDTO> getCustomerPreferences(
+            @Parameter(description = "ID of the customer") @PathVariable String customerId
+    ) {
         return ResponseEntity.ok(customerService.getCustomerPreferences(customerId));
     }
 
     @PutMapping("/{id}/preferences")
     public ResponseEntity<Void> updatePreferences(
-            @PathVariable String id,
+            @Parameter(description = "ID of the customer") @PathVariable String id,
             @RequestBody @Valid UpdatePreferencesRequest request
     ) {
-        customerService.updatePreferences(id, request);
+        customerService.updateCustomerPreferences(id, request);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "List customers with pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Customers retrieved successfully")
+    })
     @GetMapping
     public ResponseEntity<Page<CustomerDTO>> listCustomers(
-            @Parameter(name = "The current result page requested.") @RequestParam(value = "currentPage", defaultValue = DEFAULT_CURRENT_PAGE) final int page,
-            @Parameter(name = "The number of results returned per page.") @RequestParam(value = "pageSize", defaultValue = DEFAULT_PAGE_SIZE) final int size
+            @Parameter(name = "The current result page requested.") @RequestParam(defaultValue = DEFAULT_CURRENT_PAGE) final int page,
+            @Parameter(name = "The number of results returned per page.") @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) final int size
     ) {
         return ResponseEntity.ok(customerService.listCustomers(page, size));
     }
 
+    @Operation(summary = "Delete a customer by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Customer deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable String id) {
+    public ResponseEntity<Void> deleteCustomer(
+            @Parameter(description = "ID of the customer") @PathVariable String id
+    ) {
         // TODO customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }

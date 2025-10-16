@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerPreferencesDTO {
+public class CreateTicketResponse {
 
-    private String id;
-
-    private boolean emailNotificationsEnabled;
-
-    private boolean smsNotificationsEnabled;
+    private Long ticketId;
 
 }
