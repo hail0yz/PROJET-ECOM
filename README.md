@@ -6,14 +6,14 @@ ___
 - ### bookService/
     - How to run
 
-Type the following commands in a terminal while being at `bookService/` directory:
+Type the following commands in a terminal while being at `backend/bookService/` directory:
 ```
 mvn clean
 mvn install
 mvn spring-boot:run
 ```
 
-Else, you can type these commands, still in `bookService/` directory, if you want to generate the jar file:
+Else, you can type these commands, still in `backend/bookService/` directory, if you want to generate the jar file:
 ```
 mvn clean package
 java -jar target/bookService-0.0.1-SNAPSHOT.jar
