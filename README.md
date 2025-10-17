@@ -4,8 +4,8 @@ ___
 # Backend
 
 - ### bookService/
-  - How to run
-    
+    - How to run
+
 Type the following commands in a terminal while being at `bookService/` directory:
 ```
 mvn clean
@@ -22,7 +22,7 @@ java -jar target/bookService-0.0.1-SNAPSHOT.jar
 The application now running you can type `http://localhost:8080/api/v1/books` on the research bar of your navigator to display all the books.
 
 # Frontend
-- How tu run  
+- How tu run
 
 To run the application with Angular, go to `frontend/angularApp` directory then type the following commands:
 ```
