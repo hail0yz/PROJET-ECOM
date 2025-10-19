@@ -15,6 +15,22 @@ services:
       timeout: 10s
       retries: 10
 
+  customer-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - customer-postgres:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: customers_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
   sonarqube-db:
     image: postgres:latest
     container_name: ecom-postgress-sonarqube
@@ -51,6 +67,7 @@ services:
 
 volumes:
   cart-postgres:
+  customer-postgres:
   sonarqube_data:
   sonarqube_logs:
   sonarqube_extensions:

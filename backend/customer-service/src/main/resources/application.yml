@@ -1,0 +1,14 @@
+spring.application.name: customer-service
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${CUSTOMER_SERVICE_DB_PORT:5434}/${CUSTOMER_SERVICE_DB_NAME:customers_db}
+    username: ${CUSTOMER_SERVICE_DB_PASSWORD:postgres}
+    password: ${CUSTOMER_SERVICE_DB_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# TODO eureka config
+
+# TODO security config

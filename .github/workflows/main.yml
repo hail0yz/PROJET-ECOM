@@ -23,6 +23,7 @@ jobs:
           java-version: '21'
       - name: Build with Maven
         run: |
+          mvn -B package --file backend/customer-service/pom.xml
           mvn -B package --file backend/cart-service/pom.xml
           mvn -B package --file backend/order/pom.xml
           mvn -B package --file backend/notification/pom.xml
