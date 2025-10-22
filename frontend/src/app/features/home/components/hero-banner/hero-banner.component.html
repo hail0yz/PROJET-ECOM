@@ -1,0 +1,30 @@
+<div id="book-carousel" class="relative w-full" data-carousel="slide">
+    <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+            <img src="assets/banner1.jpg" class="absolute block w-full h-full object-cover" alt="New arrivals" />
+        </div>
+        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+            <img src="assets/banner2.jpg" class="absolute block w-full h-full object-cover" alt="Best sellers" />
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <button type="button" data-carousel-prev
+        class="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/30 hover:bg-white/50">
+            <svg class="w-4 h-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 1 1 5l4 4" />
+            </svg>
+        </span>
+    </button>
+    <button type="button" data-carousel-next
+        class="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/30 hover:bg-white/50">
+            <svg class="w-4 h-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m1 9 4-4-4-4" />
+            </svg>
+        </span>
+    </button>
+</div>

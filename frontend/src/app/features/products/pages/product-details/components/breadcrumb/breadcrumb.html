@@ -1,0 +1,36 @@
+<nav aria-label="breadcrumb">
+    <ol data-slot="breadcrumb-list"
+        class="text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5">
+        <li data-slot="breadcrumb-item" class="inline-flex items-center gap-1.5">
+            <a data-slot="breadcrumb-link" class="hover:text-foreground transition-colors" href="/">
+                Home
+            </a>
+        </li>
+        <li role="presentation" aria-hidden="true" class="[&amp;&gt;svg]:size-3.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-right">
+                <path d="m9 18 6-6-6-6"></path>
+            </svg>
+        </li>
+        <li class="inline-flex items-center gap-1.5">
+            <a data-slot="breadcrumb-link" class="hover:text-foreground transition-colors" href="/categories/id">
+                Categorie
+            </a>
+        </li>
+        <li data-slot="breadcrumb-separator" role="presentation" aria-hidden="true"
+            class="[&amp;&gt;svg]:h-3.5 [&amp;&gt;svg]:w-3.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-right">
+                <path d="m9 18 6-6-6-6"></path>
+            </svg>
+        </li>
+        <li class="inline-flex items-center gap-1.5">
+            <span data-slot="breadcrumb-page" role="link" aria-disabled="true" aria-current="page"
+                class="text-foreground font-normal">
+                {{ productName }}
+            </span>
+        </li>
+    </ol>
+</nav>
