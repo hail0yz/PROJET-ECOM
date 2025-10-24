@@ -1,6 +1,7 @@
 <app-navbar />
 
-<main class="container max-w-screen-xl mx-auto px-4 py-8 space-y-6">
+<main
+    class="container max-w-screen-xl min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] mx-auto px-4 py-8 space-y-6">
     <div class="flex flex-col gap-6 lg:flex-row">
         <product-list-sidebar [categories]="categories" />
 
