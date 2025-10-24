@@ -1,0 +1,62 @@
+<header>
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-screen-xl h-15 flex flex-wrap items-center justify-between mx-auto px-4">
+            <a routerLink="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+                LOGO
+            </a>
+            <div class="flex items-center md:order-2 space-x-2">
+                <div class="flex items-center space-x-1">
+                    <button
+                        class="inline-flex items-center justify-center text-muted-foreground/80 h-8 rounded-md bg-transparent hover:bg-neutral-100 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-search">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                    </button>
+                    <a href="/cart"
+                        class="inline-flex items-center justify-center text-muted-foreground/80 h-8 rounded-md bg-transparent hover:bg-neutral-100 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-shopping-cart-icon lucide-shopping-cart">
+                            <circle cx="8" cy="21" r="1" />
+                            <circle cx="19" cy="21" r="1" />
+                            <path
+                                d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+                        </svg>
+                    </a>
+                </div>
+                <a class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-gray-900 text-white shadow-xs hover:bg-gray-900/90 h-9 px-4 py-2"
+                    href="/login">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-log-in-icon lucide-log-in">
+                        <path d="m10 17 5-5-5-5" />
+                        <path d="M15 12H3" />
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    </svg>
+                    Login
+                </a>
+            </div>
+            <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar">
+                <ul
+                    class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 bg-gray-50 md:space-x-3 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
+                    <li>
+                        <a routerLink="/"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50"
+                            aria-current="page">Accueil</a>
+                    </li>
+                    <li>
+                        <a href="/products"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Produits</a>
+                    </li>
+                    <li>
+                        <a href="/categories"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Catégories</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

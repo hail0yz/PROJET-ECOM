@@ -1,0 +1,433 @@
+<admin-layout>
+    <div class="flex flex-1 flex-col">
+        <div class="@container/main flex flex-1 flex-col gap-2">
+            <div class="min-h-[calc(100vh_-_var(--header-height))] flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                <div
+                    class="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+                    <div
+                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
+                        <div data-slot="card-header"
+                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
+                            <div data-slot="card-description" class="text-muted-foreground text-sm">Total
+                                Revenue
+                            </div>
+                            <div data-slot="card-title"
+                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">$1,250.00
+                            </div>
+                            <div class="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
+                                <span
+                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up ">
+                                        <path d="M3 17l6 -6l4 4l8 -8"></path>
+                                        <path d="M14 7l7 0l0 7"></path>
+                                    </svg>
+                                    +12.5%
+                                </span>
+                            </div>
+                        </div>
+                        <div data-slot="card-footer"
+                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
+                            <div class="line-clamp-1 flex gap-2 font-medium">Trending up this month <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up size-4">
+                                    <path d="M3 17l6 -6l4 4l8 -8"></path>
+                                    <path d="M14 7l7 0l0 7"></path>
+                                </svg>
+                            </div>
+                            <div class="text-muted-foreground">Visitors for the last 6 months</div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
+                        <div data-slot="card-header"
+                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
+                            <div data-slot="card-description" class="text-muted-foreground text-sm">
+                                New Customers
+                            </div>
+                            <div data-slot="card-title"
+                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">1,234</div>
+                            <div class="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
+                                <span
+                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-down ">
+                                        <path d="M3 7l6 6l4 -4l8 8"></path>
+                                        <path d="M21 10l0 7l-7 0"></path>
+                                    </svg>
+                                    -20%
+                                </span>
+                            </div>
+                        </div>
+                        <div data-slot="card-footer"
+                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
+                            <div class="line-clamp-1 flex gap-2 font-medium">Down 20% this period <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-down size-4">
+                                    <path d="M3 7l6 6l4 -4l8 8"></path>
+                                    <path d="M21 10l0 7l-7 0"></path>
+                                </svg></div>
+                            <div class="text-muted-foreground">Acquisition needs attention</div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
+                        <div data-slot="card-header"
+                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
+                            <div data-slot="card-description" class="text-muted-foreground text-sm">Active
+                                Accounts</div>
+                            <div data-slot="card-title"
+                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">45,678</div>
+                            <div data-slot="card-action"
+                                class="col-start-2 row-span-2 row-start-1 self-start justify-self-end"><span
+                                    data-slot="badge"
+                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground"><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up ">
+                                        <path d="M3 17l6 -6l4 4l8 -8"></path>
+                                        <path d="M14 7l7 0l0 7"></path>
+                                    </svg>+12.5%</span></div>
+                        </div>
+                        <div data-slot="card-footer"
+                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
+                            <div class="line-clamp-1 flex gap-2 font-medium">Strong user retention <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up size-4">
+                                    <path d="M3 17l6 -6l4 4l8 -8"></path>
+                                    <path d="M14 7l7 0l0 7"></path>
+                                </svg></div>
+                            <div class="text-muted-foreground">Engagement exceed targets</div>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
+                        <div data-slot="card-header"
+                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
+                            <div data-slot="card-description" class="text-muted-foreground text-sm">Growth Rate
+                            </div>
+                            <div data-slot="card-title"
+                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">4.5%</div>
+                            <div data-slot="card-action"
+                                class="col-start-2 row-span-2 row-start-1 self-start justify-self-end"><span
+                                    data-slot="badge"
+                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up ">
+                                        <path d="M3 17l6 -6l4 4l8 -8"></path>
+                                        <path d="M14 7l7 0l0 7"></path>
+                                    </svg>
+                                    +4.5%
+                                </span>
+                            </div>
+                        </div>
+                        <div data-slot="card-footer"
+                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
+                            <div class="line-clamp-1 flex gap-2 font-medium">Steady performance increase <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up size-4">
+                                    <path d="M3 17l6 -6l4 4l8 -8"></path>
+                                    <path d="M14 7l7 0l0 7"></path>
+                                </svg></div>
+                            <div class="text-muted-foreground">Meets growth projections</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 lg:px-6">
+                    <div data-slot="card"
+                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
+                        <div data-slot="card-header"
+                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
+                            <div data-slot="card-title" class="leading-none font-semibold">
+                                Total Visitors
+                            </div>
+                            <div data-slot="card-description" class="text-muted-foreground text-sm">
+                                <span class="hidden @[540px]/card:block">Total for the last 3 months</span>
+                                <span class="@[540px]/card:hidden">Last 3 months</span>
+                            </div>
+                            <div data-slot="card-action"
+                                class="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
+                                <div role="group" dir="ltr" data-slot="toggle-group" data-variant="outline"
+                                    class="group/toggle-group w-fit items-center rounded-md data-[variant=outline]:shadow-xs hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
+                                    tabindex="0" style="outline:none"><button type="button" data-state="on" role="radio"
+                                        aria-checked="true" data-slot="toggle-group-item" data-variant="outline"
+                                        class="inline-flex items-center justify-center gap-2 text-sm font-medium disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap border border-input bg-transparent hover:bg-accent hover:text-accent-foreground h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+                                        tabindex="-1" data-radix-collection-item="">Last 3
+                                        months</button><button type="button" data-state="off" role="radio"
+                                        aria-checked="false" data-slot="toggle-group-item" data-variant="outline"
+                                        class="inline-flex items-center justify-center gap-2 text-sm font-medium disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap border border-input bg-transparent hover:bg-accent hover:text-accent-foreground h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+                                        tabindex="-1" data-radix-collection-item="">Last 30 days</button><button
+                                        type="button" data-state="off" role="radio" aria-checked="false"
+                                        data-slot="toggle-group-item" data-variant="outline"
+                                        class="inline-flex items-center justify-center gap-2 text-sm font-medium disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap border border-input bg-transparent hover:bg-accent hover:text-accent-foreground h-9 px-2 min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l"
+                                        tabindex="-1" data-radix-collection-item="">Last 7 days</button>
+                                </div>
+                                <button type="button" role="combobox" aria-controls="radix-_R_5ml9bsnpfjb_"
+                                    aria-expanded="false" aria-autocomplete="none" dir="ltr" data-state="closed"
+                                    data-slot="select-trigger" data-size="sm"
+                                    class="border-input data-[placeholder]:text-muted-foreground [&amp;_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4 flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
+                                    aria-label="Select a value"><span data-slot="select-value"
+                                        style="pointer-events:none">Last 3 months</span><svg
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-chevron-down size-4 opacity-50"
+                                        aria-hidden="true">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg></button>
+                            </div>
+                        </div>
+                        <div data-slot="card-content" class="px-2 pt-4 sm:px-6 sm:pt-6">
+                            <div data-slot="chart" data-chart="chart-_R_al9bsnpfjb_"
+                                class="[&amp;_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&amp;_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&amp;_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&amp;_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&amp;_.recharts-radial-bar-background-sector]:fill-muted [&amp;_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&amp;_.recharts-reference-line_[stroke='#ccc']]:stroke-border flex justify-center text-xs [&amp;_.recharts-dot[stroke='#fff']]:stroke-transparent [&amp;_.recharts-layer]:outline-hidden [&amp;_.recharts-sector]:outline-hidden [&amp;_.recharts-sector[stroke='#fff']]:stroke-transparent [&amp;_.recharts-surface]:outline-hidden aspect-auto h-[250px] w-full">
+                                <style>
+                                    [data-chart=chart-_R_al9bsnpfjb_] {
+                                        --color-desktop: var(--primary);
+                                        --color-mobile: var(--primary);
+                                    }
+
+
+                                    .dark [data-chart=chart-_R_al9bsnpfjb_] {
+                                        --color-desktop: var(--primary);
+                                        --color-mobile: var(--primary);
+                                    }
+                                </style>
+                                <div class="recharts-responsive-container" style="width:100%;height:100%;min-width:0">
+                                    <div class="recharts-wrapper"
+                                        style="position: relative; cursor: default; width: 100%; height: 100%; max-height: 250px; max-width: 893px;">
+                                        <svg class="recharts-surface" width="893" height="250" viewBox="0 0 893 250"
+                                            style="width: 100%; height: 100%;">
+                                            <title></title>
+                                            <desc></desc>
+                                            <defs>
+                                                <clipPath id="recharts1-clip">
+                                                    <rect x="5" y="5" height="210" width="883"></rect>
+                                                </clipPath>
+                                            </defs>
+                                            <defs>
+                                                <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stop-color="var(--color-desktop)"
+                                                        stop-opacity="1"></stop>
+                                                    <stop offset="95%" stop-color="var(--color-desktop)"
+                                                        stop-opacity="0.1"></stop>
+                                                </linearGradient>
+                                                <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stop-color="var(--color-mobile)"
+                                                        stop-opacity="0.8"></stop>
+                                                    <stop offset="95%" stop-color="var(--color-mobile)"
+                                                        stop-opacity="0.1"></stop>
+                                                </linearGradient>
+                                            </defs>
+                                            <g class="recharts-cartesian-grid">
+                                                <g class="recharts-cartesian-grid-horizontal">
+                                                    <line stroke="#ccc" fill="none" x="5" y="5" width="883" height="210"
+                                                        x1="5" y1="215" x2="888" y2="215"></line>
+                                                    <line stroke="#ccc" fill="none" x="5" y="5" width="883" height="210"
+                                                        x1="5" y1="162.5" x2="888" y2="162.5">
+                                                    </line>
+                                                    <line stroke="#ccc" fill="none" x="5" y="5" width="883" height="210"
+                                                        x1="5" y1="110" x2="888" y2="110"></line>
+                                                    <line stroke="#ccc" fill="none" x="5" y="5" width="883" height="210"
+                                                        x1="5" y1="57.5" x2="888" y2="57.5"></line>
+                                                    <line stroke="#ccc" fill="none" x="5" y="5" width="883" height="210"
+                                                        x1="5" y1="5" x2="888" y2="5"></line>
+                                                </g>
+                                            </g>
+                                            <g class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis">
+                                                <g class="recharts-cartesian-axis-ticks">
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="24.622222222222167" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="24.622222222222167" dy="0.71em">Apr 3
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="93.29999999999995" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="93.29999999999995" dy="0.71em">Apr 10
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="161.97777777777773" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="161.97777777777773" dy="0.71em">Apr 17
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="230.6555555555555" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="230.6555555555555" dy="0.71em">Apr 24
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="299.3333333333333" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="299.3333333333333" dy="0.71em">May 1
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="368.01111111111106" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="368.01111111111106" dy="0.71em">May 8
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="436.68888888888887" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="436.68888888888887" dy="0.71em">May 15
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="515.1777777777777" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="515.1777777777777" dy="0.71em">May 23
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="593.6666666666667" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="593.6666666666667" dy="0.71em">May 31
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="662.3444444444444" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="662.3444444444444" dy="0.71em">Jun 7
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="731.0222222222221" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="731.0222222222221" dy="0.71em">Jun 14
+                                                            </tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="799.7" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="799.7" dy="0.71em">Jun 21</tspan>
+                                                        </text></g>
+                                                    <g class="recharts-layer recharts-cartesian-axis-tick"><text
+                                                            orientation="bottom" width="883" height="30" stroke="none"
+                                                            x="873.3249988555908" y="229"
+                                                            class="recharts-text recharts-cartesian-axis-tick-value"
+                                                            text-anchor="middle" fill="#666">
+                                                            <tspan x="873.3249988555908" dy="0.71em">Jun 30
+                                                            </tspan>
+                                                        </text></g>
+                                                </g>
+                                            </g>
+                                            <g class="recharts-layer recharts-area">
+                                                <g class="recharts-layer">
+                                                    <path fill="url(#fillMobile)" width="883" height="210"
+                                                        fill-opacity="0.6" stroke="none"
+                                                        class="recharts-curve recharts-area-area"
+                                                        d="M5,188.75C8.27,184.6,11.541,180.451,14.811,183.5C18.081,186.549,21.352,196.797,24.622,194C27.893,191.203,31.163,175.36,34.433,169.5C37.704,163.64,40.974,167.762,44.244,164.25C47.515,160.738,50.785,149.591,54.056,155.5C57.326,161.409,60.596,184.375,63.867,183.5C67.137,182.625,70.407,157.91,73.678,159C76.948,160.09,80.219,186.986,83.489,195.75C86.759,204.514,90.03,195.146,93.3,181.75C96.57,168.354,99.841,150.929,103.111,153.75C106.381,156.571,109.652,179.637,112.922,178.25C116.193,176.863,119.463,151.024,122.733,148.5C126.004,145.976,129.274,166.768,132.544,176.5C135.815,186.232,139.085,184.903,142.356,185.25C145.626,185.597,148.896,187.62,152.167,181.75C155.437,175.88,158.707,162.116,161.978,152C165.248,141.884,168.519,135.416,171.789,143.25C175.059,151.084,178.33,173.221,181.6,183.5C184.87,193.779,188.141,192.201,191.411,188.75C194.681,185.299,197.952,179.974,201.222,180C204.493,180.026,207.763,185.401,211.033,185.25C214.304,185.099,217.574,179.42,220.844,174.75C224.115,170.08,227.385,166.417,230.656,164.25C233.926,162.083,237.196,161.41,240.467,171.25C243.737,181.09,247.007,201.442,250.278,192.25C253.548,183.058,256.819,144.321,260.089,141.5C263.359,138.679,266.63,171.775,269.9,183.5C273.17,195.225,276.441,185.578,279.711,173C282.981,160.422,286.252,144.913,289.522,148.5C292.793,152.087,296.063,174.771,299.333,176.5C302.604,178.229,305.874,159.003,309.144,160.75C312.415,162.497,315.685,185.215,318.956,181.75C322.226,178.285,325.496,148.635,328.767,141.5C332.037,134.365,335.307,149.745,338.578,146.75C341.848,143.755,345.119,122.385,348.389,124C351.659,125.615,354.93,150.216,358.2,162.5C361.47,174.784,364.741,174.753,368.011,178.25C371.281,181.747,374.552,188.774,377.822,183.5C381.093,178.226,384.363,160.652,387.633,157.25C390.904,153.848,394.174,164.619,397.444,167.75C400.715,170.881,403.985,166.371,407.256,173C410.526,179.629,413.796,197.397,417.067,187C420.337,176.603,423.607,138.04,426.878,129.25C430.148,120.46,433.419,141.441,436.689,148.5C439.959,155.559,443.23,148.695,446.5,145C449.77,141.305,453.041,140.778,456.311,141.5C459.581,142.222,462.852,144.191,466.122,153.75C469.393,163.309,472.663,180.456,475.933,183.5C479.204,186.544,482.474,175.483,485.744,174.75C489.015,174.017,492.285,183.61,495.556,190.5C498.826,197.39,502.096,201.577,505.367,194C508.637,186.423,511.907,167.081,515.178,164.25C518.448,161.419,521.719,175.1,524.989,176.5C528.259,177.9,531.53,167.02,534.8,171.25C538.07,175.48,541.341,194.82,544.611,185.25C547.881,175.68,551.152,137.201,554.422,134.5C557.693,131.799,560.963,164.876,564.233,181.75C567.504,198.624,570.774,199.296,574.044,192.25C577.315,185.204,580.585,170.439,583.856,166C587.126,161.561,590.396,167.447,593.667,174.75C596.937,182.053,600.207,190.771,603.478,180C606.748,169.229,610.019,138.968,613.289,143.25C616.559,147.532,619.83,186.356,623.1,187C626.37,187.644,629.641,150.107,632.911,148.5C636.181,146.893,639.452,181.216,642.722,190.5C645.993,199.784,649.263,184.028,652.533,171.25C655.804,158.472,659.074,148.673,662.344,150.25C665.615,151.827,668.885,164.781,672.156,159C675.426,153.219,678.696,128.703,681.967,131C685.237,133.297,688.507,162.407,691.778,180C695.048,197.593,698.319,203.669,701.589,188.75C704.859,173.831,708.13,137.916,711.4,141.5C714.67,145.084,717.941,188.168,721.211,192.25C724.481,196.332,727.752,161.414,731.022,148.5C734.293,135.586,737.563,144.676,740.833,153.75C744.104,162.824,747.374,171.883,750.644,160.75C753.915,149.617,757.185,118.293,760.456,124C763.726,129.707,766.996,172.446,770.267,185.25C773.537,198.054,776.807,180.923,780.078,164.25C783.348,147.577,786.619,131.362,789.889,136.25C793.159,141.138,796.43,167.13,799.7,178.25C802.97,189.37,806.241,185.619,809.511,167.75C812.781,149.881,816.052,117.896,819.322,122.25C822.593,126.604,825.863,167.298,829.133,183.5C832.404,199.702,835.674,191.414,838.944,181.75C842.215,172.086,845.485,161.047,848.756,148.5C852.026,135.953,855.296,121.9,858.567,129.25C861.837,136.6,865.107,165.354,868.378,180C871.648,194.646,874.919,195.185,878.189,187C881.459,178.815,884.73,161.908,888,145L888,215C884.73,215,881.459,215,878.189,215C874.919,215,871.648,215,868.378,215C865.107,215,861.837,215,858.567,215C855.296,215,852.026,215,848.756,215C845.485,215,842.215,215,838.944,215C835.674,215,832.404,215,829.133,215C825.863,215,822.593,215,819.322,215C816.052,215,812.781,215,809.511,215C806.241,215,802.97,215,799.7,215C796.43,215,793.159,215,789.889,215C786.619,215,783.348,215,780.078,215C776.807,215,773.537,215,770.267,215C766.996,215,763.726,215,760.456,215C757.185,215,753.915,215,750.644,215C747.374,215,744.104,215,740.833,215C737.563,215,734.293,215,731.022,215C727.752,215,724.481,215,721.211,215C717.941,215,714.67,215,711.4,215C708.13,215,704.859,215,701.589,215C698.319,215,695.048,215,691.778,215C688.507,215,685.237,215,681.967,215C678.696,215,675.426,215,672.156,215C668.885,215,665.615,215,662.344,215C659.074,215,655.804,215,652.533,215C649.263,215,645.993,215,642.722,215C639.452,215,636.181,215,632.911,215C629.641,215,626.37,215,623.1,215C619.83,215,616.559,215,613.289,215C610.019,215,606.748,215,603.478,215C600.207,215,596.937,215,593.667,215C590.396,215,587.126,215,583.856,215C580.585,215,577.315,215,574.044,215C570.774,215,567.504,215,564.233,215C560.963,215,557.693,215,554.422,215C551.152,215,547.881,215,544.611,215C541.341,215,538.07,215,534.8,215C531.53,215,528.259,215,524.989,215C521.719,215,518.448,215,515.178,215C511.907,215,508.637,215,505.367,215C502.096,215,498.826,215,495.556,215C492.285,215,489.015,215,485.744,215C482.474,215,479.204,215,475.933,215C472.663,215,469.393,215,466.122,215C462.852,215,459.581,215,456.311,215C453.041,215,449.77,215,446.5,215C443.23,215,439.959,215,436.689,215C433.419,215,430.148,215,426.878,215C423.607,215,420.337,215,417.067,215C413.796,215,410.526,215,407.256,215C403.985,215,400.715,215,397.444,215C394.174,215,390.904,215,387.633,215C384.363,215,381.093,215,377.822,215C374.552,215,371.281,215,368.011,215C364.741,215,361.47,215,358.2,215C354.93,215,351.659,215,348.389,215C345.119,215,341.848,215,338.578,215C335.307,215,332.037,215,328.767,215C325.496,215,322.226,215,318.956,215C315.685,215,312.415,215,309.144,215C305.874,215,302.604,215,299.333,215C296.063,215,292.793,215,289.522,215C286.252,215,282.981,215,279.711,215C276.441,215,273.17,215,269.9,215C266.63,215,263.359,215,260.089,215C256.819,215,253.548,215,250.278,215C247.007,215,243.737,215,240.467,215C237.196,215,233.926,215,230.656,215C227.385,215,224.115,215,220.844,215C217.574,215,214.304,215,211.033,215C207.763,215,204.493,215,201.222,215C197.952,215,194.681,215,191.411,215C188.141,215,184.87,215,181.6,215C178.33,215,175.059,215,171.789,215C168.519,215,165.248,215,161.978,215C158.707,215,155.437,215,152.167,215C148.896,215,145.626,215,142.356,215C139.085,215,135.815,215,132.544,215C129.274,215,126.004,215,122.733,215C119.463,215,116.193,215,112.922,215C109.652,215,106.381,215,103.111,215C99.841,215,96.57,215,93.3,215C90.03,215,86.759,215,83.489,215C80.219,215,76.948,215,73.678,215C70.407,215,67.137,215,63.867,215C60.596,215,57.326,215,54.056,215C50.785,215,47.515,215,44.244,215C40.974,215,37.704,215,34.433,215C31.163,215,27.893,215,24.622,215C21.352,215,18.081,215,14.811,215C11.541,215,8.27,215,5,215Z">
+                                                    </path>
+                                                    <path fill="none" stroke="var(--color-mobile)" width="883"
+                                                        height="210" fill-opacity="0.6"
+                                                        class="recharts-curve recharts-area-curve"
+                                                        d="M5,188.75C8.27,184.6,11.541,180.451,14.811,183.5C18.081,186.549,21.352,196.797,24.622,194C27.893,191.203,31.163,175.36,34.433,169.5C37.704,163.64,40.974,167.762,44.244,164.25C47.515,160.738,50.785,149.591,54.056,155.5C57.326,161.409,60.596,184.375,63.867,183.5C67.137,182.625,70.407,157.91,73.678,159C76.948,160.09,80.219,186.986,83.489,195.75C86.759,204.514,90.03,195.146,93.3,181.75C96.57,168.354,99.841,150.929,103.111,153.75C106.381,156.571,109.652,179.637,112.922,178.25C116.193,176.863,119.463,151.024,122.733,148.5C126.004,145.976,129.274,166.768,132.544,176.5C135.815,186.232,139.085,184.903,142.356,185.25C145.626,185.597,148.896,187.62,152.167,181.75C155.437,175.88,158.707,162.116,161.978,152C165.248,141.884,168.519,135.416,171.789,143.25C175.059,151.084,178.33,173.221,181.6,183.5C184.87,193.779,188.141,192.201,191.411,188.75C194.681,185.299,197.952,179.974,201.222,180C204.493,180.026,207.763,185.401,211.033,185.25C214.304,185.099,217.574,179.42,220.844,174.75C224.115,170.08,227.385,166.417,230.656,164.25C233.926,162.083,237.196,161.41,240.467,171.25C243.737,181.09,247.007,201.442,250.278,192.25C253.548,183.058,256.819,144.321,260.089,141.5C263.359,138.679,266.63,171.775,269.9,183.5C273.17,195.225,276.441,185.578,279.711,173C282.981,160.422,286.252,144.913,289.522,148.5C292.793,152.087,296.063,174.771,299.333,176.5C302.604,178.229,305.874,159.003,309.144,160.75C312.415,162.497,315.685,185.215,318.956,181.75C322.226,178.285,325.496,148.635,328.767,141.5C332.037,134.365,335.307,149.745,338.578,146.75C341.848,143.755,345.119,122.385,348.389,124C351.659,125.615,354.93,150.216,358.2,162.5C361.47,174.784,364.741,174.753,368.011,178.25C371.281,181.747,374.552,188.774,377.822,183.5C381.093,178.226,384.363,160.652,387.633,157.25C390.904,153.848,394.174,164.619,397.444,167.75C400.715,170.881,403.985,166.371,407.256,173C410.526,179.629,413.796,197.397,417.067,187C420.337,176.603,423.607,138.04,426.878,129.25C430.148,120.46,433.419,141.441,436.689,148.5C439.959,155.559,443.23,148.695,446.5,145C449.77,141.305,453.041,140.778,456.311,141.5C459.581,142.222,462.852,144.191,466.122,153.75C469.393,163.309,472.663,180.456,475.933,183.5C479.204,186.544,482.474,175.483,485.744,174.75C489.015,174.017,492.285,183.61,495.556,190.5C498.826,197.39,502.096,201.577,505.367,194C508.637,186.423,511.907,167.081,515.178,164.25C518.448,161.419,521.719,175.1,524.989,176.5C528.259,177.9,531.53,167.02,534.8,171.25C538.07,175.48,541.341,194.82,544.611,185.25C547.881,175.68,551.152,137.201,554.422,134.5C557.693,131.799,560.963,164.876,564.233,181.75C567.504,198.624,570.774,199.296,574.044,192.25C577.315,185.204,580.585,170.439,583.856,166C587.126,161.561,590.396,167.447,593.667,174.75C596.937,182.053,600.207,190.771,603.478,180C606.748,169.229,610.019,138.968,613.289,143.25C616.559,147.532,619.83,186.356,623.1,187C626.37,187.644,629.641,150.107,632.911,148.5C636.181,146.893,639.452,181.216,642.722,190.5C645.993,199.784,649.263,184.028,652.533,171.25C655.804,158.472,659.074,148.673,662.344,150.25C665.615,151.827,668.885,164.781,672.156,159C675.426,153.219,678.696,128.703,681.967,131C685.237,133.297,688.507,162.407,691.778,180C695.048,197.593,698.319,203.669,701.589,188.75C704.859,173.831,708.13,137.916,711.4,141.5C714.67,145.084,717.941,188.168,721.211,192.25C724.481,196.332,727.752,161.414,731.022,148.5C734.293,135.586,737.563,144.676,740.833,153.75C744.104,162.824,747.374,171.883,750.644,160.75C753.915,149.617,757.185,118.293,760.456,124C763.726,129.707,766.996,172.446,770.267,185.25C773.537,198.054,776.807,180.923,780.078,164.25C783.348,147.577,786.619,131.362,789.889,136.25C793.159,141.138,796.43,167.13,799.7,178.25C802.97,189.37,806.241,185.619,809.511,167.75C812.781,149.881,816.052,117.896,819.322,122.25C822.593,126.604,825.863,167.298,829.133,183.5C832.404,199.702,835.674,191.414,838.944,181.75C842.215,172.086,845.485,161.047,848.756,148.5C852.026,135.953,855.296,121.9,858.567,129.25C861.837,136.6,865.107,165.354,868.378,180C871.648,194.646,874.919,195.185,878.189,187C881.459,178.815,884.73,161.908,888,145">
+                                                    </path>
+                                                </g>
+                                            </g>
+                                            <g class="recharts-layer recharts-active-dot">
+                                                <circle cx="4.999999999999943" cy="188.75" r="4"
+                                                    fill="var(--color-mobile)" stroke-width="2" stroke="#fff"
+                                                    class="recharts-dot"></circle>
+                                            </g>
+                                            <g class="recharts-layer recharts-area">
+                                                <g class="recharts-layer">
+                                                    <path fill="url(#fillDesktop)" width="883" height="210"
+                                                        fill-opacity="0.6" stroke="none"
+                                                        class="recharts-curve recharts-area-area"
+                                                        d="M5,149.9C8.27,156.186,11.541,162.471,14.811,166.525C18.081,170.579,21.352,172.401,24.622,164.775C27.893,157.149,31.163,140.075,34.433,127.15C37.704,114.225,40.974,105.448,44.244,98.975C47.515,92.502,50.785,88.334,54.056,102.825C57.326,117.316,60.596,150.465,63.867,140.625C67.137,130.785,70.407,77.955,73.678,87.425C76.948,96.895,80.219,168.666,83.489,185.425C86.759,202.184,90.03,163.932,93.3,136.075C96.57,108.218,99.841,90.757,103.111,96.525C106.381,102.293,109.652,131.291,112.922,127.15C116.193,123.009,119.463,85.73,122.733,88.65C126.004,91.57,129.274,134.69,132.544,152.525C135.815,170.36,139.085,162.912,142.356,164.25C145.626,165.588,148.896,175.712,152.167,157.6C155.437,139.488,158.707,93.138,161.978,73.95C165.248,54.762,168.519,62.735,171.789,79.55C175.059,96.365,178.33,122.021,181.6,140.975C184.87,159.929,188.141,172.182,191.411,173.175C194.681,174.168,197.952,163.903,201.222,156.025C204.493,148.147,207.763,142.658,211.033,146.05C214.304,149.442,217.574,161.716,220.844,150.6C224.115,139.484,227.385,104.98,230.656,96.525C233.926,88.07,237.196,105.666,240.467,133.625C243.737,161.584,247.007,199.907,250.278,179.125C253.548,158.343,256.819,78.458,260.089,74.475C263.359,70.492,266.63,142.412,269.9,162.15C273.17,181.888,276.441,149.446,279.711,117.875C282.981,86.304,286.252,55.605,289.522,69.05C292.793,82.495,296.063,140.084,299.333,147.625C302.604,155.166,305.874,112.657,309.144,109.475C312.415,106.293,315.685,142.436,318.956,138.525C322.226,134.614,325.496,90.649,328.767,74.125C332.037,57.601,335.307,68.519,338.578,62.575C341.848,56.631,345.119,33.826,348.389,36.85C351.659,39.874,354.93,68.727,358.2,94.6C361.47,120.473,364.741,143.366,368.011,152.175C371.281,160.984,374.552,155.71,377.822,143.775C381.093,131.84,384.363,113.245,387.633,105.975C390.904,98.705,394.174,102.759,397.444,109.125C400.715,115.491,403.985,124.17,407.256,138.525C410.526,152.88,413.796,172.91,417.067,152.525C420.337,132.14,423.607,71.34,426.878,50.85C430.148,30.36,433.419,50.182,436.689,65.725C439.959,81.268,443.23,92.534,446.5,85.85C449.77,79.166,453.041,54.534,456.311,54.175C459.581,53.816,462.852,77.73,466.122,98.625C469.393,119.52,472.663,137.396,475.933,142.375C479.204,147.354,482.474,139.435,485.744,143.775C489.015,148.115,492.285,164.713,495.556,176.15C498.826,187.587,502.096,193.863,505.367,179.825C508.637,165.787,511.907,131.436,515.178,120.15C518.448,108.864,521.719,120.643,524.989,125.05C528.259,129.457,531.53,126.492,534.8,136.075C538.07,145.658,541.341,167.789,544.611,147.975C547.881,128.161,551.152,66.402,554.422,61C557.693,55.598,560.963,106.553,564.233,140.975C567.504,175.397,570.774,193.285,574.044,178.6C577.315,163.915,580.585,116.658,583.856,106.5C587.126,96.342,590.396,123.285,593.667,143.6C596.937,163.915,600.207,177.602,603.478,148.85C606.748,120.098,610.019,48.907,613.289,61C616.559,73.093,619.83,168.472,623.1,168.975C626.37,169.478,629.641,75.107,632.911,71.675C636.181,68.243,639.452,155.751,642.722,175.1C645.993,194.449,649.263,145.64,652.533,119.8C655.804,93.96,659.074,91.087,662.344,93.725C665.615,96.363,668.885,104.51,672.156,91.625C675.426,78.74,678.696,44.824,681.967,54.35C685.237,63.876,688.507,116.845,691.778,152.875C695.048,188.905,698.319,207.996,701.589,172.65C704.859,137.304,708.13,47.52,711.4,55.4C714.67,63.28,717.941,168.823,721.211,178.075C724.481,187.327,727.752,100.287,731.022,73.95C734.293,47.613,737.563,81.977,740.833,100.025C744.104,118.073,747.374,119.805,750.644,95.825C753.915,71.845,757.185,22.155,760.456,40.875C763.726,59.595,766.996,146.726,770.267,166.525C773.537,186.324,776.807,138.792,780.078,104.575C783.348,70.358,786.619,49.458,789.889,64.85C793.159,80.242,796.43,131.928,799.7,148.675C802.97,165.422,806.241,147.231,809.511,112.275C812.781,77.319,816.052,25.598,819.322,38.25C822.593,50.902,825.863,127.929,829.133,160.4C832.404,192.871,835.674,180.787,838.944,157.075C842.215,133.363,845.485,98.021,848.756,72.55C852.026,47.079,855.296,31.477,858.567,50.85C861.837,70.223,865.107,124.572,868.378,153.925C871.648,183.278,874.919,187.637,878.189,168.975C881.459,150.313,884.73,108.632,888,66.95L888,145C884.73,161.908,881.459,178.815,878.189,187C874.919,195.185,871.648,194.646,868.378,180C865.107,165.354,861.837,136.6,858.567,129.25C855.296,121.9,852.026,135.953,848.756,148.5C845.485,161.047,842.215,172.086,838.944,181.75C835.674,191.414,832.404,199.702,829.133,183.5C825.863,167.298,822.593,126.604,819.322,122.25C816.052,117.896,812.781,149.881,809.511,167.75C806.241,185.619,802.97,189.37,799.7,178.25C796.43,167.13,793.159,141.138,789.889,136.25C786.619,131.362,783.348,147.577,780.078,164.25C776.807,180.923,773.537,198.054,770.267,185.25C766.996,172.446,763.726,129.707,760.456,124C757.185,118.293,753.915,149.617,750.644,160.75C747.374,171.883,744.104,162.824,740.833,153.75C737.563,144.676,734.293,135.586,731.022,148.5C727.752,161.414,724.481,196.332,721.211,192.25C717.941,188.168,714.67,145.084,711.4,141.5C708.13,137.916,704.859,173.831,701.589,188.75C698.319,203.669,695.048,197.593,691.778,180C688.507,162.407,685.237,133.297,681.967,131C678.696,128.703,675.426,153.219,672.156,159C668.885,164.781,665.615,151.827,662.344,150.25C659.074,148.673,655.804,158.472,652.533,171.25C649.263,184.028,645.993,199.784,642.722,190.5C639.452,181.216,636.181,146.893,632.911,148.5C629.641,150.107,626.37,187.644,623.1,187C619.83,186.356,616.559,147.532,613.289,143.25C610.019,138.968,606.748,169.229,603.478,180C600.207,190.771,596.937,182.053,593.667,174.75C590.396,167.447,587.126,161.561,583.856,166C580.585,170.439,577.315,185.204,574.044,192.25C570.774,199.296,567.504,198.624,564.233,181.75C560.963,164.876,557.693,131.799,554.422,134.5C551.152,137.201,547.881,175.68,544.611,185.25C541.341,194.82,538.07,175.48,534.8,171.25C531.53,167.02,528.259,177.9,524.989,176.5C521.719,175.1,518.448,161.419,515.178,164.25C511.907,167.081,508.637,186.423,505.367,194C502.096,201.577,498.826,197.39,495.556,190.5C492.285,183.61,489.015,174.017,485.744,174.75C482.474,175.483,479.204,186.544,475.933,183.5C472.663,180.456,469.393,163.309,466.122,153.75C462.852,144.191,459.581,142.222,456.311,141.5C453.041,140.778,449.77,141.305,446.5,145C443.23,148.695,439.959,155.559,436.689,148.5C433.419,141.441,430.148,120.46,426.878,129.25C423.607,138.04,420.337,176.603,417.067,187C413.796,197.397,410.526,179.629,407.256,173C403.985,166.371,400.715,170.881,397.444,167.75C394.174,164.619,390.904,153.848,387.633,157.25C384.363,160.652,381.093,178.226,377.822,183.5C374.552,188.774,371.281,181.747,368.011,178.25C364.741,174.753,361.47,174.784,358.2,162.5C354.93,150.216,351.659,125.615,348.389,124C345.119,122.385,341.848,143.755,338.578,146.75C335.307,149.745,332.037,134.365,328.767,141.5C325.496,148.635,322.226,178.285,318.956,181.75C315.685,185.215,312.415,162.497,309.144,160.75C305.874,159.003,302.604,178.229,299.333,176.5C296.063,174.771,292.793,152.087,289.522,148.5C286.252,144.913,282.981,160.422,279.711,173C276.441,185.578,273.17,195.225,269.9,183.5C266.63,171.775,263.359,138.679,260.089,141.5C256.819,144.321,253.548,183.058,250.278,192.25C247.007,201.442,243.737,181.09,240.467,171.25C237.196,161.41,233.926,162.083,230.656,164.25C227.385,166.417,224.115,170.08,220.844,174.75C217.574,179.42,214.304,185.099,211.033,185.25C207.763,185.401,204.493,180.026,201.222,180C197.952,179.974,194.681,185.299,191.411,188.75C188.141,192.201,184.87,193.779,181.6,183.5C178.33,173.221,175.059,151.084,171.789,143.25C168.519,135.416,165.248,141.884,161.978,152C158.707,162.116,155.437,175.88,152.167,181.75C148.896,187.62,145.626,185.597,142.356,185.25C139.085,184.903,135.815,186.232,132.544,176.5C129.274,166.768,126.004,145.976,122.733,148.5C119.463,151.024,116.193,176.863,112.922,178.25C109.652,179.637,106.381,156.571,103.111,153.75C99.841,150.929,96.57,168.354,93.3,181.75C90.03,195.146,86.759,204.514,83.489,195.75C80.219,186.986,76.948,160.09,73.678,159C70.407,157.91,67.137,182.625,63.867,183.5C60.596,184.375,57.326,161.409,54.056,155.5C50.785,149.591,47.515,160.738,44.244,164.25C40.974,167.762,37.704,163.64,34.433,169.5C31.163,175.36,27.893,191.203,24.622,194C21.352,196.797,18.081,186.549,14.811,183.5C11.541,180.451,8.27,184.6,5,188.75Z">
+                                                    </path>
+                                                    <path fill="none" stroke="var(--color-desktop)" width="883"
+                                                        height="210" fill-opacity="0.6"
+                                                        class="recharts-curve recharts-area-curve"
+                                                        d="M5,149.9C8.27,156.186,11.541,162.471,14.811,166.525C18.081,170.579,21.352,172.401,24.622,164.775C27.893,157.149,31.163,140.075,34.433,127.15C37.704,114.225,40.974,105.448,44.244,98.975C47.515,92.502,50.785,88.334,54.056,102.825C57.326,117.316,60.596,150.465,63.867,140.625C67.137,130.785,70.407,77.955,73.678,87.425C76.948,96.895,80.219,168.666,83.489,185.425C86.759,202.184,90.03,163.932,93.3,136.075C96.57,108.218,99.841,90.757,103.111,96.525C106.381,102.293,109.652,131.291,112.922,127.15C116.193,123.009,119.463,85.73,122.733,88.65C126.004,91.57,129.274,134.69,132.544,152.525C135.815,170.36,139.085,162.912,142.356,164.25C145.626,165.588,148.896,175.712,152.167,157.6C155.437,139.488,158.707,93.138,161.978,73.95C165.248,54.762,168.519,62.735,171.789,79.55C175.059,96.365,178.33,122.021,181.6,140.975C184.87,159.929,188.141,172.182,191.411,173.175C194.681,174.168,197.952,163.903,201.222,156.025C204.493,148.147,207.763,142.658,211.033,146.05C214.304,149.442,217.574,161.716,220.844,150.6C224.115,139.484,227.385,104.98,230.656,96.525C233.926,88.07,237.196,105.666,240.467,133.625C243.737,161.584,247.007,199.907,250.278,179.125C253.548,158.343,256.819,78.458,260.089,74.475C263.359,70.492,266.63,142.412,269.9,162.15C273.17,181.888,276.441,149.446,279.711,117.875C282.981,86.304,286.252,55.605,289.522,69.05C292.793,82.495,296.063,140.084,299.333,147.625C302.604,155.166,305.874,112.657,309.144,109.475C312.415,106.293,315.685,142.436,318.956,138.525C322.226,134.614,325.496,90.649,328.767,74.125C332.037,57.601,335.307,68.519,338.578,62.575C341.848,56.631,345.119,33.826,348.389,36.85C351.659,39.874,354.93,68.727,358.2,94.6C361.47,120.473,364.741,143.366,368.011,152.175C371.281,160.984,374.552,155.71,377.822,143.775C381.093,131.84,384.363,113.245,387.633,105.975C390.904,98.705,394.174,102.759,397.444,109.125C400.715,115.491,403.985,124.17,407.256,138.525C410.526,152.88,413.796,172.91,417.067,152.525C420.337,132.14,423.607,71.34,426.878,50.85C430.148,30.36,433.419,50.182,436.689,65.725C439.959,81.268,443.23,92.534,446.5,85.85C449.77,79.166,453.041,54.534,456.311,54.175C459.581,53.816,462.852,77.73,466.122,98.625C469.393,119.52,472.663,137.396,475.933,142.375C479.204,147.354,482.474,139.435,485.744,143.775C489.015,148.115,492.285,164.713,495.556,176.15C498.826,187.587,502.096,193.863,505.367,179.825C508.637,165.787,511.907,131.436,515.178,120.15C518.448,108.864,521.719,120.643,524.989,125.05C528.259,129.457,531.53,126.492,534.8,136.075C538.07,145.658,541.341,167.789,544.611,147.975C547.881,128.161,551.152,66.402,554.422,61C557.693,55.598,560.963,106.553,564.233,140.975C567.504,175.397,570.774,193.285,574.044,178.6C577.315,163.915,580.585,116.658,583.856,106.5C587.126,96.342,590.396,123.285,593.667,143.6C596.937,163.915,600.207,177.602,603.478,148.85C606.748,120.098,610.019,48.907,613.289,61C616.559,73.093,619.83,168.472,623.1,168.975C626.37,169.478,629.641,75.107,632.911,71.675C636.181,68.243,639.452,155.751,642.722,175.1C645.993,194.449,649.263,145.64,652.533,119.8C655.804,93.96,659.074,91.087,662.344,93.725C665.615,96.363,668.885,104.51,672.156,91.625C675.426,78.74,678.696,44.824,681.967,54.35C685.237,63.876,688.507,116.845,691.778,152.875C695.048,188.905,698.319,207.996,701.589,172.65C704.859,137.304,708.13,47.52,711.4,55.4C714.67,63.28,717.941,168.823,721.211,178.075C724.481,187.327,727.752,100.287,731.022,73.95C734.293,47.613,737.563,81.977,740.833,100.025C744.104,118.073,747.374,119.805,750.644,95.825C753.915,71.845,757.185,22.155,760.456,40.875C763.726,59.595,766.996,146.726,770.267,166.525C773.537,186.324,776.807,138.792,780.078,104.575C783.348,70.358,786.619,49.458,789.889,64.85C793.159,80.242,796.43,131.928,799.7,148.675C802.97,165.422,806.241,147.231,809.511,112.275C812.781,77.319,816.052,25.598,819.322,38.25C822.593,50.902,825.863,127.929,829.133,160.4C832.404,192.871,835.674,180.787,838.944,157.075C842.215,133.363,845.485,98.021,848.756,72.55C852.026,47.079,855.296,31.477,858.567,50.85C861.837,70.223,865.107,124.572,868.378,153.925C871.648,183.278,874.919,187.637,878.189,168.975C881.459,150.313,884.73,108.632,888,66.95">
+                                                    </path>
+                                                </g>
+                                            </g>
+                                            <g class="recharts-layer recharts-active-dot">
+                                                <circle cx="4.999999999999943" cy="149.9" r="4"
+                                                    fill="var(--color-desktop)" stroke-width="2" stroke="#fff"
+                                                    class="recharts-dot"></circle>
+                                            </g>
+                                        </svg>
+                                        <div tabindex="-1"
+                                            class="recharts-tooltip-wrapper recharts-tooltip-wrapper-right recharts-tooltip-wrapper-bottom"
+                                            style="visibility: visible; pointer-events: none; position: absolute; top: 0px; left: 0px; transition: transform 400ms; transform: translate(15px, 10px);">
+                                            <div
+                                                class="border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl">
+                                                <div class="font-medium">Apr 1</div>
+                                                <div class="grid gap-1.5">
+                                                    <div
+                                                        class="[&amp;&gt;svg]:text-muted-foreground flex w-full flex-wrap gap-2 [&amp;&gt;svg]:h-2.5 [&amp;&gt;svg]:w-2.5 items-center">
+                                                        <div class="shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg) h-2.5 w-2.5"
+                                                            style="--color-bg: var(--color-mobile); --color-border: var(--color-mobile);">
+                                                        </div>
+                                                        <div
+                                                            class="flex flex-1 justify-between leading-none items-center">
+                                                            <div class="grid gap-1.5"><span
+                                                                    class="text-muted-foreground">Mobile</span>
+                                                            </div><span
+                                                                class="text-foreground font-mono font-medium tabular-nums">150</span>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="[&amp;&gt;svg]:text-muted-foreground flex w-full flex-wrap gap-2 [&amp;&gt;svg]:h-2.5 [&amp;&gt;svg]:w-2.5 items-center">
+                                                        <div class="shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg) h-2.5 w-2.5"
+                                                            style="--color-bg: var(--color-desktop); --color-border: var(--color-desktop);">
+                                                        </div>
+                                                        <div
+                                                            class="flex flex-1 justify-between leading-none items-center">
+                                                            <div class="grid gap-1.5"><span
+                                                                    class="text-muted-foreground">Desktop</span>
+                                                            </div><span
+                                                                class="text-foreground font-mono font-medium tabular-nums">222</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</admin-layout>

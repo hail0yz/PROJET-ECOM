@@ -1,0 +1,17 @@
+export interface Book {
+    id: string;
+    title: string;
+    author: string;
+    description?: string;
+    price: number;
+    image: string;
+    category?: string;
+    rating?: number;
+    stock?: number;
+    publishedDate?: string;
+    publisher?: string;
+    isbn?: string;
+    language?: string;
+    format?: 'paperback' | 'hardcover' | 'ebook';
+    tags?: string[];
+}
