@@ -1,6 +1,7 @@
 package com.ecom.bookService.repository;
 
 import com.ecom.bookService.model.Book;
+import com.ecom.bookService.model.CategoryName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,4 +14,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT b FROM Book b WHERE LOWER(b.title) = LOWER(:title)")
     List<Book> findByTitle(@Param("title") String title);
+
+    @Query("SELECT b FROM Book b WHERE b.category.categoryName IN :categoryEnum")
+    List<Book> findByCategory(@Param("categoryEnum") CategoryName categoryEnum);
 }

@@ -2,8 +2,13 @@ package com.ecom.bookService.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
+
+/**
+ * Model representation of a category
+ */
 
 @Entity
 @Table(name="Categories")
@@ -12,6 +17,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private CategoryName categoryName;
 

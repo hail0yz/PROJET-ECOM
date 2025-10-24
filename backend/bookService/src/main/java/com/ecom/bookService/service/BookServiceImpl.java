@@ -1,6 +1,7 @@
 package com.ecom.bookService.service;
 
 import com.ecom.bookService.model.Book;
+import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,5 +27,15 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> getAllBooksByTitle(String title) {
         return bookRepository.findByTitle(title);
+    }
+
+    @Override
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Book> getAllBooksByCategory(CategoryName categoryEnum) {
+        return bookRepository.findByCategory(categoryEnum);
     }
 }
