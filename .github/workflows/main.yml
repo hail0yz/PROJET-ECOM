@@ -27,3 +27,5 @@ jobs:
           mvn -B package --file backend/cart-service/pom.xml
           mvn -B package --file backend/order/pom.xml
           mvn -B package --file backend/notification/pom.xml
+          mvn -B package --file backend/api-gateway/pom.xml
+          mvn -B package --file backend/registry-server/pom.xml
