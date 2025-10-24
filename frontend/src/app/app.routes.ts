@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
 
-import { HomeComponent } from './features/home/home.component';
-import { ProductDetailPage } from './features/products/pages/product-details/product.page';
-import { ProductListPage } from './features/products/pages/product-list/products.page';
-import { CartPage } from './features/cart/cart.page';
-import { AdminDashboardPage } from './features/admin/dashboard/dashboard.page';
-import { AdminCategoriesPage } from './features/admin/categories/categories.page';
-import { RegistrationPage } from './features/registration/registration.page';
+import { HomeComponent } from '@/app/features/home/home.component';
+import { ProductDetailPage } from '@/app/features/products/pages/product-details/product.page';
+import { ProductListPage } from '@/app/features/products/pages/product-list/products.page';
+import { CartPage } from '@/app/features/cart/cart.page';
+import { AdminDashboardPage } from '@/app/features/admin/dashboard/dashboard.page';
+import { AdminCategoriesPage } from '@/app/features/admin/categories/categories.page';
+import { RegistrationPage } from '@/app/features/registration/registration.page';
+import { AdminProductListPage } from '@/app/features/admin/products/product-list/product-list.page';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -16,4 +17,5 @@ export const routes: Routes = [
     { path: 'signup', component: RegistrationPage },
     { path: 'admin', component: AdminDashboardPage },
     { path: 'admin/categories', component: AdminCategoriesPage },
+    { path: 'admin/products', component: AdminProductListPage },
 ];
