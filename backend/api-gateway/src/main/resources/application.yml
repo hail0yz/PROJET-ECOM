@@ -18,6 +18,22 @@ spring:
               filters:
                 - RemoveRequestHeader=Cookie
 
+            - id: customer-registration
+              uri: lb://customer-service
+              predicates:
+                - Path=/register
+              filters:
+                - RewritePath=/register, /api/v1/register
+                - RemoveRequestHeader=Cookie
+
+            - id: customer-service
+              uri: lb://customer-service
+              predicates:
+                - Path=/customers/**
+              filters:
+                - RewritePath=/customers/?(?<segment>.*), /api/v1/customers/$\{segment}
+                - RemoveRequestHeader=Cookie
+
 eureka:
   instance:
     prefer-ip-address: true
