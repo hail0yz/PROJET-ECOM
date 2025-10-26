@@ -1,0 +1,205 @@
+<app-navbar></app-navbar>
+
+<main
+    class="container min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] max-w-screen-xl mx-auto px-4 py-8 space-y-6">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            <div class="bg-card border-cart-border rounded-lg border p-6">
+                <h1 class="mb-6 text-2xl font-semibold">Shopping Cart</h1>
+                <div class="space-y-4">
+                    <div class="bg-cart-item border-cart-border flex items-center gap-4 rounded-lg border p-4">
+                        <div class="bg-muted flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg">
+                            <img src="https://placehold.co/600x600?text=01"
+                                alt="Samsung Galaxy S23 Ultra S918B/DS 256GB"
+                                class="h-full w-full rounded-lg object-cover">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-foreground line-clamp-2 text-sm font-medium lg:text-base">
+                                Samsung Galaxy S23
+                                Ultra S918B/DS 256GB
+                            </h3>
+                            <p class="text-cart-color mt-1 text-sm">Color: <span>Phantom Black</span></p>
+                        </div>
+                        <div class="bg-cart-quantity flex items-center gap-2 rounded-lg p-1">
+                            <button data-slot="button"
+                                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 hover:bg-muted h-8 w-8">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-minus h-4 w-4">
+                                    <path d="M5 12h14"></path>
+                                </svg>
+                            </button>
+                            <span class="min-w-[2rem] text-center text-sm font-medium">2</span><button
+                                data-slot="button"
+                                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 hover:bg-muted h-8 w-8"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-plus h-4 w-4">
+                                    <path d="M5 12h14"></path>
+                                    <path d="M12 5v14"></path>
+                                </svg></button>
+                        </div>
+                        <div class="text-cart-price min-w-[80px] text-right text-sm font-semibold lg:text-base">
+                            $1049.99
+                        </div>
+                        <button data-slot="button"
+                            class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 size-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-trash2 lucide-trash-2 h-4 w-4">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                <line x1="10" x2="10" y1="11" y2="17"></line>
+                                <line x1="14" x2="14" y1="11" y2="17"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="bg-cart-item border-cart-border flex items-center gap-4 rounded-lg border p-4">
+                        <div class="bg-muted flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg">
+                            <img src="https://placehold.co/600x600?text=02"
+                                alt="JBL Charge 3 Waterproof Portable Bluetooth Speaker"
+                                class="h-full w-full rounded-lg object-cover">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-foreground line-clamp-2 text-sm font-medium lg:text-base">JBL Charge 3
+                                Waterproof Portable Bluetooth Speaker</h3>
+                            <p class="text-cart-color mt-1 text-sm">Color: <span>Black</span></p>
+                        </div>
+                        <div class="bg-cart-quantity flex items-center gap-2 rounded-lg p-1"><button data-slot="button"
+                                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 hover:bg-muted h-8 w-8"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-minus h-4 w-4">
+                                    <path d="M5 12h14"></path>
+                                </svg></button><span
+                                class="min-w-[2rem] text-center text-sm font-medium">1</span><button data-slot="button"
+                                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 hover:bg-muted h-8 w-8"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-plus h-4 w-4">
+                                    <path d="M5 12h14"></path>
+                                    <path d="M12 5v14"></path>
+                                </svg></button></div>
+                        <div class="text-cart-price min-w-[80px] text-right text-sm font-semibold lg:text-base">
+                            $<!-- -->109.99</div><button data-slot="button"
+                            class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 size-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-trash2 lucide-trash-2 h-4 w-4">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                <line x1="10" x2="10" y1="11" y2="17"></line>
+                                <line x1="14" x2="14" y1="11" y2="17"></line>
+                            </svg></button>
+                    </div>
+                    <div class="bg-cart-item border-cart-border flex items-center gap-4 rounded-lg border p-4">
+                        <div class="bg-muted flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg">
+                            <img src="https://placehold.co/600x600?text=03"
+                                alt="GARMIN Fenix 7X 010-02541-11 Exclusive Version"
+                                class="h-full w-full rounded-lg object-cover">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-foreground line-clamp-2 text-sm font-medium lg:text-base">GARMIN Fenix 7X
+                                010-02541-11 Exclusive Version</h3>
+                            <p class="text-cart-color mt-1 text-sm">Color: <span>Black</span></p>
+                        </div>
+                        <div class="bg-cart-quantity flex items-center gap-2 rounded-lg p-1">
+                            <button data-slot="button"
+                                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 hover:bg-muted h-8 w-8"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-minus h-4 w-4">
+                                    <path d="M5 12h14"></path>
+                                </svg></button><span
+                                class="min-w-[2rem] text-center text-sm font-medium">1</span><button data-slot="button"
+                                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 hover:bg-muted h-8 w-8"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-plus h-4 w-4">
+                                    <path d="M5 12h14"></path>
+                                    <path d="M12 5v14"></path>
+                                </svg></button>
+                        </div>
+                        <div class="text-cart-price min-w-[80px] text-right text-sm font-semibold lg:text-base">
+                            $<!-- -->349.99</div><button data-slot="button"
+                            class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 size-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-trash2 lucide-trash-2 h-4 w-4">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                <line x1="10" x2="10" y1="11" y2="17"></line>
+                                <line x1="14" x2="14" y1="11" y2="17"></line>
+                            </svg></button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex flex-col gap-4 sm:flex-row"><button data-slot="button"
+                    class="cursor-pointer justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-9 px-4 py-2 has-[&gt;svg]:px-3 flex items-center gap-2"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-arrow-left h-4 w-4">
+                        <path d="m12 19-7-7 7-7"></path>
+                        <path d="M19 12H5"></path>
+                    </svg>Back</button><button data-slot="button"
+                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-white shadow-xs focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 h-9 px-4 py-2 has-[&gt;svg]:px-3 bg-destructive hover:bg-destructive/90">Cancel
+                    Order</button></div>
+        </div>
+        <div class="space-y-6">
+            <div class="bg-card border border-gray-200 rounded-lg p-6">
+                <h2 class="mb-4 text-xl font-semibold">Coupon Code</h2>
+                <div class="space-y-4">
+                    <input data-slot="input"
+                        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input border-gray-200 flex w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] h-12"
+                        placeholder="Enter Your Coupon Code" value=""><button data-slot="button"
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-neutral-50 shadow-xs px-4 py-2 has-[&gt;svg]:px-3 bg-gray-900 hover:bg-primary/90 h-12 w-full">
+                        Apply Your Coupon
+                    </button>
+                </div>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-6">
+                <h2 class="mb-6 text-xl font-semibold">Order Summary</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-muted-foreground">Discount</span>
+                        <span class="font-medium">$<!-- -->0.00</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-muted-foreground">Delivery</span>
+                        <span class="font-medium">$29.99</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-muted-foreground">Tax</span>
+                        <span class="font-medium">$39.99</span>
+                    </div>
+                    <hr class="border-cart-border">
+                    <div class="flex items-center justify-between"><span class="text-lg font-semibold">Total</span>
+                        <span class="text-xl font-bold">$2929.92</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-card border border-gray-200 rounded-lg p-6">
+                <h2 class="mb-6 text-xl font-semibold">Payment Method</h2>
+                <div class="mb-6 grid grid-cols-4 gap-3"><button data-slot="button"
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0">
+                        <span class="text-lg">💳</span>
+                    </button>
+                    <button data-slot="button"
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0"><span
+                            class="text-lg">$</span></button><button data-slot="button"
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0"><span
+                            class="text-lg">💳</span></button><button data-slot="button"
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0"><span
+                            class="text-lg">₿</span></button>
+                </div><button data-slot="button"
+                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive shadow-xs px-4 py-2 has-[&gt;svg]:px-3 bg-primary hover:bg-primary/90 text-primary-foreground h-12 w-full">Check
+                    Out</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<app-footer></app-footer>

@@ -27,5 +27,18 @@ jobs:
           mvn -B package --file backend/cart-service/pom.xml
           mvn -B package --file backend/order/pom.xml
           mvn -B package --file backend/notification/pom.xml
-          mvn -B package --file backend/api-gateway/pom.xml
-          mvn -B package --file backend/registry-server/pom.xml
+
+  frontend_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run test:ci
+        working-directory: frontend
