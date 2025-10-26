@@ -52,7 +52,7 @@ class CustomerServiceUnitTest {
     private CustomerProfileDTO customerProfileDTO;
     private CustomerPreferencesDTO customerPreferencesDTO;
 
-    private final String CUSTOMER_ID = "C123";
+    private final Long CUSTOMER_ID = 123L;
 
     @BeforeEach
     void setUp() {
@@ -177,13 +177,13 @@ class CustomerServiceUnitTest {
         int size = 2;
         Pageable pageable = PageRequest.of(page, size);
 
-        Customer c1 = buildCustomer("C2", "Bob");
+        Customer c1 = buildCustomer(2L, "Bob");
         Page<Customer> customerPage = new PageImpl<>(List.of(customer, c1), pageable, 10);
 
         when(customerRepository.findAll(pageable)).thenReturn(customerPage);
 
         when(customerMapper.mapToCustomerDTO(customer)).thenReturn(buildCustomerDTO(CUSTOMER_ID, "Name 1"));
-        when(customerMapper.mapToCustomerDTO(c1)).thenReturn(buildCustomerDTO("C2", "Name 2"));
+        when(customerMapper.mapToCustomerDTO(c1)).thenReturn(buildCustomerDTO(2L, "Name 2"));
 
         Page<CustomerDTO> resultPage = customerService.listCustomers(page, size);
 
@@ -196,14 +196,14 @@ class CustomerServiceUnitTest {
         verify(customerRepository, times(1)).findAll(pageable);
     }
 
-    private Customer buildCustomer(String id, String name) {
+    private Customer buildCustomer(Long id, String name) {
         return Customer.builder()
                 .id(id)
                 .name(name)
                 .build();
     }
 
-    private CustomerDTO buildCustomerDTO(String id, String name) {
+    private CustomerDTO buildCustomerDTO(Long id, String name) {
         return CustomerDTO.builder()
                 .id(id)
                 .name(name)
