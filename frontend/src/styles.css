@@ -14,9 +14,9 @@
     --radius: .625rem;
     --color-background: oklch(100% 0 0);
     --color-foreground: oklch(14.5% 0 0);
-    --color-cart: oklch(100% 0 0);
-    --color-cart-foreground: oklch(14.5% 0 0);
-    --color-cart-border: oklch(92.2% 0 0);
+    --color-card: oklch(100% 0 0);
+    --color-card-foreground: oklch(14.5% 0 0);
+    --color-card-border: oklch(92.2% 0 0);
     --popover: oklch(100% 0 0);
     --popover-foreground: oklch(14.5% 0 0);
     --color-primary: oklch(20.5% 0 0);

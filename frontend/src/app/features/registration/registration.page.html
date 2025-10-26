@@ -1,79 +1,147 @@
 <app-navbar />
 
+
 <main
-    class="container max-w-screen-xl min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] mx-auto px-4 py-8 flex items-center justify-center">
-    <div class="bg-white text-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm">
-        <div
-            class="grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
-            <div class="leading-none font-semibold">Create an account</div>
-            <div class="text-muted-foreground text-sm">
-                Enter your information below to create your account
+    class="relative container max-w-screen-xl min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] mx-auto px-4 py-8 flex items-center justify-center">
+
+    <div class="space-y-2">
+        <div class="flex flex-col w-full space-y-2">
+            @if(errorMessage) {
+            <div
+                class="relative w-full rounded-lg border border-red-500 bg-red-50 text-red-800 shadow-xs px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-alert">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" x2="12" y1="8" y2="12"></line>
+                    <line x1="12" x2="12.01" y1="16" y2="16"></line>
+                </svg>
+                <div class="col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight">
+                    {{ errorMessage }}
+                </div>
             </div>
+
+            }
+            @if(successMessage) {
+            <div
+                class="relative w-full rounded-lg border border-green-500 bg-green-50 text-green-800 shadow-xs px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-check">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9 12l2 2 4-4"></path>
+                </svg>
+                <div class="col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight">
+                    {{ successMessage }}
+                </div>
+            </div>
+
+            }
         </div>
-        <div class="px-6">
-            <form>
-                <div
-                    class="group/field-group @container/field-group flex w-full flex-col gap-4 data-[slot=checkbox-group]:gap-3 [&amp;&gt;[data-slot=field-group]]:gap-4">
-                    <div role="group" data-slot="field" data-orientation="vertical"
-                        class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
-                        <label data-slot="field-label"
-                            class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
-                            for="firstname">
-                            First Name
-                        </label>
-                        <input type="text"
-                            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-                            id="firstname" required>
-                    </div>
-                    <div role="group" data-slot="field" data-orientation="vertical"
-                        class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
-                        <label data-slot="field-label"
-                            class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
-                            for="lastname">
-                            Last Name
-                        </label>
-                        <input type="text"
-                            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-                            id="lastname" required>
-                    </div>
-                    <div role="group" data-slot="field" data-orientation="vertical"
-                        class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
-                        <label data-slot="field-label"
-                            class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
-                            for="email">
-                            Email
-                        </label>
-                        <input type="email"
-                            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-                            id="email" placeholder="m@example.com" required="">
-                    </div>
-                    <div role="group" data-slot="field" data-orientation="vertical"
-                        class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
-                        <div class="flex items-center">
+        <div class="bg-white text-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm">
+            <div
+                class="grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
+                <div class="leading-none font-semibold">Créer un compte</div>
+                <div class="text-muted-foreground text-sm">
+                    Entrez vos informations ci-dessous pour créer votre compte
+                </div>
+            </div>
+            <div class="px-6">
+                <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+                    <div
+                        class="group/field-group @container/field-group flex w-full flex-col gap-4 data-[slot=checkbox-group]:gap-3 [&amp;&gt;[data-slot=field-group]]:gap-4">
+                        <div role="group" data-slot="field" data-orientation="vertical"
+                            class="group/field flex w-full gap-2 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
                             <label data-slot="field-label"
                                 class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
-                                for="password">
-                                Password
+                                for="firstname">
+                                Prénom
                             </label>
+                            <input type="text" name="firstname" formControlName="firstname"
+                                [aria-invalid]="registrationForm.get('firstname')?.invalid && registrationForm.get('firstname')?.touched"
+                                class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+                                id="firstname" required>
+                            @if(registrationForm.get('firstname')?.invalid &&
+                            (registrationForm.get('firstname')?.touched ||
+                            submitted)) {
+                            <p class="text-red-500 text-xs italic">Veuillez saisir un nom de famille.</p>
+                            }
                         </div>
-                        <input type="password" data-slot="input"
-                            class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
-                            id="password" required="">
+                        <div role="group" data-slot="field" data-orientation="vertical"
+                            class="group/field flex w-full gap-2 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
+                            <label data-slot="field-label"
+                                class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                                for="lastname">
+                                Non de famille
+                            </label>
+                            <input type="text" name="lastname" formControlName="lastname"
+                                [aria-invalid]="registrationForm.get('lastname')?.invalid && registrationForm.get('lastname')?.touched"
+                                class=":text-foreground placeholder:text-muted-foreground selection:bg-primary
+                                selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0
+                                rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow]
+                                outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm
+                                file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed
+                                disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50
+                                focus-visible:ring-[3px] aria-invalid:ring-destructive/20
+                                dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive" id="lastname"
+                                required>
+                            @if(registrationForm.get('lastname')?.invalid && (registrationForm.get('lastname')?.touched
+                            ||
+                            submitted)) {
+                            <p class="text-red-500 text-xs italic">Veuillez saisir un nom de famille.</p>
+                            }
+                        </div>
+                        <div role="group" data-slot="field" data-orientation="vertical"
+                            class="group/field flex w-full gap-2 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
+                            <label data-slot="field-label"
+                                class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                                for="email">
+                                Email
+                            </label>
+                            <input type="email" name="email" formControlName="email"
+                                [aria-invalid]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+                                class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+                                id="email" placeholder="m@example.com" required="">
+                            @if(registrationForm.get('email')?.invalid && (registrationForm.get('email')?.touched ||
+                            submitted)) {
+                            <p class="text-red-500 text-xs italic">Please enter a valid email.</p>
+                            }
+                        </div>
+                        <div role="group" data-slot="field" data-orientation="vertical"
+                            class="group/field flex w-full gap-2 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
+                            <div class="flex items-center">
+                                <label data-slot="field-label"
+                                    class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                                    for="password">
+                                    Mot de passe
+                                </label>
+                            </div>
+                            <input type="password" name="password" formControlName="password"
+                                [aria-invalid]="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
+                                class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+                                id="password" required="">
+                            @if(registrationForm.get('password')?.invalid && (registrationForm.get('password')?.touched
+                            ||
+                            submitted)) {
+                            <p class="text-red-500 text-xs italic">Veuillez entrer un mot de passe valide.</p>
+                            }
+                        </div>
+                        <div role="group" data-slot="field" data-orientation="vertical"
+                            class="group/field flex w-full gap-2 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
+                            <button
+                                [disabled]="(registrationForm.invalid && (registrationForm.touched || submitted)) || (!registrationForm.invalid && submitted)"
+                                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[&gt;svg]:px-3"
+                                type="submit">
+                                Créer un compte
+                            </button>
+                            <p
+                                class="text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&amp;]:-mt-1.5 [&amp;&gt;a:hover]:text-primary [&amp;&gt;a]:underline [&amp;&gt;a]:underline-offset-4 text-center">
+                                Vous avez déjà un compte? <a href="/login" class="underline">Connectez-vous</a>
+                            </p>
+                        </div>
                     </div>
-                    <div role="group" data-slot="field" data-orientation="vertical"
-                        class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto">
-                        <button data-slot="button"
-                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[&gt;svg]:px-3"
-                            type="submit">
-                            Register
-                        </button>
-                        <p
-                            class="text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&amp;]:-mt-1.5 [&amp;&gt;a:hover]:text-primary [&amp;&gt;a]:underline [&amp;&gt;a]:underline-offset-4 text-center">
-                            Already have an account? <a href="/login" class="underline">Sign in</a>
-                        </p>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </main>
