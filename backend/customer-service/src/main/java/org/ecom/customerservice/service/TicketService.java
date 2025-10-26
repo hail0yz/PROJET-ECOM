@@ -43,13 +43,13 @@ public class TicketService {
 
     private final TicketCategoryRepository ticketCategoryRepository;
 
-    public TicketDTO getTicketById(String customerId, Long ticketId) {
+    public TicketDTO getTicketById(Long customerId, Long ticketId) {
         Ticket ticket = ticketRepository.findByIdAndCustomerId(ticketId, customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Ticket not found : " + ticketId));
         return ticketMapper.mapToTicketDTO(ticket);
     }
 
-    public Page<TicketDTO> getCustomerTickets(String customerId, int page, int size, String sort) {
+    public Page<TicketDTO> getCustomerTickets(Long customerId, int page, int size, String sort) {
         String property = SORT_FIELD_MAP.get(sort);
         if (property == null) {
             throw createConstraintViolation(sort);
@@ -61,7 +61,7 @@ public class TicketService {
                 .map(ticketMapper::mapToTicketDTO);
     }
 
-    public CreateTicketResponse createTicket(String customerId, CreateTicketRequest request) {
+    public CreateTicketResponse createTicket(Long customerId, CreateTicketRequest request) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found : " + customerId));
 
