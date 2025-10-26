@@ -46,7 +46,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @GetMapping("/{customerId}/profile")
-    public ResponseEntity<CustomerProfileDTO> getCustomerProfile(@PathVariable String customerId) {
+    public ResponseEntity<CustomerProfileDTO> getCustomerProfile(@PathVariable Long customerId) {
         return ResponseEntity.ok(customerService.getCustomerProfile(customerId));
     }
 
@@ -57,14 +57,14 @@ public class CustomerController {
     })
     @GetMapping("/{customerId}/preferences")
     public ResponseEntity<CustomerPreferencesDTO> getCustomerPreferences(
-            @Parameter(description = "ID of the customer") @PathVariable String customerId
+            @Parameter(description = "ID of the customer") @PathVariable Long customerId
     ) {
         return ResponseEntity.ok(customerService.getCustomerPreferences(customerId));
     }
 
     @PutMapping("/{id}/preferences")
     public ResponseEntity<Void> updatePreferences(
-            @Parameter(description = "ID of the customer") @PathVariable String id,
+            @Parameter(description = "ID of the customer") @PathVariable Long id,
             @RequestBody @Valid UpdatePreferencesRequest request
     ) {
         customerService.updateCustomerPreferences(id, request);
@@ -90,7 +90,7 @@ public class CustomerController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(
-            @Parameter(description = "ID of the customer") @PathVariable String id
+            @Parameter(description = "ID of the customer") @PathVariable Long id
     ) {
         // TODO customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();

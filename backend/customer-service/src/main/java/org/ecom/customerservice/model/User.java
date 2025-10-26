@@ -3,6 +3,8 @@ package org.ecom.customerservice.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
@@ -27,7 +29,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class User {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String externalId;
 

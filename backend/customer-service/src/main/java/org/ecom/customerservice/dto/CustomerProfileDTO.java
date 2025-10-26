@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerProfileDTO {
 
-    private String id;
+    private Long id;
 
     private String email;
 

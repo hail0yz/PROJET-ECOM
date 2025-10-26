@@ -25,17 +25,17 @@ public class CustomerService {
 
     private final CustomerMapper customerMapper;
 
-    public CustomerDTO getCustomerById(String customerId) {
+    public CustomerDTO getCustomerById(Long customerId) {
         Customer customer = findCustomerById(customerId);
         return customerMapper.mapToCustomerDTO(customer);
     }
 
-    public CustomerProfileDTO getCustomerProfile(String customerId) {
+    public CustomerProfileDTO getCustomerProfile(Long customerId) {
         Customer customer = findCustomerById(customerId);
         return customerMapper.mapToCustomerProfileDTO(customer);
     }
 
-    public void updateCustomerPreferences(String customerId, UpdatePreferencesRequest request) {
+    public void updateCustomerPreferences(Long customerId, UpdatePreferencesRequest request) {
         Preferences preferences = Preferences.builder()
                 .emailNotificationsEnabled(request.emailNotificationsEnabled())
                 .smsNotificationsEnabled(request.smsNotificationsEnabled())
@@ -46,7 +46,7 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    public CustomerPreferencesDTO getCustomerPreferences(String customerId) {
+    public CustomerPreferencesDTO getCustomerPreferences(Long customerId) {
         Customer customer = findCustomerById(customerId);
         return customerMapper.mapToCustomerPreferencesDTO(customer);
     }
@@ -56,7 +56,7 @@ public class CustomerService {
                 .map(customerMapper::mapToCustomerDTO);
     }
 
-    private Customer findCustomerById(String id) {
+    private Customer findCustomerById(Long id) {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
     }
