@@ -1,10 +1,12 @@
+import {Category} from '@core/models/category.model';
+
 export interface Book {
-    id: string;
+    id: number;
     title: string;
     author: string;
-    description?: string;
+    summary: string;
     price: number;
-    image: string;
+    image?: string;
     category?: string;
     rating?: number;
     stock?: number;

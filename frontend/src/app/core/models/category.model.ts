@@ -1,6 +1,4 @@
 export interface Category {
-    id: string;
-    name: string;
-    description?: string;
-    image: string;
+    id: number;
+    name: string; // MANGA | THRILLER
 }

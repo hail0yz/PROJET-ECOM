@@ -1,8 +1,10 @@
 import { Book } from '@/app/core/models/book.model';
 import { Injectable } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {catchError, map, Observable, of} from 'rxjs';
 
 export const MOCK_BOOKS: Book[] = [
-    {
+    /*{
         id: '1',
         title: 'Angular for Beginners',
         author: 'John Doe',
@@ -52,21 +54,32 @@ export const MOCK_BOOKS: Book[] = [
         language: 'English',
         format: 'ebook',
         tags: ['Programming', 'Best Practices', 'Software Engineering']
-    }
+    }*/
 ];
 
 @Injectable({ providedIn: 'root' })
 export class BooksService {
-    getBestSellersBooks(): Book[] {
-        return MOCK_BOOKS;
-    }
 
-    async getBooks(): Promise<Book[]> {
-        return MOCK_BOOKS;
-    }
+  private bookServiceURL = "http://localhost:8080/api/v1/books";
 
-    async getBookById(id: string): Promise<Book | undefined> {
+  constructor(private http: HttpClient) { }
+
+  public getAllBooks(): Observable<Book[]> {
+
+    return this.http.get<Book[]>(this.bookServiceURL);
+  }
+
+  /*
+  getBestSellersBooks(): Book[] {
+    return MOCK_BOOKS;
+  }*/
+
+  async getBooks(): Promise<Book[]> {
+    return MOCK_BOOKS;
+  }
+
+    /*async getBookById(id: string): Promise<Book | undefined> {
         const books = await this.getBooks(); // TODO: Implement fetching book by ID
         return Promise.resolve(books.find(book => book.id === id));
-    }
+    }*/
 }

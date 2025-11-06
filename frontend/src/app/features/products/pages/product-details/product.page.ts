@@ -28,9 +28,9 @@ export class ProductDetailPage implements OnInit {
         this.productId = this.route.snapshot.paramMap.get('id')!;
         console.log(this.productId);
 
-        this.booksService.getBookById(this.productId)
+        /*this.booksService.getBookById(this.productId)
             .then(book => {
                 this.book = book;
-            });
+            });*/
     }
 }

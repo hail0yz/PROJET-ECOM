@@ -30,10 +30,15 @@ export class ProductListPage implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.categories = this.categoriesService.getCategories();
-        this.booksService.getBooks().then(books => {
+        //this.categories = this.categoriesService.getCategories();
+        this.booksService.getAllBooks().subscribe({
+          next: (books) => {
+            console.log("Received books :", books);
             this.books = books;
-            this.loadingBooks = false;
-        })
+          },
+          error: (err) => {
+            console.log("Error: ", err);
+          }
+        });
     }
 }

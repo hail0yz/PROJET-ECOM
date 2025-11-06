@@ -5,7 +5,7 @@ import { Category } from '@/app/core/models/category.model';
 export class CategoriesService {
     getCategories(): Category[] {
         return [
-            {
+            /*{
                 id: "1",
                 name: "Fiction",
                 description: "Romans contemporains et classiques de fiction.",
@@ -148,7 +148,7 @@ export class CategoriesService {
                 name: "Langues",
                 description: "Méthodes d'apprentissage des langues et linguistique.",
                 image: "https://placehold.co/600x600?text='categorie 24'"
-            }
+            }*/
         ]
             ;
     }
