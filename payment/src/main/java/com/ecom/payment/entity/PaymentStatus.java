@@ -1,7 +1,9 @@
 package com.ecom.payment.entity;
-
 public enum PaymentStatus {
     PENDING,
+    PROCESSING,
+    COMPLETED,
     FAILED,
-    COMPLETED, REQUIRES_ACTION, CANCELLED, PROCESSING
+    REFUNDED,
+    CANCELLED, REQUIRES_ACTION
 }

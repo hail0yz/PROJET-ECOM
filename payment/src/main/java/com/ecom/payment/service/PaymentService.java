@@ -45,7 +45,7 @@ public class PaymentService {
         
         try {
             // Créer un PaymentIntent avec Stripe
-            PaymentIntent paymentIntent = stripePaymentService.crPaymentIntent(
+            PaymentIntent paymentIntent = stripePaymentService.createPaymentIntent(
                     request.getAmount(),
                     request.getCustomerEmail(),
                     description
@@ -96,7 +96,7 @@ public class PaymentService {
         
         try {
             // Récupérer le statut du PaymentIntent depuis Stripe
-            PaymentIntent paymentIntent = stripePaymentService.captPaymentIntent(
+            PaymentIntent paymentIntent = stripePaymentService.retrievePaymentIntent(
                     payment.getStripePaymentIntentId()
             );
             

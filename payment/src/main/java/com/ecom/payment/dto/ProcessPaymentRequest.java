@@ -1,9 +1,11 @@
 package com.ecom.payment.dto;
 
-import com.ecom.payment.entity.Payment;
-
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -11,6 +13,13 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProcessPaymentRequest {
-    @NotNull(message= "order id is required.")
+    
+    @NotNull(message = "Payment ID is required")
     private Integer paymentId;
+    
+    // Code de vérification pour la sécurité
+    private String verificationCode;
+    
+    // Détails additionnels si nécessaire
+    private PaymentDetailsDTO paymentDetails;
 }

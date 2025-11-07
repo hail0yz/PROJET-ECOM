@@ -15,12 +15,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentResponse{
+public class PaymentResponse {
     private Integer paymentId;
     private Integer orderId;
+    private PaymentStatus status;
+    private String transactionId;
+    private String message;
+    private String failureReason;
     private BigDecimal amount;
     private String paymentMethod;
-    private PaymentStatus status;
-    private String failureReason;
-    private String message;
+
+    private String stripePaymentIntentId;
+
+    private String clientSecret;
+
 }

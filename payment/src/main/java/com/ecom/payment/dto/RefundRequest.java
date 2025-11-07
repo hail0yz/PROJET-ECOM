@@ -26,4 +26,13 @@ public class RefundRequest {
 
     @NotBlank(message="reason is required.")
     private String reason;
+    @NotNull(message = "Payment ID is required")
+
+    private Integer paymentId;
+
+    
+
+    @DecimalMin(value = "0.01", message = "Refund amount must be greater than 0")
+    private BigDecimal refundAmount;
+
 }

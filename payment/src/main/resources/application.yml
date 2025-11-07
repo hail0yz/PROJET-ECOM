@@ -1,14 +1,13 @@
-spring.application.name: payment-service
-
 spring:
+  application:
+    name: payment-service
   datasource:
-    url: jdbc:postgresql://localhost:${PAYMENT_SERVICE_DB_PORT:5433}/${PAYMENT_SERVICE_DB_NAME:payment_db}
-    username: ${PAYMENT_SERVICE_DB_PASSWORD:postgres}
-    password: ${PAYMENT_SERVICE_DB_PASSWORD:password}
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
-
-# TODO eureka config
-
-# TODO security config
+      ddl-auto: create-drop
+    show-sql: true
