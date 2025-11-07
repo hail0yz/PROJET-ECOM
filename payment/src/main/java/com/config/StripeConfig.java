@@ -1,20 +1,22 @@
-package com.config;
+package com.ecom.payment.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 import com.stripe.Stripe;
 
-import org.springframework.context.annotation.Configuration;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import lombok.*;
-import lombok.extern.slf4j.Slf4j;
+
 @Configuration
-@Slf4j
 public class StripeConfig {
-    @Value("sk_test_51SIm6gReSF6nTokF1ZUsmPw7GhPTXTW9c25WbF5Jb6b5Pr6MD6wgm9SQeidpSoW0Hg80qvCieuW5YV62sUEcOt3H00DpgNd93r")
+
+    @Value("${stripe.api-key}")
     private String stripeApiKey;
 
     @PostConstruct
-    public void init(){
-        Stripe.apiKey= stripeApiKey;
+    public void init() {
+        Stripe.apiKey = stripeApiKey;
+        System.out.println("Stripe API Key configured: " + 
+            (stripeApiKey != null ? "sk_****..." : "NOT FOUND"));
     }
 }
