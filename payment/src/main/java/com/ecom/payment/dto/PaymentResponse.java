@@ -1,0 +1,32 @@
+package com.ecom.payment.dto;
+
+import java.math.BigDecimal;
+
+import com.ecom.payment.entity.PaymentStatus;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PaymentResponse {
+    private Integer paymentId;
+    private Integer orderId;
+    private PaymentStatus status;
+    private String transactionId;
+    private String message;
+    private String failureReason;
+    private BigDecimal amount;
+    private String paymentMethod;
+
+    private String stripePaymentIntentId;
+
+    private String clientSecret;
+
+}
