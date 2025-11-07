@@ -1,0 +1,82 @@
+<div class="payment-container">
+    <h1>Paiement</h1>
+  
+    <div class="payment-summary">
+      <h2>Résumé de la commande</h2>
+      <p>Commande #{{ orderId }}</p>
+      <p class="total-amount">Montant total: {{ totalAmount | currency:'EUR' }}</p>
+    </div>
+  
+    <div class="payment-form">
+      <h2>Méthode de paiement</h2>
+      
+      <!-- Sélection de la méthode de paiement -->
+      <div class="payment-methods">
+        <label class="payment-method-option">
+          <input 
+            type="radio" 
+            name="paymentMethod" 
+            [value]="PaymentMethod.CARD"
+            [(ngModel)]="selectedPaymentMethod"
+            (change)="onPaymentMethodChange(PaymentMethod.CARD)"
+          />
+          <span>Carte bancaire</span>
+        </label>
+  
+        <label class="payment-method-option">
+          <input 
+            type="radio" 
+            name="paymentMethod" 
+            [value]="PaymentMethod.PAYPAL"
+            [(ngModel)]="selectedPaymentMethod"
+            (change)="onPaymentMethodChange(PaymentMethod.PAYPAL)"
+          />
+          <span>PayPal</span>
+        </label>
+  
+        <label class="payment-method-option">
+          <input 
+            type="radio" 
+            name="paymentMethod" 
+            [value]="PaymentMethod.BANK_TRANSFER"
+            [(ngModel)]="selectedPaymentMethod"
+            (change)="onPaymentMethodChange(PaymentMethod.BANK_TRANSFER)"
+          />
+          <span>Virement bancaire</span>
+        </label>
+      </div>
+  
+      <!-- Email du client -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          [(ngModel)]="customerEmail"
+          placeholder="votre@email.com"
+          required
+        />
+      </div>
+  
+      <!-- Composant spécifique selon la méthode -->
+      <app-payment-form 
+        *ngIf="selectedPaymentMethod === PaymentMethod.CARD"
+        [amount]="totalAmount"
+      ></app-payment-form>
+  
+      <!-- Message d'erreur -->
+      <div class="error-message" *ngIf="error">
+        {{ error }}
+      </div>
+  
+      <!-- Bouton de paiement -->
+      <button 
+        class="btn-pay"
+        (click)="processPayment()"
+        [disabled]="isProcessing || !customerEmail"
+      >
+        <span *ngIf="!isProcessing">Payer {{ totalAmount | currency:'EUR' }}</span>
+        <span *ngIf="isProcessing">Traitement en cours...</span>
+      </button>
+    </div>
+  </div>
