@@ -1,13 +1,13 @@
 package com.ecom.bookService.service;
 
-import com.ecom.bookService.model.Book;
-import com.ecom.bookService.model.Category;
-import com.ecom.bookService.model.CategoryName;
-
 import java.util.List;
+import java.util.Optional;
+
+import com.ecom.bookService.dto.CategoryDTO;
+import com.ecom.bookService.model.Category;
 
 public interface CategoryService {
-    public void saveCategory(Category category);
-    public List<Book> getByCategoryName(CategoryName categoryName);
-    public List<Category> getAllCategories();
+    void saveCategory(Category category);
+    Optional<Category> getByCategoryName(String categoryName);
+    List<CategoryDTO> getAllCategories();
 }

@@ -1,5 +1,6 @@
 package com.ecom.bookService.Controller;
 
+import com.ecom.bookService.dto.CategoryDTO;
 import com.ecom.bookService.model.Category;
 import com.ecom.bookService.repository.CategoryRepository;
 import com.ecom.bookService.service.CategoryService;
@@ -17,5 +18,9 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    public List<Category> getAllCategories() { return categoryService.getAllCategories(); }
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
 }

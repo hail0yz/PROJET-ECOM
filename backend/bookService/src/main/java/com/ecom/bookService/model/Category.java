@@ -1,37 +1,56 @@
 package com.ecom.bookService.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-
+import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Model representation of a category
  */
-
 @Entity
-@Table(name="Categories")
+@Table(name = "Categories")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private CategoryName categoryName;
+    private String categoryName;
 
-    @OneToMany(mappedBy="category", fetch=FetchType.EAGER)
-    @JsonIgnoreProperties("category")
+    private String description;
+
+    private String image; // image URL
+
+    @OneToMany(mappedBy = "category")
     private List<Book> books;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    public Long getCategoryId() { return categoryId; }
-    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-    public CategoryName getCategoryName() { return categoryName; }
-    public void setCategoryName(CategoryName categoryName) { this.categoryName = categoryName; }
-
-    public List<Book> getBooks() { return books; }
-    public void setBooks(List<Book> books) { this.books = books; }
 }

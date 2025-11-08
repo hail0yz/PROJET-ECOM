@@ -7,6 +7,6 @@ import { Component, Input } from '@angular/core';
   host: { class: 'contents' }
 })
 export class Breadcrumb {
-  @Input() category!: { name: string, id: string };
+  @Input() category!: { name: string, id: number } | undefined;
   @Input() productName!: string;
 }

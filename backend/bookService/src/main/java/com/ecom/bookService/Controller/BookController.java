@@ -1,14 +1,22 @@
 package com.ecom.bookService.Controller;
 
+import com.ecom.bookService.dto.BookDTO;
+import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.service.BookService;
+import lombok.RequiredArgsConstructor;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -19,15 +27,32 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-
     /**
      * GET /api/v1/books
      *
      * @return List containing all books
      */
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public Page<BookDTO> getAllBooks(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Sort.Direction direction,
+            @RequestParam(required = false) BookFilter.BookSortBy sortBy,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        BookFilter filter = BookFilter.builder()
+                .search(search)
+                .categoryId(categoryId)
+                .direction(direction)
+                .sortBy(sortBy)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .build();
+
+        return bookService.getPagedBooks(filter, page, size);
     }
 
     /**
@@ -52,9 +77,9 @@ public class BookController {
      * @param id The id of a book
      * @return A ResponseEntity containing in its body the book whose id is the one given in parameter. The body will contain a string error if the id corresponds to book.
      */
-    @GetMapping("id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
-        Book book = bookService.getBookById(id);
+        BookDTO book = bookService.getBookById(id);
         if(book == null) {
             return new ResponseEntity<>("Nothing found for id book " + id, HttpStatus.NOT_FOUND);
         }

@@ -1,18 +1,26 @@
 package com.ecom.bookService.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import com.ecom.bookService.dto.BookDTO;
+import com.ecom.bookService.dto.BookFilter;
+import com.ecom.bookService.mapper.BookMapper;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import com.ecom.bookService.util.BookSpecificationUtils;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     @Override
     public void saveBook(Book book) {
@@ -30,12 +38,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book getBookById(Long id) {
-        return bookRepository.findById(id).orElse(null);
+    public BookDTO getBookById(Long id) {
+        return bookRepository.findById(id)
+                .map(bookMapper::mapToDTO)
+                .orElse(null);
     }
 
     @Override
     public List<Book> getAllBooksByCategory(CategoryName categoryEnum) {
         return bookRepository.findByCategory(categoryEnum);
     }
+
+    @Override
+    public Page<BookDTO> getPagedBooks(BookFilter filter, int page, int size) {
+        return bookRepository.findAll(BookSpecificationUtils.filter(filter), PageRequest.of(page, size))
+                .map(bookMapper::mapToDTO);
+    }
+
 }

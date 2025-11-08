@@ -8,4 +8,9 @@ import { Component, Input } from '@angular/core';
 })
 export class SidebarComponent {
   @Input() categories: Category[] = [];
+
+  onCategoryChange(categoryId: number): void {
+    console.log('Selected category ID:', categoryId);
+  }
+
 }

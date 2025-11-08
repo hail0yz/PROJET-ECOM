@@ -1,48 +1,67 @@
 package com.ecom.bookService.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name="Books")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="CATEGORY_FK")
     @JsonIgnoreProperties("books")
     private Category category;
 
     private String title;
+
+    private String subtitle;
+
     private String author;
-    private Double price;
+
+    private BigDecimal price;
+
     private int stock;
+
+    @Column(length = 10_000)
     private String summary;
 
+    private String isbn10; // https://isbn-international.org
 
-    public Long getId() { return bookId; }
-    public void setId(Long bookId) { this.bookId = bookId; }
+    private String isbn13;
 
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
+    private String thumbnail;
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    private Integer publishedYear;
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    private Integer numPages;
 
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    public int getStock() { return stock; }
-    public void setStock(int stock) { this.stock = stock; }
-
-    public String getSummary() { return summary; }
-    public void setSummary(String summary) { this.summary = summary; }
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }

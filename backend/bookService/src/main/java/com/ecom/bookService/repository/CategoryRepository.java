@@ -9,10 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    @Query("SELECT c.books FROM Category c WHERE c.categoryName= :categoryName")
-    public List<Book> findByCategoryName(@Param("categoryName") CategoryName categoryName);
+    Optional<Category> findByCategoryName(String categoryName);
+
+    boolean existsByCategoryName(String name);
+
 }
