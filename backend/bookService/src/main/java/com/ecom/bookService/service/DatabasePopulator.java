@@ -2,18 +2,16 @@ package com.ecom.bookService.service;
 
 import java.math.BigDecimal;
 
-import com.ecom.bookService.model.Book;
-import com.ecom.bookService.model.Category;
-import com.ecom.bookService.model.CategoryName;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.ecom.bookService.model.Book;
+import com.ecom.bookService.model.Category;
 
 /*
     This class allows to populate the database.
     For now, we put datas manually.
  */
-
 @Component
 public class DatabasePopulator implements CommandLineRunner {
 

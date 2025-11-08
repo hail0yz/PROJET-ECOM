@@ -18,13 +18,12 @@ public class BookSpecificationUtils {
     public static Specification<Book> filter(BookFilter filter) {
         Assert.notNull(filter, () -> "Book Filter must not be null");
 
-        Specification<Book> specification = Specification.allOf(
+        return Specification.allOf(
                 search(filter.search()),
                 priceGreaterThanOrEqualTo(filter.minPrice()),
-                priceLessThanOrEqualTo(filter.maxPrice())
+                priceLessThanOrEqualTo(filter.maxPrice()),
+                orderBy(filter.sortBy(), filter.direction())
         );
-
-        return specification;
     }
 
     public static Specification<Book> search(String search) {

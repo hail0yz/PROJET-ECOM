@@ -1,19 +1,16 @@
 package com.ecom.bookService.service;
 
-import com.ecom.bookService.dto.CategoryDTO;
-import com.ecom.bookService.mapper.CategoryMapper;
-import com.ecom.bookService.model.Book;
-import com.ecom.bookService.model.Category;
-import com.ecom.bookService.model.CategoryName;
-import com.ecom.bookService.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.ecom.bookService.dto.CategoryDTO;
+import com.ecom.bookService.mapper.CategoryMapper;
+import com.ecom.bookService.model.Category;
+import com.ecom.bookService.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
