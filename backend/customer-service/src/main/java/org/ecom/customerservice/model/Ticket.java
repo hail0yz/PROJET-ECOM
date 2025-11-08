@@ -2,15 +2,7 @@ package org.ecom.customerservice.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -47,6 +39,7 @@ public class Ticket {
     private Status status;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "ticket_type")
     private Type type;
 
     @ManyToOne
@@ -72,8 +65,23 @@ public class Ticket {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public enum Status {}
+    public enum Status {
+        OPEN,
+        IN_PROGRESS,
+        WAITING_CUSTOMER,
+        WAITING_VENDOR,
+        RESOLVED,
+        CLOSED,
+        REOPENED
+    }
 
-    public enum Type {}
+    public enum Type {
+        ORDER_ISSUE,
+        PAYMENT_ISSUE,
+        PRODUCT_QUERY,
+        ACCOUNT_ISSUE,
+        FEEDBACK,
+        OTHER
+    }
 
 }

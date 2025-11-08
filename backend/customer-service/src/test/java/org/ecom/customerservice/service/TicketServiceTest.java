@@ -43,7 +43,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TicketServiceTest {
 
-    private final String CUSTOMER_ID = "C123";
+    private final Long CUSTOMER_ID = 123L;
     private final Long TICKET_ID = 99L;
     private final int PAGE = 0;
     private final int SIZE = 10;

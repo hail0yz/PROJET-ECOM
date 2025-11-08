@@ -1,0 +1,62 @@
+spring:
+  application.name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOriginPatterns:
+                  - "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders:
+                  - "*"
+                allowCredentials: true
+          routes:
+          - id: product-service
+            uri: lb://product-service
+            predicates:
+              - Path=/products/**
+            filters:
+              - RemoveRequestHeader=Cookie
+          - id: review-service
+            uri: lb://review-service
+            predicates:
+              - Path=/reviews/**
+            filters:
+              - RemoveRequestHeader=Cookie
+
+          - id: customer-registration
+            uri: lb://customer-service
+            predicates:
+              - Path=/register
+            filters:
+              - RewritePath=/register, /api/v1/register
+              - RemoveRequestHeader=Cookie
+
+          - id: customer-service
+            uri: lb://customer-service
+            predicates:
+              - Path=/customers/**
+            filters:
+              - RewritePath=/customers/?(?<segment>.*), /api/v1/customers/$\{segment}
+              - RemoveRequestHeader=Cookie
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka:eureka@localhost:8761/eureka/
+
+logging:
+  level:
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: TRACE
