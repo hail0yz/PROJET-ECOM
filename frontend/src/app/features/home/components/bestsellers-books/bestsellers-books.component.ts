@@ -18,6 +18,6 @@ export class BestSellersBooksComponent implements OnInit {
     constructor(private booksService: BooksService) { }
 
     ngOnInit() {
-        this.books = this.booksService.getBestSellersBooks();
+        //this.books = this.booksService.getBestSellersBooks();
     }
 }

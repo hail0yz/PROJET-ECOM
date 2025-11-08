@@ -1,17 +1,20 @@
+import { Category } from '@core/models/category.model';
+
 export interface Book {
-    id: string;
+    id: number;
     title: string;
     author: string;
-    description?: string;
+    summary: string;
     price: number;
-    image: string;
-    category?: string;
+    thumbnail?: string;
+    category?: Category;
     rating?: number;
     stock?: number;
-    publishedDate?: string;
+    publishedYear?: string;
     publisher?: string;
-    isbn?: string;
+    isbn10?: string;
+    isbn13?: string;
     language?: string;
-    format?: 'paperback' | 'hardcover' | 'ebook';
+    numPages?: number;
     tags?: string[];
 }

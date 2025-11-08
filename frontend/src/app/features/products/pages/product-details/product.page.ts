@@ -28,9 +28,14 @@ export class ProductDetailPage implements OnInit {
         this.productId = this.route.snapshot.paramMap.get('id')!;
         console.log(this.productId);
 
-        this.booksService.getBookById(this.productId)
-            .then(book => {
+        this.booksService.getBookById(this.productId).subscribe({
+            next: (book) => {
                 this.book = book;
-            });
+                console.log(this.book);
+            },
+            error: (error) => {
+                console.error('Error fetching book details:', error);
+            }
+        });
     }
 }

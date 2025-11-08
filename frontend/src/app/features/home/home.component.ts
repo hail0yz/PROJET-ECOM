@@ -13,7 +13,7 @@ import { FooterComponent } from '@/app/core/components/footer/footer.component';
     imports: [
         CommonModule,
         NavbarComponent,
-        HeroBannerComponent,
+        //HeroBannerComponent,
         BestSellersBooksComponent,
         CategoriesCarouselComponent,
         FooterComponent,
