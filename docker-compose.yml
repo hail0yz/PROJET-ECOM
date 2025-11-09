@@ -6,7 +6,7 @@ services:
     ports:
       - 5433:5432
     environment:
-      POSTGRES_DB: products_db
+      POSTGRES_DB: carts_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     healthcheck:

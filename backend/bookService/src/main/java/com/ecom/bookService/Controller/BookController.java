@@ -3,20 +3,27 @@ package com.ecom.bookService.Controller;
 import java.math.BigDecimal;
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
+import com.ecom.bookService.dto.ReservationResult;
+import com.ecom.bookService.dto.ReserveStockRequest;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.service.BookService;
@@ -24,6 +31,7 @@ import com.ecom.bookService.service.BookService;
 @RestController
 @RequestMapping("api/v1/books")
 @CrossOrigin(origins = "http://localhost:4200")
+@Validated
 public class BookController {
 
     @Autowired

@@ -58,10 +58,51 @@ public class Book {
 
     private Integer numPages;
 
+    // ----------- Inventory / Entrepôt -----------
+
+    private int availableQuantity;
+
+    private int reservedQuantity;
+
+    private int minimumStockLevel;
+
+    // ----------- Optimistic Locking -----------
+
+    @Version
+    private Long version;
+
+    // ----------- Audit -----------
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public boolean canReserve(int quantity) {
+        return availableQuantity - reservedQuantity >= quantity;
+    }
+
+    public void reserve(int quantity) {
+        if (!canReserve(quantity)) {
+            throw new IllegalStateException("Not enough stock");
+        }
+        reservedQuantity += quantity;
+    }
+
+    public void confirmReservation(int quantity) {
+        if (reservedQuantity < quantity) {
+            throw new IllegalStateException("Reservation mismatch");
+        }
+        reservedQuantity -= quantity;
+        availableQuantity -= quantity;
+    }
+
+    public void cancelReservation(int quantity) {
+        if (reservedQuantity < quantity) {
+            throw new IllegalStateException("Invalid cancellation");
+        }
+        reservedQuantity -= quantity;
+    }
 
 }

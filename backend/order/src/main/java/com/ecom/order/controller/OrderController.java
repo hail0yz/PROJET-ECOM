@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@Validated
 public class OrderController {
 
 
@@ -23,10 +25,10 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<UUID> createOrder(
+    public ResponseEntity<UUID> placeOrder(
             @RequestBody @Valid OrderRequest request
     ) {
-        return ResponseEntity.ok(this.orderService.createOrder(request));
+        return ResponseEntity.ok(this.orderService.placeOrder(request));
     }
 
     @GetMapping
