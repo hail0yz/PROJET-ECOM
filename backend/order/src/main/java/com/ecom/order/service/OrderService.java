@@ -1,13 +1,10 @@
 package com.ecom.order.service;
 
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,20 +13,22 @@ import org.springframework.stereotype.Service;
 import com.ecom.order.cart.CartClient;
 import com.ecom.order.cart.CartDetails;
 import com.ecom.order.customer.CustomerResponse;
-import com.ecom.order.customer.CutomerClient;
+import com.ecom.order.customer.CustomerClient;
 import com.ecom.order.dto.OrderRequest;
 import com.ecom.order.dto.OrderResponse;
-import com.ecom.order.exception.BusinessException;
-import com.ecom.order.kafka.OrderProducer;
+import com.ecom.order.dto.PlaceOrderResponse;
+import com.ecom.order.exception.EntityNotFoundException;
 import com.ecom.order.mapper.OrderMapper;
+import com.ecom.order.model.DeliveryInfo;
 import com.ecom.order.model.Order;
 import com.ecom.order.model.OrderLine;
 import com.ecom.order.model.OrderStatus;
-import com.ecom.order.payment.PaymentInterface;
-import com.ecom.order.product.InventoryClient;
-import com.ecom.order.product.ReserveStockRequest;
+import com.ecom.order.model.PaymentInfo;
+import com.ecom.order.payment.CreatePaymentRequest;
+import com.ecom.order.payment.PaymentFailedException;
 import com.ecom.order.product.ReserveStockResponse;
 import com.ecom.order.repository.OrderRepo;
+import static java.util.stream.Collectors.toMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,74 +39,106 @@ public class OrderService {
 
     private final OrderRepo orderRepo;
 
-    private final CutomerClient customerClient;
+    private final CustomerClient customerClient;
 
     private final OrderMapper orderMapper;
 
-    private final OrderProducer orderProducer;
-
-    private final PaymentInterface paymentInterface;
-
     private final CartClient cartClient;
 
-    private final InventoryClient inventoryClient;
+    private final InventoryService inventoryService;
 
-    public UUID placeOrder(OrderRequest orderRequest) {
+    private final PaymentService paymentService;
+
+    public PlaceOrderResponse placeOrder(OrderRequest orderRequest) {
         String customerId = "CUSTOMER_ID"; // extracted from 'Authorization Header' token
         CustomerResponse customer = customerClient.getCustomer(customerId)
-                .orElseThrow(() -> new BusinessException("Customer not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
 
         CartDetails cart = cartClient.getCartById(orderRequest.getCartId());
 
-        Order order = orderRepo.save(buildOrder(customerId, cart.items()));
+        Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
 
-        ReserveStockResponse reserveStockResponse = reserveProducts(order.getId().toString(), cart.items());
+        if (!reserveStockAndHandleFailure(cart, order)) {
+            return PlaceOrderResponse.builder()
+                    .orderId(order.getId())
+                    .build();
+        }
+
+        boolean paymentFailed = !processOrderPayment(customer, order, cart);
+
+        if (paymentFailed) {
+            // TODO cancel / release books reservation
+            // InventoryService.releaseReservation(...)
+        }
+
+        // TODO publish event OrderPlaced
+
+        return PlaceOrderResponse.builder()
+                .orderId(order.getId())
+                .paymentId(order.getPaymentInfo().paymentId())
+                .build();
+    }
+
+    private boolean processOrderPayment(CustomerResponse customer, Order order, CartDetails cart) {
+        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
+                .paymentMethod(order.getPaymentInfo().paymentMethod())
+                .customerEmail(customer.getEmail())
+                .orderId(order.getId().toString())
+                .amount(cart.totalPrice())
+                .build();
+
+        try {
+            Long paymentId = paymentService.createPayment(createPaymentRequest);
+            order.setStatus(OrderStatus.PAYMENT_PENDING);
+            order.setPaymentInfo(order.getPaymentInfo().withPaymentId(paymentId));
+        }
+        catch (PaymentFailedException exception) {
+            order.setStatus(OrderStatus.PAYMENT_FAILED);
+            orderRepo.save(order);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean reserveStockAndHandleFailure(CartDetails cart, Order order) {
+        Map<Long, Integer> productsWithQuantities = cart.items().stream().collect(toMap(
+                CartDetails.CartItem::productId,
+                CartDetails.CartItem::quantity
+        ));
+        ReserveStockResponse reserveStockResponse = inventoryService.reserveProducts(order.getId().toString(), productsWithQuantities);
 
         if (!reserveStockResponse.success()) {
             log.error("Reserving stock failed [orderId={}]: {}", order.getId(), reserveStockResponse.message());
             order.setStatus(OrderStatus.FAILED);
-            return order.getId();
+            return false;
         }
-
-        // TODO payment
-
-//        var paymentRequest = new PaymentRequest(
-//                order.getReference(),
-//                order.getId(),
-//                orderRequest.getPaymentMethod(),
-//                orderRequest.getAmmount(),
-//                customer
-//        );
-//
-//        paymentInterface.requestOrderPayment(paymentRequest);
-//
-//        //send orderconfirmation to notification microservice
-//        OrderConfirmation orderConfirmation = new OrderConfirmation(
-//                orderRequest.getReference(),
-//                orderRequest.getAmmount(),
-//                orderRequest.getPaymentMethod(),
-//                customer,
-//                products
-//        );
-
-//        orderProducer.sentOrderConfirmation(orderConfirmation);
-        return order.getId();
+        return true;
     }
 
-    private Order buildOrder(String customerId, List<CartDetails.CartItem> items) {
-        List<OrderLine> orderLines = items.stream()
+    private Order createOrderFromCart(OrderRequest request, CustomerResponse customer, CartDetails cart) {
+        List<OrderLine> orderLines = cart.items().stream()
                 .map(item -> OrderLine.builder()
-                        .quantity((long) item.quantity())
+                        .quantity(item.quantity())
                         .productId(item.productId())
                         .build())
                 .toList();
 
+        PaymentInfo paymentInfo = new PaymentInfo(null, request.getPaymentDetails().paymentMethod());
+        DeliveryInfo deliveryInfo = new DeliveryInfo(
+                request.getAddress().street(),
+                null,
+                request.getAddress().city(),
+                null,
+                request.getAddress().postalCode(),
+                request.getAddress().country()
+        );
         return Order.builder()
-                .customerId(customerId)
+                .customerId(customer.getCutomerId())
                 .orderLines(orderLines)
-                .totalAmount(BigDecimal.valueOf(0.0))
-                .paymentInfo(null) // TODO set payment info
-                .deliveryInfo(null) // TODO delivery info
+                .totalAmount(cart.totalPrice())
+                .paymentInfo(paymentInfo)
+                .deliveryInfo(deliveryInfo)
                 .build();
     }
 
@@ -126,17 +157,7 @@ public class OrderService {
     public OrderResponse findById(UUID id) {
         return this.orderRepo.findById(id)
                 .map(this.orderMapper::fromOrder)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("No order found with the provided ID: %d", id)));
-    }
-
-    private ReserveStockResponse reserveProducts(String orderId, List<CartDetails.CartItem> items) {
-        Map<Long, Integer> products = items.stream()
-                .collect(Collectors.toMap(
-                        CartDetails.CartItem::productId,
-                        CartDetails.CartItem::quantity
-                ));
-
-        return inventoryClient.reserveProducts(new ReserveStockRequest(orderId, products));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("No order found with the provided ID: " + id)));
     }
 
 }

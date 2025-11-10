@@ -14,9 +14,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
 
+        http.sessionManagement(AbstractHttpConfigurer::disable);
+
         http.authorizeHttpRequests(c -> c.requestMatchers("/actuator/**", "/swagger-ui.html").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/register").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/customers/**").hasAuthority("ROLE_ADMIN"));
+                .requestMatchers("/api/v1/customers/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER"));
 
         http.oauth2ResourceServer(c -> c.jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakAuthenticationConverter())));
 

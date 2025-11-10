@@ -21,7 +21,7 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID orderLineId;
 
-    private Long quantity;
+    private Integer quantity;
 
     private Long productId;
 

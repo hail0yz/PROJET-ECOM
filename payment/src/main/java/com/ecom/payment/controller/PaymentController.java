@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class PaymentController {
     
     private final PaymentService paymentService;
-    
+
     @PostMapping
     public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody CreatePaymentRequest request) {
         PaymentResponse response = paymentService.createPayment(request);
@@ -54,7 +54,7 @@ public class PaymentController {
         PaymentResponse response = paymentService.refundPayment(request);
         return ResponseEntity.ok(response);
     }
-    
+
     @PutMapping("/{paymentId}/cancel")
     public ResponseEntity<Map<String, String>> cancelPayment(@PathVariable Integer paymentId) {
         paymentService.cancelPayment(paymentId);

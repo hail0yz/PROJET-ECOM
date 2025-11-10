@@ -18,15 +18,16 @@ public class KeycloakAuthenticationConverter implements Converter<Jwt, AbstractA
     @Override
     public AbstractAuthenticationToken convert(Jwt source) {
         var scope = new JwtGrantedAuthoritiesConverter().convert(source).stream();
-        var roles = Stream.concat(scope, extractRealmAccessAuthorities(source));
+        var roles = Stream.concat(scope, extractRealmAccessAuthorities(source))
+                .collect(Collectors.toSet());
 
-        return new JwtAuthenticationToken(source, Stream.concat(scope, roles).collect(Collectors.toSet()));
+        return new JwtAuthenticationToken(source, roles);
     }
 
     private Stream<GrantedAuthority> extractRealmAccessAuthorities(Jwt jwt) {
         var realmAccess = new HashMap<>(jwt.getClaim("realm_access"));
         return ((List<String>) realmAccess.get("roles")).stream()
-            .map(this::mapRoleToAuthority);
+                .map(this::mapRoleToAuthority);
     }
 
     private GrantedAuthority mapRoleToAuthority(String role) {

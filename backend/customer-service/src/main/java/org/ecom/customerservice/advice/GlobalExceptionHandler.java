@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import org.ecom.customerservice.dto.APIErrorResponse;
 import org.ecom.customerservice.exception.EmailAlreadyExistsException;
@@ -46,6 +47,22 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(ex.getMessage())
                 .message("Validation failed")
+                .details(details)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<APIErrorResponse> handle(MethodArgumentTypeMismatchException ex) {
+        Map<String, String> details = Map.of(
+                ex.getName(), "Invalid value: " + ex.getValue() + " for type " + ex.getRequiredType().getSimpleName()
+        );
+
+        APIErrorResponse errorResponse = APIErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(ex.getMessage())
+                .message("Path variable or request parameter type mismatch")
                 .details(details)
                 .build();
 

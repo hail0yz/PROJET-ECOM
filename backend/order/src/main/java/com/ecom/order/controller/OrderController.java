@@ -1,18 +1,26 @@
 package com.ecom.order.controller;
 
 
-import com.ecom.order.dto.OrderRequest;
-import com.ecom.order.dto.OrderResponse;
-import com.ecom.order.service.OrderService;
+import java.util.List;
+import java.util.UUID;
+
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
+import com.ecom.order.dto.OrderRequest;
+import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.PlaceOrderResponse;
+import com.ecom.order.service.OrderService;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -25,7 +33,7 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<UUID> placeOrder(
+    public ResponseEntity<PlaceOrderResponse> placeOrder(
             @RequestBody @Valid OrderRequest request
     ) {
         return ResponseEntity.ok(this.orderService.placeOrder(request));

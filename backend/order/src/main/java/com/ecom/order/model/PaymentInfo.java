@@ -5,7 +5,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
 @Embeddable
-public record PaymentInfo(
-        @Enumerated(EnumType.STRING) PaymentMethod paymentMethod
-) {
+public record PaymentInfo(Long paymentId, String paymentMethod) {
+
+    public PaymentInfo withPaymentId(Long paymentId) {
+        return new PaymentInfo(paymentId, this.paymentMethod);
+    }
+
 }

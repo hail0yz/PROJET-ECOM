@@ -5,7 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "bookService")
+import com.ecom.order.configs.FeignConfig;
+
+@FeignClient(name = "bookService", configuration = FeignConfig.class)
 public interface InventoryClient {
 
     @PostMapping("/api/v1/books/reserve")
