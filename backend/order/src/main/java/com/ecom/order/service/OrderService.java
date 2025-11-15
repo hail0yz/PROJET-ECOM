@@ -10,10 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ecom.order.cart.CartClient;
 import com.ecom.order.cart.CartDetails;
-import com.ecom.order.customer.CustomerResponse;
-import com.ecom.order.customer.CustomerClient;
+import com.ecom.order.customer.CustomerDetails;
 import com.ecom.order.dto.OrderRequest;
 import com.ecom.order.dto.OrderResponse;
 import com.ecom.order.dto.PlaceOrderResponse;
@@ -39,22 +37,20 @@ public class OrderService {
 
     private final OrderRepo orderRepo;
 
-    private final CustomerClient customerClient;
+    private final CustomerService customerService;
 
     private final OrderMapper orderMapper;
 
-    private final CartClient cartClient;
+    private final CartService cartService;
 
     private final InventoryService inventoryService;
 
     private final PaymentService paymentService;
 
-    public PlaceOrderResponse placeOrder(OrderRequest orderRequest) {
-        String customerId = "CUSTOMER_ID"; // extracted from 'Authorization Header' token
-        CustomerResponse customer = customerClient.getCustomer(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+    public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
+        CustomerDetails customer = customerService.getCustomerDetails(customerId);
 
-        CartDetails cart = cartClient.getCartById(orderRequest.getCartId());
+        CartDetails cart = cartService.getCartById(orderRequest.getCartId());
 
         Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
 
@@ -79,10 +75,10 @@ public class OrderService {
                 .build();
     }
 
-    private boolean processOrderPayment(CustomerResponse customer, Order order, CartDetails cart) {
+    private boolean processOrderPayment(CustomerDetails customer, Order order, CartDetails cart) {
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .paymentMethod(order.getPaymentInfo().paymentMethod())
-                .customerEmail(customer.getEmail())
+                .customerEmail(customer.email())
                 .orderId(order.getId().toString())
                 .amount(cart.totalPrice())
                 .build();
@@ -116,7 +112,7 @@ public class OrderService {
         return true;
     }
 
-    private Order createOrderFromCart(OrderRequest request, CustomerResponse customer, CartDetails cart) {
+    private Order createOrderFromCart(OrderRequest request, CustomerDetails customer, CartDetails cart) {
         List<OrderLine> orderLines = cart.items().stream()
                 .map(item -> OrderLine.builder()
                         .quantity(item.quantity())
@@ -134,7 +130,7 @@ public class OrderService {
                 request.getAddress().country()
         );
         return Order.builder()
-                .customerId(customer.getCutomerId())
+                .customerId(customer.id().toString())
                 .orderLines(orderLines)
                 .totalAmount(cart.totalPrice())
                 .paymentInfo(paymentInfo)

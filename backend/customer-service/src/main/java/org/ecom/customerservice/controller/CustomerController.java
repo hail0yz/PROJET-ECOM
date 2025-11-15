@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ecom.customerservice.dto.CustomerDTO;
+import org.ecom.customerservice.dto.CustomerDetailsDTO;
 import org.ecom.customerservice.dto.CustomerPreferencesDTO;
 import org.ecom.customerservice.dto.CustomerProfileDTO;
 import org.ecom.customerservice.dto.UpdatePreferencesRequest;
@@ -46,8 +47,18 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @GetMapping("/{customerId}/profile")
-    public ResponseEntity<CustomerProfileDTO> getCustomerProfile(@PathVariable Long customerId) {
+    public ResponseEntity<CustomerProfileDTO> getCustomerProfile(@PathVariable String customerId) {
         return ResponseEntity.ok(customerService.getCustomerProfile(customerId));
+    }
+
+    @Operation(summary = "Get customer details by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Customer details retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
+    @GetMapping("/{customerId}/details")
+    public ResponseEntity<CustomerDetailsDTO> getCustomerDetails(@PathVariable String customerId) {
+        return ResponseEntity.ok(customerService.getCustomerDetails(customerId));
     }
 
     @Operation(summary = "Get customer preferences by ID")
@@ -57,14 +68,14 @@ public class CustomerController {
     })
     @GetMapping("/{customerId}/preferences")
     public ResponseEntity<CustomerPreferencesDTO> getCustomerPreferences(
-            @Parameter(description = "ID of the customer") @PathVariable Long customerId
+            @Parameter(description = "ID of the customer") @PathVariable String customerId
     ) {
         return ResponseEntity.ok(customerService.getCustomerPreferences(customerId));
     }
 
     @PutMapping("/{id}/preferences")
     public ResponseEntity<Void> updatePreferences(
-            @Parameter(description = "ID of the customer") @PathVariable Long id,
+            @Parameter(description = "ID of the customer") @PathVariable String id,
             @RequestBody @Valid UpdatePreferencesRequest request
     ) {
         customerService.updateCustomerPreferences(id, request);
@@ -90,7 +101,7 @@ public class CustomerController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(
-            @Parameter(description = "ID of the customer") @PathVariable Long id
+            @Parameter(description = "ID of the customer") @PathVariable String id
     ) {
         // TODO customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();

@@ -35,4 +35,7 @@ public class Customer extends User {
     @Embedded
     private Preferences preferences;
 
+    @Embedded
+    private BlacklistInfo blacklistInfo;
+
 }

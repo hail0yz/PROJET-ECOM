@@ -9,6 +9,12 @@ spring:
     hibernate:
       ddl-auto: update
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/realms/ecom
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -22,5 +28,3 @@ server:
   port: 0
   compression:
     enabled: true
-
-# TODO security config

@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,11 +24,13 @@ import com.ecom.order.dto.OrderResponse;
 import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class OrderController {
 
 
@@ -34,9 +39,10 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<PlaceOrderResponse> placeOrder(
-            @RequestBody @Valid OrderRequest request
+            @RequestBody @Valid OrderRequest request,
+            @AuthenticationPrincipal(expression = "subject") String customerId
     ) {
-        return ResponseEntity.ok(this.orderService.placeOrder(request));
+        return ResponseEntity.ok(this.orderService.placeOrder(request, customerId));
     }
 
     @GetMapping

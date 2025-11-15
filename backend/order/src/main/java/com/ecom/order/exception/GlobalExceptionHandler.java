@@ -14,7 +14,7 @@ import java.util.HashMap;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)

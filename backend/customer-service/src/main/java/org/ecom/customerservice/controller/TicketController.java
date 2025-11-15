@@ -41,7 +41,7 @@ public class TicketController {
     @GetMapping(value = "/customers/{customerId}/tickets")
     @Operation(summary = "Get all tickets for customer")
     public ResponseEntity<Page<TicketDTO>> getCustomerTickets(
-            @PathVariable Long customerId,
+            @PathVariable String customerId,
             @Parameter(name = "The current result page requested.") @RequestParam(defaultValue = DEFAULT_CURRENT_PAGE) final int page,
             @Parameter(name = "The number of results returned per page.") @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) final int size,
             @Parameter(name = "Sorting method applied to the returned results. Currently, `date` and `id` are supported.") @RequestParam(defaultValue = "date") final String sort
@@ -54,7 +54,7 @@ public class TicketController {
     @Operation(summary = "Create a ticket")
     public ResponseEntity<CreateTicketResponse> createTicket(
             @RequestBody @Valid CreateTicketRequest request,
-            @PathVariable Long customerId
+            @PathVariable String customerId
     ) {
         var response = ticketService.createTicket(customerId, request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -63,7 +63,7 @@ public class TicketController {
     @GetMapping(value = "/customers/{customerId}/tickets/{ticketId}")
     @Operation(summary = "Get a ticket by ticket id.")
     public ResponseEntity<TicketDTO> getTicket(
-            @PathVariable Long customerId,
+            @PathVariable String customerId,
             @PathVariable final Long ticketId
     ) {
         return ResponseEntity.ok(ticketService.getTicketById(customerId, ticketId)); //

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerDTO {
 
-    private Long id;
+    private String id;
 
     private String externalId;
 

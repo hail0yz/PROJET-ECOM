@@ -16,7 +16,11 @@ public class SecurityConfig {
 
         http.sessionManagement(AbstractHttpConfigurer::disable);
 
-        http.authorizeHttpRequests(c -> c.requestMatchers("/actuator/**", "/swagger-ui.html").permitAll()
+        http.authorizeHttpRequests(c -> c.requestMatchers(
+                        "/actuator/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs*/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/register").permitAll()
                 .requestMatchers("/api/v1/customers/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER"));
 

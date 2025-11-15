@@ -1,5 +1,6 @@
-package org.ecom.customerservice.advice;
+package com.ecom.order.advice;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -15,22 +16,51 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import org.ecom.customerservice.dto.APIErrorResponse;
-import org.ecom.customerservice.exception.CustomerRegistrationFailedException;
-import org.ecom.customerservice.exception.EmailAlreadyExistsException;
+import com.ecom.order.exception.BadREquestException;
+import com.ecom.order.exception.BusinessException;
+import com.ecom.order.exception.EntityNotFoundException;
+import com.ecom.order.exception.ExternalServiceException;
+import lombok.Builder;
+import lombok.Value;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<APIErrorResponse> handle(EmailAlreadyExistsException e) {
-        APIErrorResponse error = APIErrorResponse.builder()
-                .error(e.getMessage())
-                .status(HttpStatus.CONFLICT.value())
-                .message("Email already exists")
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<APIErrorResponse> handle(EntityNotFoundException ex) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        APIErrorResponse errorResponse = APIErrorResponse.builder()
+                .status(status.value())
+                .error(ex.getMessage())
+                .message(ex.getMessage())
                 .build();
 
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(BadREquestException.class)
+    public ResponseEntity<APIErrorResponse> handle(BadREquestException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        APIErrorResponse errorResponse = APIErrorResponse.builder()
+                .status(status.value())
+                .error(ex.getMessage())
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<APIErrorResponse> handle(ExternalServiceException ex) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        APIErrorResponse errorResponse = APIErrorResponse.builder()
+                .status(status.value())
+                .error(ex.getMessage())
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(status).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -90,17 +120,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
-    @ExceptionHandler(CustomerRegistrationFailedException.class)
-    public ResponseEntity<Object> handleCustomerRegistrationFailed(CustomerRegistrationFailedException e) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<APIErrorResponse> handle(BusinessException e) {
         var error = APIErrorResponse.builder()
-                .status(status.value())
-                .error("CUSTOMER_REGISTRATION_FAILED")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(e.getMessage())
                 .message(e.getMessage())
                 .build();
+        return ResponseEntity.status(BAD_REQUEST).body(error);
+    }
 
-        return new ResponseEntity<>(error, status);
+    @Value
+    @Builder
+    public static class APIErrorResponse {
+
+        int status;
+
+        String error;
+
+        String message;
+
+        @Builder.Default
+        Instant timestamp = Instant.now();
+
+        Object details;
+
     }
 
 }

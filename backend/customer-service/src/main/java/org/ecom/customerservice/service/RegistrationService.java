@@ -1,17 +1,19 @@
 package org.ecom.customerservice.service;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.ws.rs.core.Response;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import static java.util.Collections.singletonList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ecom.customerservice.config.KeycloakProperties;
 import org.ecom.customerservice.dto.RegistrationRequest;
+import org.ecom.customerservice.exception.CustomerRegistrationFailedException;
 import org.ecom.customerservice.exception.EmailAlreadyExistsException;
 import org.ecom.customerservice.model.Customer;
 import org.ecom.customerservice.repository.CustomerRepository;
@@ -19,6 +21,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 @Service
@@ -30,6 +33,7 @@ public class RegistrationService {
     private final Keycloak keycloak;
     private final KeycloakProperties keycloakProps;
     private final CustomerRepository customerRepository;
+    private final static String KEYCLOAK_CUSTOMER_ROLE = "USER";
 
     public void registerUser(RegistrationRequest request) {
         RealmResource realmResource = keycloak.realm(keycloakProps.realm());
@@ -41,6 +45,33 @@ public class RegistrationService {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
+        UserRepresentation user = buildUserRepresentation(request);
+
+        String keycloakUserId;
+        try (Response response = users.create(user)) {
+            if (response.getStatus() != 201) {
+                log.error("Failed to save user in keycloak. Response={}", response);
+                throw new CustomerRegistrationFailedException("Failed to save user in keycloak");
+            }
+
+            keycloakUserId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+        }
+
+        log.debug("Customer {} was successfully registered in Keycloak {}", request.email(), keycloakUserId);
+
+        assignRolesToUser(realmResource, keycloakUserId, KEYCLOAK_CUSTOMER_ROLE);
+
+        Customer customer = Customer.builder()
+                .id(keycloakUserId)
+                .firstname(request.firstname())
+                .lastname(request.lastname())
+                .email(request.email())
+                .externalId(keycloakUserId)
+                .build();
+        customerRepository.save(customer);
+    }
+
+    private UserRepresentation buildUserRepresentation(RegistrationRequest request) {
         UserRepresentation user = new UserRepresentation();
         user.setUsername(request.email());
         user.setFirstName(request.firstname());
@@ -52,17 +83,9 @@ public class RegistrationService {
         credential.setTemporary(false);
         credential.setType(CredentialRepresentation.PASSWORD);
         credential.setValue(request.password());
+        user.setCredentials(singletonList(credential));
 
-        user.setCredentials(Collections.singletonList(credential));
-
-        try (Response response = users.create(user)) {
-            if (response.getStatus() == 201) {
-                saveUser(request, response);
-                return;
-            }
-
-            throw new RuntimeException();
-        }
+        return user;
     }
 
     private void saveUser(RegistrationRequest request, Response response) {
@@ -75,6 +98,17 @@ public class RegistrationService {
                 .externalId(externalId)
                 .build();
         customerRepository.save(customer);
+    }
+
+    private void assignRolesToUser(RealmResource realmResource, String keycloakUserId, String roleName) {
+        RoleRepresentation roleRepresentation = realmResource.roles().get(roleName).toRepresentation();
+
+        realmResource.users().get(keycloakUserId)
+                .roles()
+                .realmLevel()
+                .add(singletonList(roleRepresentation));
+
+        log.debug("Successfully assigned role {} to user {}", roleName, keycloakUserId);
     }
 
 }
