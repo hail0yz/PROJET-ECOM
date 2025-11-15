@@ -9,9 +9,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ecom.cart.dto.CartEntry;
+import org.ecom.cart.dto.CreateCartRequest;
+import org.ecom.cart.dto.CreateCartResponse;
 import org.ecom.cart.dto.GetCartResponse;
 import org.ecom.cart.service.CartService;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +41,38 @@ public class CartController {
     public ResponseEntity<GetCartResponse> getCartByUserId(@PathVariable String userId) {
         var response = cartService.getOrCreateCart(userId);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Get cart by ID", tags = "Cart")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Cart retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = GetCartResponse.class))
+            )
+    })
+    @GetMapping("/{cartId}")
+    @PreAuthorize("@cartService.isCartOwner(#cartId, authentication.principal.getClaim('sub'))")
+    public ResponseEntity<GetCartResponse> getCartById(@PathVariable Long cartId) {
+        var response = cartService.getCartById(cartId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Create cart", tags = "Cart")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Cart created successfully",
+                    content = @Content(schema = @Schema(implementation = GetCartResponse.class))
+            )
+    })
+    @PostMapping
+    public ResponseEntity<CreateCartResponse> createCart(
+            @RequestBody @Valid CreateCartRequest request,
+            @AuthenticationPrincipal(expression = "subject") String customerId
+    ) {
+        var response = cartService.createCart(request, customerId);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/user/{userId}/items")

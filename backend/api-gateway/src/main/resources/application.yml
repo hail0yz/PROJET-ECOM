@@ -18,15 +18,14 @@ spring:
                 allowedHeaders:
                   - "*"
                 allowCredentials: true
-#          default-filters:
-#            - TokenRelay
+          default-filters:
+            - TokenRelay
           routes:
           - id: order-service
             uri: lb://order-service
             predicates:
               - Path=/api/orders/**
             filters:
-              - TokenRelay
               - RemoveRequestHeader=Cookie
 
           - id: book-service
@@ -37,11 +36,12 @@ spring:
               - RewritePath=/api/?(?<segment>.*), /api/v1/$\{segment}
               - RemoveRequestHeader=Cookie
 
-          - id: review-service
-            uri: lb://review-service
+          - id: cart-service
+            uri: lb://cart-service
             predicates:
-              - Path=/reviews/**
+              - Path=/api/carts/**
             filters:
+              - RewritePath=/api/carts/(?<segment>.*), /api/v1/carts/$\{segment}
               - RemoveRequestHeader=Cookie
 
           - id: customer-registration

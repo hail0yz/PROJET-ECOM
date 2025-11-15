@@ -1,15 +1,21 @@
 package org.ecom.cart.service;
 
+import java.util.List;
+
 import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ecom.cart.dto.CartEntry;
+import org.ecom.cart.dto.CreateCartRequest;
+import org.ecom.cart.dto.CreateCartResponse;
 import org.ecom.cart.dto.GetCartResponse;
+import org.ecom.cart.exception.CartAlreadyExistsException;
 import org.ecom.cart.exception.EntityNotFoundException;
 import org.ecom.cart.mapper.CartMapper;
 import org.ecom.cart.model.Cart;
 import org.ecom.cart.model.CartItem;
+import org.ecom.cart.model.CartStatus;
 import org.ecom.cart.repository.CartItemRepository;
 import org.ecom.cart.repository.CartRepository;
 
@@ -40,6 +46,45 @@ public class CartService {
                 });
 
         log.debug("Cart retrieved successfully for userId={}, cartId={}", userId, cart.getId());
+        return cartMapper.mapCart(cart);
+    }
+
+    public CreateCartResponse createCart(CreateCartRequest request, String customerId) {
+        boolean exists = cartRepository.existsByUserIdAndStatus(customerId, CartStatus.OPEN);
+        if (exists) {
+            throw new CartAlreadyExistsException("Cart already exists for user " + customerId);
+        }
+
+        // TODO check book-service
+
+        List<CartItem> cartItems = request.items().stream()
+                .map(item -> CartItem.builder()
+                        .price(item.price())
+                        .productId(item.productId())
+                        .build()
+                )
+                .toList();
+
+        Cart cart = Cart.builder()
+                .userId(customerId)
+                .status(CartStatus.OPEN)
+                .items(cartItems)
+                .build();
+
+        Cart savedCart = cartRepository.save(cart);
+
+        return CreateCartResponse.builder()
+                .cartId(savedCart.getId())
+                .build();
+    }
+
+    public boolean isCartOwner(Long cartId, String customerId) {
+        return cartRepository.existsByIdAndUserIdAndStatus(cartId, customerId, CartStatus.OPEN);
+    }
+
+    public GetCartResponse getCartById(Long cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found"));
         return cartMapper.mapCart(cart);
     }
 
