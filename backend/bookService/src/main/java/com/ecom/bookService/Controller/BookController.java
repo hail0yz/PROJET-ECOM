@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
-import com.ecom.bookService.dto.ReservationResult;
-import com.ecom.bookService.dto.ReserveStockRequest;
+import com.ecom.bookService.dto.BulkBookValidationRequest;
+import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.service.BookService;
 
 @RestController
 @RequestMapping("api/v1/books")
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 @Validated
 public class BookController {
 
@@ -119,6 +119,14 @@ public class BookController {
             return new ResponseEntity<>("Nothing found for " + categoryName, HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(books);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<BulkBookValidationResponse> validateProducts(
+            @RequestBody @Valid BulkBookValidationRequest request
+    ) {
+        BulkBookValidationResponse response = bookService.validateProducts(request);
+        return ResponseEntity.ok(response);
     }
 
 }

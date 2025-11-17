@@ -18,7 +18,7 @@ public class CartService {
 
     private final RestClient.Builder restClient;
 
-    public CartDetails getCartById(String cartId) {
+    public CartDetails getCartById(String cartId) { // TODO set Authorization Header - Bearer token
         return restClient.build().get()
                 .uri("http://cart-service/api/v1/carts/{cartId}", cartId)
                 .retrieve()

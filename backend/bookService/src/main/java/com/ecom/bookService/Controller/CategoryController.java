@@ -14,7 +14,7 @@ import com.ecom.bookService.service.CategoryService;
 
 @RestController
 @RequestMapping("api/v1/categories")
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 public class CategoryController {
 
     @Autowired

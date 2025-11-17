@@ -29,7 +29,7 @@ spring:
               - RemoveRequestHeader=Cookie
 
           - id: book-service
-            uri: http://bookService
+            uri: lb://bookService
             predicates:
               - Path=/api/books/**, /api/inventory/**, /api/categories/**
             filters:

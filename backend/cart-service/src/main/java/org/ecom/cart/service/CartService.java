@@ -1,8 +1,12 @@
 package org.ecom.cart.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import jakarta.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +15,18 @@ import org.ecom.cart.dto.CreateCartRequest;
 import org.ecom.cart.dto.CreateCartResponse;
 import org.ecom.cart.dto.GetCartResponse;
 import org.ecom.cart.exception.CartAlreadyExistsException;
+import org.ecom.cart.exception.CartItemAlreadyExistsException;
 import org.ecom.cart.exception.EntityNotFoundException;
+import org.ecom.cart.exception.ProductDetailsInvalidException;
 import org.ecom.cart.mapper.CartMapper;
 import org.ecom.cart.model.Cart;
 import org.ecom.cart.model.CartItem;
 import org.ecom.cart.model.CartStatus;
+import org.ecom.cart.product.BookClient;
+import org.ecom.cart.product.BulkBookValidationRequest;
+import org.ecom.cart.product.BulkBookValidationResponse;
 import org.ecom.cart.repository.CartItemRepository;
 import org.ecom.cart.repository.CartRepository;
-
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +39,8 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
 
     private final CartMapper cartMapper;
+
+    private final BookClient bookClient;
 
     /**
      * Finds an open cart for the given user, or creates a new one if none exists.
@@ -50,29 +59,24 @@ public class CartService {
     }
 
     public CreateCartResponse createCart(CreateCartRequest request, String customerId) {
+        log.info("Creating Cart customerId={}, Request={}", customerId, request);
         boolean exists = cartRepository.existsByUserIdAndStatus(customerId, CartStatus.OPEN);
         if (exists) {
             throw new CartAlreadyExistsException("Cart already exists for user " + customerId);
         }
 
-        // TODO check book-service
+        BulkBookValidationResponse bulkBookValidationResponse = validateProducts(request);
 
-        List<CartItem> cartItems = request.items().stream()
-                .map(item -> CartItem.builder()
-                        .price(item.price())
-                        .productId(item.productId())
-                        .build()
-                )
-                .toList();
+        if (!bulkBookValidationResponse.valid()) {
+            log.error("Cart payload is not valid. Result = {}", bulkBookValidationResponse.items());
+            throw new ProductDetailsInvalidException(bulkBookValidationResponse);
+        }
 
-        Cart cart = Cart.builder()
-                .userId(customerId)
-                .status(CartStatus.OPEN)
-                .items(cartItems)
-                .build();
+        Cart cart = buildCart(request, customerId);
 
         Cart savedCart = cartRepository.save(cart);
 
+        log.info("Cart created customerId={} cartId={}", customerId, savedCart.getId());
         return CreateCartResponse.builder()
                 .cartId(savedCart.getId())
                 .build();
@@ -92,7 +96,50 @@ public class CartService {
         log.info("Adding productId={} (quantity={}) to cart for userId={}",
                 entry.productId(), entry.quantity(), userId);
 
-        // TODO
+        Cart cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.OPEN)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
+
+        addItemToCart(cart, entry);
+    }
+
+    public void addItemToCart(Long cartId, String userId, CartEntry entry) {
+        log.info("Adding productId={} (quantity={}) to cart(cartId={}) for userId={}",
+                entry.productId(), entry.quantity(), cartId, userId);
+
+        Cart cart = cartRepository.findByIdAndUserIdAndStatus(cartId, userId, CartStatus.OPEN)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
+
+        addItemToCart(cart, entry);
+    }
+
+    public void addItemToCart(Cart cart, CartEntry entry) {
+        Optional<CartItem> optional = cart.getItems().stream()
+                .filter(cartItem -> entry.productId().equals(cartItem.getProductId()))
+                .findFirst();
+
+        if (optional.isPresent()) {
+            throw new CartItemAlreadyExistsException("Book " + entry.productId() + " already added to cart");
+        }
+
+        BulkBookValidationResponse validationResponse = validateProduct(entry);
+
+        if (!validationResponse.valid()) {
+            log.error("Cart entry payload is not valid. Result = {}", validationResponse);
+            throw new ProductDetailsInvalidException(validationResponse);
+        }
+
+        List<CartItem> cartItems = validationResponse.items().stream()
+                .map(resultItem -> CartItem.builder()
+                        .productId(resultItem.bookId())
+                        .price(resultItem.price())
+                        .title(resultItem.title())
+                        .image(resultItem.image())
+                        .quantity(resultItem.requestedQuantity())
+                        .cart(cart)
+                        .build())
+                .toList();
+
+        cartItemRepository.saveAll(cartItems);
     }
 
     public void updateItemQuantity(String userId, CartEntry entry) {
@@ -115,9 +162,22 @@ public class CartService {
     public void removeItemFromCart(String userId, Long productId) {
         log.info("Removing productId={} from cart for userId={}", productId, userId);
 
-        Cart cart = cartRepository.findByUserId(userId)
+        Cart cart = cartRepository.findByUserIdAndStatus(userId, CartStatus.OPEN)
                 .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
 
+        removeItemFromCart(cart, productId);
+    }
+
+    public void removeItemFromCart(Long cartId, String userId, Long productId) {
+        log.info("Removing productId={} from cart for userId={}", productId, userId);
+
+        Cart cart = cartRepository.findByIdAndUserIdAndStatus(cartId, userId, CartStatus.OPEN)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
+
+        removeItemFromCart(cart, productId);
+    }
+
+    private void removeItemFromCart(Cart cart, Long productId) {
         boolean removed = cart.getItems().removeIf(item -> item.getProductId().equals(productId));
 
         if (!removed) {
@@ -126,7 +186,7 @@ public class CartService {
 
         cartRepository.save(cart);
 
-        log.info("Successfully removed productId={} from userId={} cart", productId, userId);
+        log.info("Successfully removed productId={} from userId={} cart", productId, cart.getUserId());
     }
 
     public void clearCart(String userId) {
@@ -139,8 +199,16 @@ public class CartService {
         log.info("Cleared cart for userId={}", userId);
     }
 
+    public void clearCartById(Long cartId) {
+        Cart cart = cartRepository.findByIdAndStatus(cartId, CartStatus.OPEN)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found"));
+
+        List<CartItem> items = cart.getItems();
+        cartItemRepository.deleteAll(items);
+    }
+
     private Cart getCartByUser(String userId) {
-        return cartRepository.findByUserId(userId)
+        return cartRepository.findByUserIdAndStatus(userId, CartStatus.OPEN)
                 .orElseThrow(() -> new EntityNotFoundException("Cart not found for user: " + userId));
     }
 
@@ -149,6 +217,48 @@ public class CartService {
         return Cart.builder()
                 .userId(userId)
                 .build();
+    }
+
+    private static Cart buildCart(CreateCartRequest request, String customerId) {
+        List<CartItem> cartItems = request.items().stream()
+                .map(item -> CartItem.builder()
+                        .price(item.price())
+                        .productId(item.productId())
+                        .build()
+                )
+                .toList();
+
+        return Cart.builder()
+                .userId(customerId)
+                .status(CartStatus.OPEN)
+                .items(cartItems)
+                .build();
+    }
+
+    private BulkBookValidationResponse validateProducts(CreateCartRequest cartRequest) {
+        BulkBookValidationRequest validationRequest = BulkBookValidationRequest.builder()
+                .items(cartRequest.items().stream()
+                        .map(cartItem -> BulkBookValidationRequest.BookValidationInput.builder()
+                                .bookId(cartItem.productId())
+                                .quantity(cartItem.quantity())
+                                .build())
+                        .toList())
+                .build();
+
+        return bookClient.validateProducts(validationRequest);
+    }
+
+    private BulkBookValidationResponse validateProduct(CartEntry entry) {
+        BulkBookValidationRequest validationRequest = BulkBookValidationRequest.builder()
+                .items(Stream.of(entry)
+                        .map(cartItem -> BulkBookValidationRequest.BookValidationInput.builder()
+                                .bookId(cartItem.productId())
+                                .quantity(cartItem.quantity())
+                                .build())
+                        .toList())
+                .build();
+
+        return bookClient.validateProducts(validationRequest);
     }
 
 }

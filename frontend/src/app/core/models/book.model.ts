@@ -18,3 +18,12 @@ export interface Book {
     numPages?: number;
     tags?: string[];
 }
+
+export interface BookFilters {
+    search?: string;
+    page: number;
+    size: number;
+    minPrice?: number;
+    maxPrice?: number;
+    category?: number;
+}

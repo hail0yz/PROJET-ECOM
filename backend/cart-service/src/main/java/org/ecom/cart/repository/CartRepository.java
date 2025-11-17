@@ -15,6 +15,10 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     Optional<Cart> findByUserIdAndStatus(String userId, CartStatus status);
 
+    Optional<Cart> findByIdAndUserIdAndStatus(Long id, String userId, CartStatus status);
+
+    Optional<Cart> findByIdAndStatus(Long id, CartStatus status);
+
     boolean existsByIdAndUserIdAndStatus(Long id, String userId, CartStatus status);
 
     boolean existsByUserIdAndStatus(String userId, CartStatus status);

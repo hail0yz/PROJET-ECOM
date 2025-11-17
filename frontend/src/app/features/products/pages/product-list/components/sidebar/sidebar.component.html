@@ -4,11 +4,11 @@
             <h3 class="mb-3 font-semibold">Categories</h3>
             <div role="radiogroup" aria-required="false" dir="ltr" data-slot="radio-group" class="grid gap-3"
                 tabindex="0" style="outline:none">
-                <div class="space-y-2 text-sm max-h-60 overflow-y-auto">
+                <div class="space-y-2 text-sm max-h-80 overflow-y-auto">
                     <div class="flex items-center space-x-2">
                         <input type="radio" name="category" value="ALL"
                             class="border-input text-primary aspect-square size-4 shrink-0 rounded-full border border-gray-100 shadow-xs transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                            id="category-ALL" (change)="onCategoryChange(-1)" />
+                            id="category-ALL" (change)="onCategorySelect(null)" [checked]="selectedCategory == null" />
                         <label data-slot="label"
                             class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 cursor-pointer text-sm font-normal"
                             for="category-ALL">All</label>
@@ -17,7 +17,8 @@
                     <div class="flex items-center space-x-2">
                         <input type="radio" name="category"
                             class="border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aspect-square size-4 shrink-0 rounded-full border border-gray-100 shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
-                            [id]="'category-' + category.id" (change)="onCategoryChange(category.id)" />
+                            [id]="'category-' + category.id" [checked]="selectedCategory === category.id"
+                            (change)="onCategorySelect(category.id)" />
                         <label data-slot="label"
                             class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 cursor-pointer text-sm font-normal"
                             [for]="'category-' + category.id">
@@ -31,7 +32,7 @@
         <div data-orientation="horizontal" role="none" data-slot="separator"
             class="border border-gray-100/90 shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px">
         </div>
-        <div>
+        <!-- <div>
             <h3 class="mb-3 font-semibold">Price</h3>
             <div class="space-y-4"><span dir="ltr" data-orientation="horizontal" aria-disabled="false"
                     data-slot="slider"
@@ -77,10 +78,10 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <button
+        </div> -->
+        <!-- <button
             class="w-full cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-primary text-white shadow-xs hover:bg-gray-900/90 h-9 px-4 py-2">
             Apply Filters
-        </button>
+        </button> -->
     </div>
 </aside>

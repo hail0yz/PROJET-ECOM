@@ -62,16 +62,32 @@ export const MOCK_BOOKS: Book[] = [
 @Injectable({ providedIn: 'root' })
 export class BooksService {
 
-  private bookServiceURL = "http://localhost:8080/api/v1/books";
+  private bookServiceURL = "http://localhost:8080/api/books";
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  public getAllBooks(page: number, size: number = 10): Observable<Page<Book>> {
-    const params = new HttpParams()
+  public getAllBooks(options: { page?: number, size?: number, search?: string }): Observable<Page<Book>> {
+    console.log('getAllBooks called with options:', options);
+    const size = options.size ?? 10;
+    const page = options.page ? options.page - 1 : 0; // Backend pages are 0-indexed
+
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<Page<Book>>(this.bookServiceURL, { params });
+    if (options.search) {
+      params = params.set('search', options.search);
+    }
+
+    console.log('Fetching books with params:', params.toString());
+
+    return this.http.get<Page<Book>>(this.bookServiceURL, { params })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.error('Server error:', error);
+          return throwError(() => new Error(error.message || 'Server error'));
+        })
+      );
   }
 
   /*
@@ -83,11 +99,11 @@ export class BooksService {
     return MOCK_BOOKS;
   }
 
-  public getBookById(id: string): Observable<Book> {
+  public getBookById(id: number): Observable<Book> {
     return this.http.get<Book>(this.bookServiceURL + `/${id}`).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 404) {
-          console.warn(` Livre avec l’identifiant ${id} introuvable, redirection vers la page 404 page.`);
+          console.warn(`Livre avec l'identifiant ${id} introuvable, redirection vers la page 404 page.`);
           this.router.navigate(['/404']);
           return throwError(() => error);
         }

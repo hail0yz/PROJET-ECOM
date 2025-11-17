@@ -76,8 +76,21 @@ public class CartController {
     }
 
     @PutMapping("/user/{userId}/items")
-    public ResponseEntity<Void> updateItemQuantity(@PathVariable String userId, @Valid @RequestBody CartEntry entry) {
+    public ResponseEntity<Void> updateItemQuantity(
+            @PathVariable String userId,
+            @Valid @RequestBody CartEntry entry
+    ) {
         cartService.updateItemQuantity(userId, entry);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{cartId}/items")
+    public ResponseEntity<Void> updateItemQuantity(
+            @PathVariable Long cartId,
+            @AuthenticationPrincipal(expression = "subject") String customerId,
+            @Valid @RequestBody CartEntry entry
+    ) {
+        cartService.updateItemQuantity(customerId, entry);
         return ResponseEntity.ok().build();
     }
 
@@ -96,6 +109,22 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Add an item to a cart", tags = "Cart")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Item added to cart successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Cart or product not found")
+    })
+    @PostMapping("/{cartId}/items")
+    public ResponseEntity<Void> addItemToCart(
+            @AuthenticationPrincipal(expression = "subject") String customerId,
+            @PathVariable Long cartId,
+            @RequestBody @Valid CartEntry entry
+    ) {
+        cartService.addItemToCart(cartId, customerId, entry);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "Remove an item from a user's cart", tags = "Cart")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Item removed successfully"),
@@ -108,6 +137,34 @@ public class CartController {
             @Parameter(description = "ID of the product to remove") @PathVariable Long productId
     ) {
         cartService.removeItemFromCart(userId, productId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Remove an item from a user's cart", tags = "Cart")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Item removed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Cart or product not found")
+    })
+    @DeleteMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<Void> removeItem(
+            @AuthenticationPrincipal(expression = "subject") String customerId,
+            @PathVariable Long cartId,
+            @Parameter(description = "ID of the product to remove") @PathVariable Long productId
+    ) {
+        cartService.removeItemFromCart(cartId, customerId, productId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Clear user's cart", tags = "Cart")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Item removed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Cart or product not found")
+    })
+    @PostMapping("/{cartId}/clear")
+    public ResponseEntity<Void> clearCart(@PathVariable Long cartId) {
+        cartService.clearCartById(cartId);
         return ResponseEntity.ok().build();
     }
 
