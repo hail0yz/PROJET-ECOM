@@ -2,6 +2,28 @@
 
 <main
     class="container min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] max-w-screen-xl mx-auto px-4 py-8 space-y-6">
+    @if (!cart() || (cart()?.items ?? []).length === 0) {
+    <div class="flex flex-col items-center justify-center text-center py-20 px-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-28 w-28 text-gray-400 mb-6" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.436m0 0L6.75 14.25h10.5l1.766-7.143a1.125 1.125 0 00-1.088-1.387H5.106m0 0L4.5 3m4.5 15.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm9 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        </svg>
+        <h2 class="text-2xl font-semibold mb-3">
+            Your cart is empty
+        </h2>
+        <p class="text-gray-500 max-w-md mb-8">
+            It looks like you haven't added anything to your cart yet.
+            Browse our products and find something you like.
+        </p>
+        <a href="/products"
+            class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-neutral-50 shadow-xs px-5 py-2.5 has-[&gt;svg]:px-3 bg-gray-900 hover:bg-primary/90">
+            Browse Products
+        </a>
+
+    </div>
+
+    } @else {
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
             <div class="bg-card border-gray-200 rounded-lg border p-6">
@@ -19,7 +41,6 @@
                             <h3 class="text-foreground line-clamp-2 text-sm font-medium lg:text-base">
                                 {{ item.book.title }}
                             </h3>
-                            <p class="text-cart-color mt-1 text-sm">Color: <span>Phantom Black</span></p>
                         </div>
                         <div class="bg-cart-quantity flex items-center gap-2 rounded-lg p-1">
                             <button
@@ -42,9 +63,9 @@
                             </button>
                         </div>
                         <div class="text-cart-price min-w-[80px] text-right text-sm font-semibold lg:text-base">
-                            $1049.99
+                            {{ item.book.price | currency:'EUR' }}
                         </div>
-                        <button data-slot="button"
+                        <button (click)="removeItem(item.book.id)"
                             class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 size-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -57,6 +78,8 @@
                             </svg>
                         </button>
                     </div>
+                    } @empty {
+                    <div>empty ...</div>
                     }
                 </div>
                 }
@@ -95,41 +118,34 @@
                 <div class="space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="text-muted-foreground">Discount</span>
-                        <span class="font-medium">$<!-- -->0.00</span>
+                        <span class="font-medium">{{0.00 | currency:'EUR'}}</span>
                     </div>
-                    <div class="flex items-center justify-between">
+                    <!-- <div class="flex items-center justify-between">
                         <span class="text-muted-foreground">Delivery</span>
                         <span class="font-medium">$29.99</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-muted-foreground">Tax</span>
                         <span class="font-medium">$39.99</span>
-                    </div>
+                    </div> -->
                     <hr class="border-gray-200">
                     <div class="flex items-center justify-between"><span class="text-lg font-semibold">Total</span>
-                        <span class="text-xl font-bold">$2929.92</span>
+                        <span class="text-xl font-bold">{{ getTotal() | currency:'EUR' }}</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-card border border-gray-200 rounded-lg p-6">
-                <h2 class="mb-6 text-xl font-semibold">Payment Method</h2>
-                <div class="mb-6 grid grid-cols-4 gap-3"><button data-slot="button"
-                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0">
-                        <span class="text-lg">💳</span>
-                    </button>
-                    <button data-slot="button"
-                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0"><span
-                            class="text-lg">$</span></button><button data-slot="button"
-                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0"><span
-                            class="text-lg">💳</span></button><button data-slot="button"
-                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs dark:bg-input/30 dark:border-input dark:hover:bg-input/50 has-[&gt;svg]:px-3 hover:bg-primary hover:text-primary-foreground hover:border-primary aspect-square h-12 p-0"><span
-                            class="text-lg">₿</span></button>
-                </div><button data-slot="button"
-                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive shadow-xs px-4 py-2 has-[&gt;svg]:px-3 bg-primary hover:bg-primary/90 text-primary-foreground h-12 w-full">Check
-                    Out</button>
-            </div>
+            <button
+                class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-neutral-50 shadow-xs px-4 py-2 has-[&gt;svg]:px-3 bg-gray-900 hover:bg-primary/90 h-12 w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="h-4 w-4">
+                    <path d="M20 6 9 17l-5-5" />
+                </svg>
+                Proceed to checkout
+            </button>
         </div>
     </div>
+    }
 </main>
 
 <app-footer></app-footer>

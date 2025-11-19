@@ -1,4 +1,4 @@
-import { Component, computed, signal, OnInit, effect, Signal } from '@angular/core';
+import { Component, computed, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Book, BookFilters } from '@/app/core/models/book.model';
@@ -52,10 +52,6 @@ export class ProductListPage implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    setInterval(() => {
-      console.log('Refreshing book list...', this.loadingBooks(), this.loadingCategories());
-    }, 1000);
-
     this.loadCategories();
 
     this.route.queryParams.subscribe(params => {

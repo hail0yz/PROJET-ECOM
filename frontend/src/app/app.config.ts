@@ -1,8 +1,8 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpHandlerFn, HttpRequest, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
-import { provideKeycloak } from 'keycloak-angular';
-import { KeycloakOnLoad } from 'keycloak-js';
+import { CUSTOM_BEARER_TOKEN_INTERCEPTOR_CONFIG, customBearerTokenInterceptor, INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, includeBearerTokenInterceptor, provideKeycloak } from 'keycloak-angular';
+import Keycloak, { KeycloakOnLoad } from 'keycloak-js';
 
 import { routes } from '@/app/app.routes';
 
@@ -15,6 +15,17 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([customBearerTokenInterceptor])),
+    {
+      provide: CUSTOM_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+      useValue: [
+        {
+          shouldAddToken: async (req: HttpRequest<unknown>, _: HttpHandlerFn, keycloak: Keycloak) => {
+            return keycloak.authenticated;
+          }
+        }
+      ]
+    },
     provideKeycloak({
       config: {
         url: environment.keycloak.config.url,

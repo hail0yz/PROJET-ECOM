@@ -10,9 +10,9 @@ export class SidebarComponent {
   @Input() categories: Category[] = [];
   @Input() selectedCategory?: number | undefined;
 
-  @Output() categoryChange = new EventEmitter<number | null>();
+  @Output() categoryChange = new EventEmitter<number | undefined>();
 
-  onCategorySelect(categoryId: number | null) {
+  onCategorySelect(categoryId: number | undefined) {
     console.log('Selected category ID:', categoryId);
     this.categoryChange.emit(categoryId);
   }

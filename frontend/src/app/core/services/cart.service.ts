@@ -23,6 +23,7 @@ export class CartService {
 
   constructor(private http: HttpClient) {
     this.initCart();
+    this.setupAuthListener();
   }
 
   // ========================================
@@ -36,7 +37,7 @@ export class CartService {
       : this.addItemLocal(item);
   }
 
-  updateQuantity(bookId: number, quantity: number): Observable<Cart> {
+  updateQuantity(bookId: number, quantity: number) {
     if (quantity < 1)
       return throwError(() => new Error('Quantity must be at least 1'));
 
@@ -54,9 +55,9 @@ export class CartService {
       : this.removeItemLocal(bookId);
   }
 
-  clearCart(): Observable<void> {
+  clearCart() {
     this.setLoading(true);
-    return this.isAuthenticated()
+    this.isAuthenticated()
       ? this.clearCartBackend()
       : this.clearCartLocal();
   }
@@ -87,7 +88,7 @@ export class CartService {
     return item?.quantity || 0;
   }
 
-  getCartAsObservable(): Observable<Cart> {
+  getCartAsObservable() {
     return this.cart$;
   }
 
@@ -95,7 +96,7 @@ export class CartService {
     return this.cart$.pipe(map(cart => cart.items));
   }
 
-  refreshCart(): Observable<Cart> {
+  refreshCart() {
     if (!this.isAuthenticated()) {
       this.loadLocalCart();
       return of(this.cartSubject.value);
@@ -123,19 +124,12 @@ export class CartService {
     return this.keycloak.authenticated ?? false;
   }
 
-  private getUserId(): string {
-    const userId = this.keycloak.tokenParsed?.sub;
-    if (!userId) {
-      throw new Error('User ID not found in token');
-    }
-    return userId;
-  }
-
   private getCartByIdUrl(cartId: number): string {
     return `${this.API_URL}/${cartId}`;
   }
 
   private loadLocalCart(): void {
+    console.log('load local cart')
     try {
       const data = localStorage.getItem(this.CART_LOCAL_KEY);
       if (data) {
@@ -147,6 +141,8 @@ export class CartService {
     } catch (error) {
       console.error('Failed to load local cart:', error);
       this.cartSubject.next({ id: 0, items: [], local: true });
+    } finally {
+      this.setLoading(false);
     }
   }
 
@@ -159,7 +155,7 @@ export class CartService {
     }
   }
 
-  private addItemLocal(item: CartItem): Observable<Cart> {
+  private addItemLocal(item: CartItem) {
     const currentCart = this.cartSubject.value;
     const items = [...currentCart.items];
     const existingIndex = items.findIndex(i => i.book.id === item.book.id);
@@ -176,7 +172,7 @@ export class CartService {
     return of(updatedCart);
   }
 
-  private updateQuantityLocal(bookId: number, quantity: number): Observable<Cart> {
+  private updateQuantityLocal(bookId: number, quantity: number) {
     const currentCart = this.cartSubject.value;
     const items = [...currentCart.items];
     const item = items.find(i => i.book.id === bookId);
@@ -188,7 +184,6 @@ export class CartService {
     const updatedCart: Cart = { id: 0, items, local: true };
     this.saveLocalCart(updatedCart);
     this.setLoading(false);
-    return of(updatedCart);
   }
 
   private removeItemLocal(bookId: number): Observable<Cart> {
@@ -201,20 +196,19 @@ export class CartService {
     return of(updatedCart);
   }
 
-  private clearCartLocal(): Observable<void> {
+  private clearCartLocal() {
     localStorage.removeItem(this.CART_LOCAL_KEY);
     this.cartSubject.next({ id: 0, items: [], local: true });
     this.setLoading(false);
-    return of(void 0);
   }
 
   // ========================================
   // BACKEND OPERATIONS
   // ========================================
-  private loadBackendCart(): Observable<Cart> {
+  private loadBackendCart() {
     this.setLoading(true);
 
-    return this.http.get<GetCartResponseAPI>(this.API_URL)
+    this.http.get<GetCartResponseAPI>(`${this.API_URL}/current`)
       .pipe(
         map(response => {
           const cart: Cart = {
@@ -232,7 +226,6 @@ export class CartService {
             persisted: true
           };
 
-          this.cartSubject.next(cart);
           this.setLoading(false);
           return cart;
         }),
@@ -249,7 +242,6 @@ export class CartService {
             return of(emptyCart);
           }
 
-          console.error('Error loading backend cart:', err);
           const emptyCart: Cart = {
             id: 0,
             items: [],
@@ -258,9 +250,12 @@ export class CartService {
           };
           this.cartSubject.next(emptyCart);
           this.setLoading(false);
-          return throwError(() => err);
+          return this.handleBackendError('load cart', err)
         })
       )
+      .subscribe({
+        next: cart => this.cartSubject.next(cart),
+      })
   }
 
   private addItemBackend(item: CartItem): Observable<Cart> {
@@ -268,7 +263,7 @@ export class CartService {
     const currentCartId = currentCart.id;
 
     // Cart exists - add item to existing cart
-    if (currentCartId && currentCartId !== 0) {
+    if (currentCart.persisted) {
       const entry: CartEntryAPI = {
         productId: item.book.id,
         quantity: item.quantity
@@ -278,17 +273,19 @@ export class CartService {
           map(_ => {
             const updatedItems = [...currentCart.items, item]
             const updatedCart = { ...currentCart, items: updatedItems, };
-            this.cartSubject.next(updatedCart);
             this.setLoading(false);
+            this.cartSubject.next(updatedCart)
             return updatedCart;
           }),
           catchError(err => {
             this.setLoading(false);
             return this.handleBackendError('add item', err);
           })
-        );
+        )
+
     }
 
+    // Cart exists - create cart with items
     return this.createCartWithItem(item);
   }
 
@@ -324,26 +321,25 @@ export class CartService {
               local: false,
               persisted: false
             };
-            this.cartSubject.next(emptyCart);
             this.setLoading(false);
+            this.cartSubject.next(emptyCart)
             return of(emptyCart);
           }
 
-          console.error('Error loading backend cart:', err);
           const emptyCart: Cart = {
             id: 0,
             items: [],
             local: false,
             persisted: false
           };
-          this.cartSubject.next(emptyCart);
+          this.cartSubject.next(emptyCart)
           this.setLoading(false);
           return this.handleBackendError('create cart with item', err);
         })
       );
   }
 
-  private updateQuantityBackend(bookId: number, quantity: number): Observable<Cart> {
+  private updateQuantityBackend(bookId: number, quantity: number) {
     const currentCart = this.cartSubject.value;
     const currentCartId = currentCart.id;
 
@@ -371,16 +367,18 @@ export class CartService {
             items: updatedItems
           };
 
-          this.cartSubject.next(updatedCart);
           this.setLoading(false);
-
           return updatedCart;
         }),
         catchError(err => {
           this.setLoading(false);
           return this.handleBackendError('update quantity', err);
         })
-      );
+      )
+      .subscribe({
+        next: cart => this.cartSubject.next(cart),
+        error: err => console.error('Failed to update book quantity in cart [backend]', err)
+      });
   }
 
   private removeItemBackend(bookId: number): Observable<Cart> {
@@ -399,7 +397,7 @@ export class CartService {
           const updatedItems = currentCart.items.filter(entry => entry.book.id !== bookId);
           const updatedCart: Cart = { ...currentCart, items: updatedItems };
           this.setLoading(false);
-          this.cartSubject.next(updatedCart);
+          this.cartSubject.next(updatedCart)
           return updatedCart;
         }),
         catchError(err => {
@@ -409,25 +407,30 @@ export class CartService {
       );
   }
 
-  private clearCartBackend(): Observable<void> {
+  private clearCartBackend() {
     this.setLoading(true);
     const currentCart = this.cartSubject.value;
     const currentCartId = currentCart.id;
 
     if (!currentCartId || currentCartId === 0) {
       this.setLoading(false);
-      return throwError(() => new Error('Cart does not exist. Cannot remove item.'));
+      this.handleBackendError('Clear Cart', new Error('Cart does not exist. Cannot remove item.'))
     }
 
-    return this.http.delete<void>(`${this.API_URL}/clear`)
+    this.http.delete<void>(`${this.API_URL}/clear`)
       .pipe(
         tap(() => {
           const updatedCart: Cart = { ...currentCart, items: [] };
           this.setLoading(false);
           this.cartSubject.next(updatedCart);
+          return updatedCart;
         }),
         catchError(err => this.handleBackendError('clear cart', err))
-      );
+      )
+      .subscribe({
+        next: _ => console.log('Cart clear successfully'),
+        error: (err) => console.error('Failed to clear Cart', err)
+      });
   }
 
   private handleBackendError(operation: string, error: any): Observable<never> {
@@ -463,24 +466,62 @@ export class CartService {
     // );
   }
 
-  saveToLocalOnLogout(): void {
-    const currentCart = this.cartSubject.value;
-    if (currentCart.items.length > 0) {
-      const localCart: Cart = {
-        id: 0,
-        items: currentCart.items,
-        local: true,
-        persisted: false
-      };
-      this.saveLocalCart(localCart);
-    } else {
-      this.cartSubject.next({
-        id: 0,
-        items: [],
-        local: true,
-        persisted: false
-      });
-    }
+  // saveToLocalOnLogout(): void {
+  //   const currentCart = this.cartSubject.value;
+  //   if (currentCart.items.length > 0) {
+  //     const localCart: Cart = {
+  //       id: 0,
+  //       items: currentCart.items,
+  //       local: true,
+  //       persisted: false
+  //     };
+  //     this.saveLocalCart(localCart);
+  //   } else {
+  //     this.cartSubject.next({
+  //       id: 0,
+  //       items: [],
+  //       local: true,
+  //       persisted: false
+  //     });
+  //   }
+  // }
+
+  private setupAuthListener(): void {
+    console.log('set auth listener');
+    this.keycloak.onAuthSuccess = () => {
+      this.handleLogin();
+    };
+
+    this.keycloak.onAuthLogout = () => {
+      this.handleLogout();
+    };
+
+    // this.keycloak.onTokenExpired = () => {
+    //   this.keycloak.updateToken(30);
+    // };
+  }
+
+  private handleLogin(): void {
+    const localCart = this.cartSubject.value;
+
+    // If user has items in local cart, migrate them
+    // if (localCart.local && localCart.items.length > 0) {
+    //   this.loadBackendCart().subscribe({
+    //     next: () => console.log('Cart (loaded from backend | migrated) successfully'),
+    //     error: (err) => console.error('Failed to (load from backend | migrate cart):', err)
+    //   });
+    // } else {
+    //   // Just load backend cart
+    //   this.loadBackendCart().subscribe({
+    //     error: (err) => console.error('Failed to load backend cart:', err)
+    //   });
+    // }
+
+    this.loadBackendCart();
+  }
+
+  private handleLogout(): void {
+    //this.saveToLocalOnLogout();
   }
 
 }
