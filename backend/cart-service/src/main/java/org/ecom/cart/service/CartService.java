@@ -72,9 +72,25 @@ public class CartService {
             throw new ProductDetailsInvalidException(bulkBookValidationResponse);
         }
 
-        Cart cart = buildCart(request, customerId);
+        Cart cart = Cart.builder()
+                .userId(customerId)
+                .status(CartStatus.OPEN)
+                .build();
 
         Cart savedCart = cartRepository.save(cart);
+
+
+        List<CartItem> cartItems = bulkBookValidationResponse.items().stream()
+                .map(item -> CartItem.builder()
+                        .cart(savedCart)
+                        .productId(item.bookId())
+                        .title(item.title())
+                        .image(item.image())
+                        .quantity(item.requestedQuantity())
+                        .price(item.price())
+                        .build())
+                .toList();
+        cartItemRepository.saveAll(cartItems);
 
         log.info("Cart created customerId={} cartId={}", customerId, savedCart.getId());
         return CreateCartResponse.builder()
@@ -86,8 +102,20 @@ public class CartService {
         return cartRepository.existsByIdAndUserIdAndStatus(cartId, customerId, CartStatus.OPEN);
     }
 
+    public boolean isCurrentCartOwner(String customerId) {
+        return cartRepository.findByUserIdAndStatus(customerId, CartStatus.OPEN)
+                .map(card -> customerId.equals(card.getUserId()))
+                .orElse(true); // Since the shopping cart doesn't exist, we can say that the user has access, but in any case, they don't have a shopping cart.
+    }
+
     public GetCartResponse getCartById(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found"));
+        return cartMapper.mapCart(cart);
+    }
+
+    public GetCartResponse getCustomerCurrentCart(String customerId) {
+        Cart cart = cartRepository.findByUserIdAndStatus(customerId, CartStatus.OPEN)
                 .orElseThrow(() -> new EntityNotFoundException("Cart not found"));
         return cartMapper.mapCart(cart);
     }
@@ -216,22 +244,6 @@ public class CartService {
         log.debug("Creating new Cart entity for userId={}", userId);
         return Cart.builder()
                 .userId(userId)
-                .build();
-    }
-
-    private static Cart buildCart(CreateCartRequest request, String customerId) {
-        List<CartItem> cartItems = request.items().stream()
-                .map(item -> CartItem.builder()
-                        .price(item.price())
-                        .productId(item.productId())
-                        .build()
-                )
-                .toList();
-
-        return Cart.builder()
-                .userId(customerId)
-                .status(CartStatus.OPEN)
-                .items(cartItems)
                 .build();
     }
 

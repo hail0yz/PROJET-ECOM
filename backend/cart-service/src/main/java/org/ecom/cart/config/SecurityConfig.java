@@ -23,9 +23,12 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/v3/api-docs*/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/carts/user/{userId}").hasAuthority("ROLE_ADMIN") // Get opened card by user id
-                .requestMatchers(HttpMethod.GET, "/api/v1/carts/{cartId}").hasAuthority("ROLE_USER") // Get Cart by id
-                .requestMatchers(HttpMethod.POST, "/api/v1/carts").hasAuthority("ROLE_USER") // Create Cart
+                .requestMatchers("/api/v1/carts/user/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/carts").hasAuthority("ROLE_USER")
+                .requestMatchers(HttpMethod.GET, "/api/v1/carts/current").hasAuthority("ROLE_USER")
+                .requestMatchers(HttpMethod.GET, "/api/v1/carts/{cartId}").hasAuthority("ROLE_USER")
+                .requestMatchers("/api/v1/carts/{cartId}/items").hasAuthority("ROLE_USER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/carts/{cartId}/clear").hasAuthority("ROLE_USER")
                 .anyRequest().authenticated());
 
         http.oauth2ResourceServer(c -> c.jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakAuthenticationConverter())));

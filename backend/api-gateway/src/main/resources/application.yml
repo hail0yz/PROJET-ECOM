@@ -36,6 +36,14 @@ spring:
               - RewritePath=/api/?(?<segment>.*), /api/v1/$\{segment}
               - RemoveRequestHeader=Cookie
 
+          - id: cart-service2
+            uri: lb://cart-service
+            predicates:
+              - Path=/api/carts
+            filters:
+              - RewritePath=/api/carts, /api/v1/carts
+              - RemoveRequestHeader=Cookie
+
           - id: cart-service
             uri: lb://cart-service
             predicates:

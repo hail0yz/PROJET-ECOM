@@ -58,6 +58,24 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Get user's current cart", tags = "Cart")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Cart retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = GetCartResponse.class))
+            )
+    })
+
+    @GetMapping("/current")
+    @PreAuthorize("@cartService.isCurrentCartOwner(authentication.principal.getClaim('sub'))")
+    public ResponseEntity<GetCartResponse> getCartById(
+            @AuthenticationPrincipal(expression = "subject") String customerId
+    ) {
+        var response = cartService.getCustomerCurrentCart(customerId);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "Create cart", tags = "Cart")
     @ApiResponses({
             @ApiResponse(
