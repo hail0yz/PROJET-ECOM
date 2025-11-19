@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
+import { ToastService } from 'ngx-toastr-notifier';
 
 import { Book } from '@/app/core/models/book.model';
 import { BooksService } from '@/app/core/services/books.service';
@@ -9,7 +10,7 @@ import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { LoadingComponent } from '@/app/core/components/loading/loading.component';
 import { CartService } from '@/app/core/services/cart.service';
-import { Cart, CartItem } from '@/app/core/models/cart.model';
+import { CartItem } from '@/app/core/models/cart.model';
 
 @Component({
     selector: 'product-page',
@@ -29,7 +30,8 @@ export class ProductDetailPage implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private booksService: BooksService,
-        private cartService: CartService
+        private cartService: CartService,
+        private toastr: ToastService
     ) { }
 
     ngOnInit(): void {
@@ -110,6 +112,8 @@ export class ProductDetailPage implements OnInit {
                 console.log('Item added to cart:', cart);
                 this.addingToCart.set(false);
                 this.showSuccessMessage.set(true);
+
+                this.toastr.info("Book added to cart successfully");
 
                 setTimeout(() => {
                     this.showSuccessMessage.set(false);
