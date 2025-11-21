@@ -1,21 +1,36 @@
 package com.ecom.order.controller;
 
 
-import com.ecom.order.dto.OrderRequest;
-import com.ecom.order.dto.OrderResponse;
-import com.ecom.order.service.OrderService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
+
+import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ecom.order.dto.OrderRequest;
+import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.PlaceOrderResponse;
+import com.ecom.order.service.OrderService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@Validated
+@Slf4j
 public class OrderController {
 
 
@@ -23,10 +38,11 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<UUID> createOrder(
-            @RequestBody @Valid OrderRequest request
+    public ResponseEntity<PlaceOrderResponse> placeOrder(
+            @RequestBody @Valid OrderRequest request,
+            @AuthenticationPrincipal(expression = "subject") String customerId
     ) {
-        return ResponseEntity.ok(this.orderService.createOrder(request));
+        return ResponseEntity.ok(this.orderService.placeOrder(request, customerId));
     }
 
     @GetMapping

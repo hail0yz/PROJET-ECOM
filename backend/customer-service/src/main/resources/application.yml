@@ -34,3 +34,9 @@ server:
   port: 0
   compression:
     enabled: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

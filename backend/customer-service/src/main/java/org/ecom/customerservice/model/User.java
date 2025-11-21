@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,8 +30,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String externalId;
 
@@ -47,6 +47,9 @@ public class User {
     private boolean emailVerified;
 
     private String avatar;
+
+    @Version
+    private Long version;
 
     @Builder.Default
     private boolean active = Boolean.TRUE;

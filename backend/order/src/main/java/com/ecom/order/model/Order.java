@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "orders")
 @Data
 @Builder
 @AllArgsConstructor
@@ -28,8 +29,12 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false,unique = true)
-    private String reference;
+//    @Column(nullable = false,unique = true)
+//    private String reference;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private OrderStatus status = OrderStatus.PENDING;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -37,10 +42,13 @@ public class Order {
 
     private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    @Embedded
+    private PaymentInfo paymentInfo;
 
-    @OneToMany(mappedBy = "order")
+    @Embedded
+    private DeliveryInfo deliveryInfo;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLine> orderLines;
 
     private String customerId;
@@ -48,7 +56,5 @@ public class Order {
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime modifiedDate;
-
-
 
 }

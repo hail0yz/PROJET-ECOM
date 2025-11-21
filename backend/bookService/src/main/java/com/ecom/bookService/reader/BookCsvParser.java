@@ -59,7 +59,7 @@ public class BookCsvParser {
         record.setAverageRating(getCsvValue(csvRecord, "average_rating"));
         record.setNumPages(getCsvValue(csvRecord, "num_pages"));
         record.setRatingsCount(getCsvValue(csvRecord, "ratings_count"));
-        
+
         return record;
     }
 

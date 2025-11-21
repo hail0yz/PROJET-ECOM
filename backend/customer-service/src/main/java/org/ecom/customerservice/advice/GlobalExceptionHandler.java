@@ -13,8 +13,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import org.ecom.customerservice.dto.APIErrorResponse;
+import org.ecom.customerservice.exception.CustomerRegistrationFailedException;
 import org.ecom.customerservice.exception.EmailAlreadyExistsException;
 
 @RestControllerAdvice
@@ -52,6 +54,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<APIErrorResponse> handle(MethodArgumentTypeMismatchException ex) {
+        Map<String, String> details = Map.of(
+                ex.getName(), "Invalid value: " + ex.getValue() + " for type " + ex.getRequiredType().getSimpleName()
+        );
+
+        APIErrorResponse errorResponse = APIErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(ex.getMessage())
+                .message("Path variable or request parameter type mismatch")
+                .details(details)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<APIErrorResponse> handleConstraintViolation(ConstraintViolationException e) {
         Map<String, String> violations = e.getConstraintViolations()
@@ -70,6 +88,19 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(CustomerRegistrationFailedException.class)
+    public ResponseEntity<Object> handleCustomerRegistrationFailed(CustomerRegistrationFailedException e) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        var error = APIErrorResponse.builder()
+                .status(status.value())
+                .error("CUSTOMER_REGISTRATION_FAILED")
+                .message(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, status);
     }
 
 }

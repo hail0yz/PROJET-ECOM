@@ -27,7 +27,9 @@ public class BookMapper {
                 .isbn13(book.getIsbn13())
                 .numPages(book.getNumPages())
                 .publishedYear(book.getPublishedYear())
+                .price(book.getPrice())
                 .thumbnail(book.getThumbnail())
+                .stock(book.getInventory().getAvailableQuantity() - book.getInventory().getReservedQuantity())
                 .build();
     }
 

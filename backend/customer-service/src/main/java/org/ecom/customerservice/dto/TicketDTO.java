@@ -15,7 +15,7 @@ public class TicketDTO {
 
     private Long id;
 
-    private Long customerId;
+    private String customerId;
 
     private String subject;
 

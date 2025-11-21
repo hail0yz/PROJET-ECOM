@@ -17,7 +17,7 @@ import lombok.Setter;
 @Builder
 public class PaymentResponse {
     private Integer paymentId;
-    private Integer orderId;
+    private String orderId;
     private PaymentStatus status;
     private String transactionId;
     private String message;

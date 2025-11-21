@@ -1,5 +1,23 @@
 spring:
   application.name: bookService
+  datasource:
+    url: jdbc:postgresql://localhost:${BOOK_SERVICE_DB_PORT:5437}/${BOOK_SERVICE_DB_NAME:books_db}
+    username: ${BOOK_SERVICE_DB_PASSWORD:postgres}
+    password: ${BOOK_SERVICE_DB_PASSWORD:password}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka:eureka@localhost:8761/eureka/
+
+server:
+  port: 0
+  compression:
+    enabled: true
