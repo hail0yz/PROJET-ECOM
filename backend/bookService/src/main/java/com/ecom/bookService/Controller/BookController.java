@@ -32,6 +32,7 @@ public class BookController {
 
     /**
      * GET /api/v1/books
+     *      => example with a filter: GET /api/v1/books?search=
      *
      * Returns a list of books regarding optional filters
      *

@@ -4,7 +4,7 @@ ___
 # Backend
 
 ### Book Service
-    - How to run
+- #### How to run
 
 Type the following commands in a terminal while being at `backend/bookService/` directory:
 ```

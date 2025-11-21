@@ -22,7 +22,8 @@ public class BookSpecificationUtils {
                 search(filter.search()),
                 priceGreaterThanOrEqualTo(filter.minPrice()),
                 priceLessThanOrEqualTo(filter.maxPrice()),
-                orderBy(filter.sortBy(), filter.direction())
+                orderBy(filter.sortBy(), filter.direction()),
+                booksByCategoryId(filter.categoryId())
         );
     }
 
@@ -31,11 +32,13 @@ public class BookSpecificationUtils {
             return Specification.unrestricted();
         }
 
+        String lowerSearch = "%" + search.toLowerCase() + "%";
+
         return (root, query, cb) ->
                 cb.or(
-                        cb.like(root.get("summary"), "%" + search + "%"),
-                        cb.like(root.get("author"), "%" + search + "%"),
-                        cb.like(root.get("title"), "%" + search + "%")
+                        cb.like(cb.lower(root.get("summary")), lowerSearch),
+                        cb.like(cb.lower(root.get("author")), lowerSearch),
+                        cb.like(cb.lower(root.get("title")), lowerSearch)
                 );
     }
 
@@ -102,6 +105,15 @@ public class BookSpecificationUtils {
 
             return cb.conjunction();
         };
+    }
+
+    public static Specification<Book> booksByCategoryId(Long categoryId) {
+        if (categoryId == null) {
+            return Specification.unrestricted();
+        }
+
+        return (root, query, cb) ->
+                cb.equal(root.get("category").get("categoryId"), categoryId);
     }
 
 }
