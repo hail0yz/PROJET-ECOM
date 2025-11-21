@@ -15,6 +15,13 @@ public class BookSpecificationUtils {
     private BookSpecificationUtils() {
     }
 
+
+    /**
+     * Create a Specification to filter books based on various criteria
+     *
+     * @param filter A BookFilter
+     * @return A Specification of Book representing the combined filtering conditions
+     */
     public static Specification<Book> filter(BookFilter filter) {
         Assert.notNull(filter, () -> "Book Filter must not be null");
 
@@ -27,6 +34,13 @@ public class BookSpecificationUtils {
         );
     }
 
+
+    /**
+     * Create a Specification to filter books based on a keyword and search in a book's title, author or summary. This keyword id case-insensitive.
+     *
+     * @param search A keyword
+     * @return A Specification of Book to filter books by a keyword
+     */
     public static Specification<Book> search(String search) {
         if (search == null || search.isBlank()) {
             return Specification.unrestricted();
@@ -41,6 +55,7 @@ public class BookSpecificationUtils {
                         cb.like(cb.lower(root.get("title")), lowerSearch)
                 );
     }
+
 
     /**
      * Creates a Specification to filter Books by author (case-insensitive, contains).
@@ -62,6 +77,7 @@ public class BookSpecificationUtils {
                 );
     }
 
+
     /**
      * Creates a Specification to filter Books with a price greater than or equal to minPrice.
      *
@@ -75,6 +91,7 @@ public class BookSpecificationUtils {
         return (root, query, db) ->
                 db.greaterThanOrEqualTo(root.get("price"), minPrice);
     }
+
 
     /**
      * Creates a Specification to filter Books with a price less than or equal to maxPrice.
@@ -90,6 +107,13 @@ public class BookSpecificationUtils {
                 db.lessThanOrEqualTo(root.get("price"), maxPrice);
     }
 
+
+    /**
+     *
+     * @param sortBy
+     * @param direction
+     * @return
+     */
     public static Specification<Book> orderBy(BookFilter.BookSortBy sortBy, Sort.Direction direction) {
         BookFilter.BookSortBy sort = Objects.requireNonNullElse(sortBy, BookFilter.BookSortBy.PUBLISH_DATE);
 
@@ -107,6 +131,13 @@ public class BookSpecificationUtils {
         };
     }
 
+
+    /**
+     * Create a Specification to filter books whose category id matches the one given in parameter
+     *
+     * @param categoryId The id of a category
+     * @return A Specification of Book to filter books by the id category
+     */
     public static Specification<Book> booksByCategoryId(Long categoryId) {
         if (categoryId == null) {
             return Specification.unrestricted();
