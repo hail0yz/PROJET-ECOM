@@ -29,10 +29,21 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+
     /**
      * GET /api/v1/books
      *
-     * @return List containing all books
+     * Returns a list of books regarding optional filters
+     *
+     * @param search Optional keyword to search in a book's title, summary or author
+     * @param minPrice
+     * @param maxPrice
+     * @param categoryId Optional category ID to filter books belonging to a specific category
+     * @param direction
+     * @param sortBy
+     * @param page Optional page number, with 0 the default value (ie the first page)
+     * @param size Optional page size (ie number of books per page), with 10 the default value
+     * @return A Page of BookDTO containing the books for the requested page number
      */
     @GetMapping
     public Page<BookDTO> getAllBooks(
@@ -57,8 +68,11 @@ public class BookController {
         return bookService.getPagedBooks(filter, page, size);
     }
 
+
     /**
      * GET /api/v1/books/title/:title
+     *
+     * Returns a list of books whose title matches the one given in parameter
      *
      * @param title A title
      * @return A ResponseEntity containing all the books whose title correponds to the one given in parameter in its body
@@ -73,8 +87,11 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
+
     /**
-     * GET /api/v1/books/id/:id
+     * GET /api/v1/books/:id
+     *
+     * Returns a book whose id matches the one given in parameter
      *
      * @param id The id of a book
      * @return A ResponseEntity containing in its body the book whose id is the one given in parameter. The body will contain a string error if the id corresponds to book.
@@ -88,8 +105,11 @@ public class BookController {
         return ResponseEntity.ok(book);
     }
 
+
     /**
      * GET /api/v1/category/:categoryName
+     *
+     * Returns a list of books whose category name matches the one given in parameter
      *
      * @param categoryName The name of a category
      * @return A ResponseEntity containing in its body a list of all the books whose category correspond to the one given in parameter. The body will contain a string error if the category corresponds to nothing or no books.
@@ -97,15 +117,7 @@ public class BookController {
     @GetMapping("category/{categoryName}")
     public ResponseEntity<?> getAllBooksByCategory(@PathVariable String categoryName) {
 
-        // convert to enum types
-        CategoryName categoryEnum;
-        try {
-            categoryEnum = CategoryName.valueOf(categoryName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Category " + categoryName + " doesn't exist.", HttpStatus.BAD_REQUEST);
-        }
-
-        List<Book> books = bookService.getAllBooksByCategory(categoryEnum);
+        List<Book> books = bookService.getAllBooksByCategory(categoryName);
 
         if(books.isEmpty()) {
             return new ResponseEntity<>("Nothing found for " + categoryName, HttpStatus.NOT_FOUND);

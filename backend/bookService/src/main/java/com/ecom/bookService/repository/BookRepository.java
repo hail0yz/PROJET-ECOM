@@ -16,8 +16,8 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
     @Query("SELECT b FROM Book b WHERE LOWER(b.title) = LOWER(:title)")
     List<Book> findByTitle(@Param("title") String title);
 
-    @Query("SELECT b FROM Book b WHERE b.category.categoryName IN :categoryEnum")
-    List<Book> findByCategory(@Param("categoryEnum") CategoryName categoryEnum);
+    @Query("SELECT b FROM Book b WHERE LOWER(b.category.categoryName) = LOWER(:categoryName)")
+    List<Book> findByCategory(@Param("categoryName") String categoryName);
 
     boolean existsByIsbn13(String isbn13);
 

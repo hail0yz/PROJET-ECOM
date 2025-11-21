@@ -14,6 +14,6 @@ public interface BookService {
     public List<Book> getAllBooks();
     public List<Book> getAllBooksByTitle(String title);
     public BookDTO getBookById(Long id);
-    public List<Book> getAllBooksByCategory(CategoryName categoryEnum);
+    public List<Book> getAllBooksByCategory(String categoryEnum);
     Page<BookDTO> getPagedBooks(BookFilter filter, int page, int size);
 }

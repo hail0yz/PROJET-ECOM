@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> getAllBooksByCategory(CategoryName categoryEnum) {
+    public List<Book> getAllBooksByCategory(String categoryEnum) {
         return bookRepository.findByCategory(categoryEnum);
     }
 

@@ -20,6 +20,14 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
+    /**
+     * GET /api/v1/categories
+     *
+     * Returns a list of all categories
+     *
+     * @return A ResponseEntity containing all the categories
+     */
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
