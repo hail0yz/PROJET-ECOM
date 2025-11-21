@@ -29,8 +29,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false,unique = true)
-    private String reference;
+//    @Column(nullable = false,unique = true)
+//    private String reference;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default

@@ -2,22 +2,28 @@ spring:
   application:
     name: payment-service
   datasource:
-    url: jdbc:h2:mem:paymentdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: 
+    url: jdbc:postgresql://localhost:${PAYMENT_SERVICE_DB_PORT:5438}/${PAYMENT_SERVICE_DB_NAME:payment_db}
+    username: ${PAYMENT_SERVICE_DB_PASSWORD:postgres}
+    password: ${PAYMENT_SERVICE_DB_PASSWORD:password}
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
-  h2:
-    console:
-      enabled: true
-
-server:
-  port: 8080
 
 # Configuration Stripe
 stripe:
-  api-key: ${STRIPE_API_KEY} 
+  api-key: ${STRIPE_API_KEY}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka:eureka@localhost:8761/eureka/
+
+server:
+  port: 0
+  compression:
+    enabled: true

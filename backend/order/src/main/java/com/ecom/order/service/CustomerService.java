@@ -17,8 +17,10 @@ public class CustomerService {
     private final CustomerClient customerClient;
 
     public CustomerDetails getCustomerDetails(String customerId) {
+        log.info("Getting customer details (customerId={})", customerId);
         ResponseEntity<CustomerDetails> response = customerClient.getCustomerDetails(customerId);
         if (!response.getStatusCode().isSameCodeAs(HttpStatus.OK) || !response.hasBody()) {
+            log.error("Failed to retrieve customer details. Response={}", response);
             throw new RuntimeException("Failed to retrieve customer details");
         }
 

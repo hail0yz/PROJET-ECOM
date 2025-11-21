@@ -60,6 +60,7 @@ public class CustomerService {
     public CustomerDetailsDTO getCustomerDetails(String customerId) {
         Customer customer = findCustomerById(customerId);
         return CustomerDetailsDTO.builder()
+                .id(customer.getId())
                 .email(customer.getEmail())
                 .firstname(customer.getFirstname())
                 .lastname(customer.getFirstname())

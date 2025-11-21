@@ -10,7 +10,10 @@ import com.ecom.order.configs.FeignConfig;
 @FeignClient(name = "bookService", configuration = FeignConfig.class)
 public interface InventoryClient {
 
-    @PostMapping("/api/v1/books/reserve")
+    @PostMapping("/api/v1/inventory/reserve")
     ReserveStockResponse reserveProducts(@RequestBody ReserveStockRequest request);
+
+    @PostMapping("/api/v1/inventory/cancel")
+    void cancelStock(@RequestBody CancelStockRequest request);
 
 }

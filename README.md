@@ -4,14 +4,14 @@ ___
 # Backend
 
 | **Service Name**         | **Port** | **Database** | **DB Port (locally)** | **DB Name**       | **DB username:password** | **Eureka Registration Name** |
-|--------------------------|----------|--------------|-----------------------|-------------------|--------------------------| ---------------------------- |
+|--------------------------|----------|--------------|-----------------------|-------------------|--------------------------|------------------------------|
 | **eureka-server**        | `8761`   | —            | —                     | —                 | —                        | `eureka-server`              |
 | **api-gateway**          | `8080`   | —            | —                     | —                 | —                        | `api-gateway`                |
 | **customer-service**     | `0`      | PostgreSQL   | `5434`                | `customers_db`    | postgres:password        | `user-service`               |
 | **cart-service**         | `0`      | PostgreSQL   | `5433`                | `carts_db`        | postgres:password        | `cart-service`               |
-| **product-service**      | `8080`   | H2           | —                     | `product_db`      |                          | `product-service`            |
+| **book-service**         | `0`      | PostgreSQL   | `5437`                | `books_db`        | postgres:password        | `bookService`                |
 | **order-service**        | `0`      | PostgreSQL   | `5436`                | `orders_db`       | postgres:password        | `order-service`              |
-| **payment-service**      | `8080`   | H2           | —                     | `payment_db`      |                          | `payment-service`            |
+| **payment-service**      | `0`      | PostgreSQL   | `5438`                | `payment_db`      |                          | `payment-service`            |
 | **notification-service** | `8080`   | —            | —                     | `notification_db` |                          | `notification-service`       |
 
 

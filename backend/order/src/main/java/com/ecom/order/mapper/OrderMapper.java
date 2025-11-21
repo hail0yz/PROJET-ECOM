@@ -10,7 +10,6 @@ public class OrderMapper {
 
     public OrderResponse fromOrder(Order order) {
         return OrderResponse.builder()
-                .reference(order.getReference())
                 .amount(order.getTotalAmount())
 //                .payment_method(order.getPaymentMethod())
                 .customerId(order.getCustomerId())

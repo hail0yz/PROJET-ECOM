@@ -18,10 +18,13 @@ import com.ecom.bookService.dto.ReservationResult;
 import com.ecom.bookService.exception.EntityNotFoundException;
 import com.ecom.bookService.exception.InsufficientStockException;
 import com.ecom.bookService.model.Book;
+import com.ecom.bookService.model.BookInventory;
 import com.ecom.bookService.model.ReservationStatus;
 import com.ecom.bookService.model.StockReservation;
 import com.ecom.bookService.model.StockReservationItem;
+import com.ecom.bookService.repository.BookInventoryRepository;
 import com.ecom.bookService.repository.BookRepository;
+import com.ecom.bookService.repository.StockReservationItemRepository;
 import com.ecom.bookService.repository.StockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +39,15 @@ public class InventoryService {
 
     private final StockReservationRepository stockReservationRepository;
 
+    private final StockReservationItemRepository stockReservationItemRepository;
+
     private final BookRepository bookRepository;
+
+    private final BookInventoryRepository bookInventoryRepository;
 
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, backoff = @Backoff(delay = 100))
     public ReservationResult reserveStock(String orderId, Map<Long, Integer> products) {
-        log.info("Stock reservation - order: {}, products: {}", orderId, products);
+        log.info("Reserving stock - order: {}, products: {}", orderId, products);
 
         try {
             List<Book> books = bookRepository.findByBookIdIn(new ArrayList<>(products.keySet()));
@@ -54,12 +61,18 @@ public class InventoryService {
                         .filter(bookIds::contains)
                         .toList();
 
-                return ReservationResult.productNotFound(notFound);
+                ReservationResult result = ReservationResult.productNotFound(notFound);
+                log.info("Stock Reservation Failed (cause : productNotFound) : {}", result);
+                return result;
             }
 
-            boolean canReserve = books.stream().allMatch(book -> book.canReserve(products.get(book.getBookId())));
+            boolean canReserve = books.stream()
+                    .allMatch(book -> book.getInventory().canReserve(products.get(book.getBookId())));
+
             if (!canReserve) {
-                return ReservationResult.failed(orderId, null, "no quantity !");
+                ReservationResult result = ReservationResult.failed(orderId, null, "no quantity !");
+                log.info("Stock Reservation Failed : {}", result);
+                return result;
             }
 
             Optional<StockReservation> existingReservation = stockReservationRepository.findByOrderId(orderId);
@@ -70,35 +83,36 @@ public class InventoryService {
 
             for (Book book : books) {
                 Integer quantity = products.get(book.getBookId());
-                book.reserve(quantity);
+                book.getInventory().reserve(quantity);
             }
 
             var savedBooks = bookRepository.saveAll(books);
 
-            List<StockReservationItem> reservationItems = savedBooks.stream()
-                    .map(book -> StockReservationItem.builder()
-                            .book(book)
-                            .reservedQuantity(products.get(book.getBookId()))
-                            .build())
-                    .toList();
-
             StockReservation reservation = StockReservation.builder()
                     .orderId(orderId)
-                    .items(reservationItems)
                     .expiresAt(Instant.now().plus(RESERVATION_DURATION_EXPIRE))
                     .build();
 
             StockReservation savedReservation = stockReservationRepository.save(reservation);
 
+            List<StockReservationItem> reservationItems = savedBooks.stream()
+                    .map(book -> StockReservationItem.builder()
+                            .book(book)
+                            .reservedQuantity(products.get(book.getBookId()))
+                            .reservation(savedReservation)
+                            .build())
+                    .toList();
+
+            stockReservationItemRepository.saveAll(reservationItems);
+
             // TODO publish {new StockReserved(orderId, products)}
 
-            return ReservationResult.success(savedReservation.getId());
+            ReservationResult result = ReservationResult.success(savedReservation.getId());
+            log.info("Stock has been reserved successfully : {}", result);
+            return result;
         }
         catch (InsufficientStockException e) {
             return ReservationResult.failed("Insufficient stock: " + e.getMessage());
-        }
-        catch (Exception e) {
-            return ReservationResult.failed("Internal error: " + e.getMessage());
         }
     }
 
@@ -114,7 +128,7 @@ public class InventoryService {
 
         List<Book> books = reservation.getItems().stream()
                 .map(item -> {
-                    item.getBook().confirmReservation(item.getReservedQuantity());
+                    item.getBook().getInventory().confirmReservation(item.getReservedQuantity());
                     return item.getBook();
                 })
                 .toList();
@@ -143,7 +157,7 @@ public class InventoryService {
 
         List<Book> books = reservation.getItems().stream()
                 .map(item -> {
-                    item.getBook().cancelReservation(item.getReservedQuantity());
+                    item.getBook().getInventory().cancelReservation(item.getReservedQuantity());
                     return item.getBook();
                 })
                 .toList();

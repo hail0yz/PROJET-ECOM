@@ -16,7 +16,7 @@ public record CartDetails(
     public record CartItem(
         Long productId,
         int quantity,
-        double price
+        BigDecimal price
     ) {
     }
 

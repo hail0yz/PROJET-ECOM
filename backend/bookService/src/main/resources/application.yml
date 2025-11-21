@@ -1,9 +1,12 @@
 spring:
   application.name: bookService
+  datasource:
+    url: jdbc:postgresql://localhost:${BOOK_SERVICE_DB_PORT:5437}/${BOOK_SERVICE_DB_NAME:books_db}
+    username: ${BOOK_SERVICE_DB_PASSWORD:postgres}
+    password: ${BOOK_SERVICE_DB_PASSWORD:password}
   jpa:
     hibernate:
-      ddl-auto: create-drop
-
+      ddl-auto: update
 
 eureka:
   instance:

@@ -18,15 +18,18 @@ public class CartService {
 
     private final RestClient.Builder restClient;
 
-    public CartDetails getCartById(String cartId) { // TODO set Authorization Header - Bearer token
+    public CartDetails getCartById(Long cartId) { // TODO set Authorization Header - Bearer token
+        log.info("Getting cart by id {}", cartId);
         return restClient.build().get()
                 .uri("http://cart-service/api/v1/carts/{cartId}", cartId)
                 .retrieve()
                 .onStatus(httpStatusCode -> !httpStatusCode.isSameCodeAs(HttpStatus.OK), (request, response) -> {
                     if (response.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                        log.error("Cart not found (cartId={})", cartId);
                         throw new EntityNotFoundException("Cart not found with id : " + cartId);
                     }
                     if (response.getStatusCode().is5xxServerError()) {
+                        log.error("Failed to get cart : Server Error " + response);
                         throw new ExternalServiceException("Customer service unavailable");
                     }
 

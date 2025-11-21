@@ -58,13 +58,8 @@ public class Book {
 
     private Integer numPages;
 
-    // ----------- Inventory / Entrepôt -----------
-
-    private int availableQuantity;
-
-    private int reservedQuantity;
-
-    private int minimumStockLevel;
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    private BookInventory inventory;
 
     // ----------- Optimistic Locking -----------
 
@@ -79,30 +74,9 @@ public class Book {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public boolean canReserve(int quantity) {
-        return availableQuantity - reservedQuantity >= quantity;
-    }
-
-    public void reserve(int quantity) {
-        if (!canReserve(quantity)) {
-            throw new IllegalStateException("Not enough stock");
-        }
-        reservedQuantity += quantity;
-    }
-
-    public void confirmReservation(int quantity) {
-        if (reservedQuantity < quantity) {
-            throw new IllegalStateException("Reservation mismatch");
-        }
-        reservedQuantity -= quantity;
-        availableQuantity -= quantity;
-    }
-
-    public void cancelReservation(int quantity) {
-        if (reservedQuantity < quantity) {
-            throw new IllegalStateException("Invalid cancellation");
-        }
-        reservedQuantity -= quantity;
+    public void setInventory(BookInventory inventory) {
+        this.inventory = inventory;
+        inventory.setBook(this);
     }
 
 }

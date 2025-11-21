@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +33,11 @@ public class StockReservation {
 
     private String orderId;
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = "reservation",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<StockReservationItem> items;
 
     private Instant expiresAt;

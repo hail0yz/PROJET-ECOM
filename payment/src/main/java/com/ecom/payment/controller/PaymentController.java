@@ -74,13 +74,13 @@ public class PaymentController {
     }
     
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<PaymentDTO> getPaymentByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<PaymentDTO> getPaymentByOrderId(@PathVariable String orderId) {
         PaymentDTO payment = paymentService.getPaymentByOrderId(orderId);
         return ResponseEntity.ok(payment);
     }
     
     @GetMapping("/order/{orderId}/all")
-    public ResponseEntity<List<PaymentDTO>> getAllPaymentsByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<List<PaymentDTO>> getAllPaymentsByOrderId(@PathVariable String orderId) {
         List<PaymentDTO> payments = paymentService.getAllPaymentsByOrderId(orderId);
         return ResponseEntity.ok(payments);
     }

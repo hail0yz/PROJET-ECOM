@@ -11,8 +11,8 @@ import lombok.Data;
 @Builder
 public class OrderRequest {
 
-    @NotBlank
-    private String cartId;
+    @NotNull
+    private Long cartId;
 
     private String reference;
 

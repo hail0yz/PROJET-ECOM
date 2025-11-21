@@ -1,7 +1,7 @@
 package com.ecom.order.customer;
 
 public record CustomerDetails(
-        Long id,
+        String id,
         String externalId,
         String firstname,
         String lastname,

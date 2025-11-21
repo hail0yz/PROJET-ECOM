@@ -93,14 +93,14 @@ public class BookServiceImpl implements BookService {
 
         for (Book book : books) {
             int quantityRequested = booksIdsQuantities.get(book.getBookId());
-            valid = valid && book.canReserve(booksIdsQuantities.get(book.getBookId()));
+            valid = valid && book.getInventory().canReserve(booksIdsQuantities.get(book.getBookId()));
             results.add(BulkBookValidationResponse.BookValidationResult.builder()
                     .bookId(book.getBookId())
                     .title(book.getTitle())
                     .image(book.getThumbnail())
                     .exists(true)
                     .requestedQuantity(quantityRequested)
-                    .availableQuantity(book.getAvailableQuantity() - book.getReservedQuantity())
+                    .availableQuantity(book.getInventory().getAvailableQuantity() - book.getInventory().getReservedQuantity())
                     .price(book.getPrice())
                     .build());
         }

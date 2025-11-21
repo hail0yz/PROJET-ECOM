@@ -15,7 +15,7 @@ public class CreatePaymentRequest {
 
     @NotNull(message = "Order ID is required")
 
-    private Integer orderId;
+    private String orderId;
 
 
     @NotNull(message = "Amount is required")
@@ -37,6 +37,11 @@ public class CreatePaymentRequest {
     private String customerEmail;
 
 
+    @NotBlank(message = "Customer id is required")
+
+    private String customerId;
+
+
     private String description;
 
 
@@ -46,7 +51,7 @@ public class CreatePaymentRequest {
     }
 
 
-    public CreatePaymentRequest(Integer orderId, BigDecimal amount, String paymentMethod,
+    public CreatePaymentRequest(String orderId, BigDecimal amount, String paymentMethod,
 
                                 String customerEmail, String description) {
 
@@ -65,7 +70,7 @@ public class CreatePaymentRequest {
 
     // Getters
 
-    public Integer getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
@@ -81,6 +86,10 @@ public class CreatePaymentRequest {
         return customerEmail;
     }
 
+    public String getCustomerId() {
+        return customerId;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -88,7 +97,7 @@ public class CreatePaymentRequest {
 
     // Setters
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
@@ -102,6 +111,10 @@ public class CreatePaymentRequest {
 
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public void setDescription(String description) {

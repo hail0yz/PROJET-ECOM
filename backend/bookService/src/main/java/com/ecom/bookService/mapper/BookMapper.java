@@ -29,7 +29,7 @@ public class BookMapper {
                 .publishedYear(book.getPublishedYear())
                 .price(book.getPrice())
                 .thumbnail(book.getThumbnail())
-                .stock(book.getAvailableQuantity() - book.getReservedQuantity())
+                .stock(book.getInventory().getAvailableQuantity() - book.getInventory().getReservedQuantity())
                 .build();
     }
 

@@ -21,6 +21,8 @@ public class CreatePaymentRequest {
 
     private String customerEmail;
 
+    private String customerId;
+
     private String description;
 
 }

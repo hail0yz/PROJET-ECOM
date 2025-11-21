@@ -38,7 +38,7 @@ public class Payment {
 
     @Column(name = "order_id", nullable = false)
 
-    private Integer orderId;
+    private String orderId;
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
 
@@ -81,4 +81,8 @@ public class Payment {
     @Column(name = "customer_email")
 
     private String customerEmail;
+
+    @Column(name = "customer_id")
+
+    private String customerId;
 }

@@ -1,9 +1,12 @@
 package com.ecom.order.service;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -47,10 +50,23 @@ public class OrderService {
 
     private final PaymentService paymentService;
 
-    public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
-        CustomerDetails customer = customerService.getCustomerDetails(customerId);
+    private final Executor taskExecutor;
 
-        CartDetails cart = cartService.getCartById(orderRequest.getCartId());
+    public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
+        log.info("Placing order customerId={}, request={}", customerId, orderRequest);
+
+        CompletableFuture<CustomerDetails> customerFuture = CompletableFuture
+                .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor);
+
+        CompletableFuture<CartDetails> cartFuture = CompletableFuture
+                .supplyAsync(() -> cartService.getCartById(orderRequest.getCartId()), taskExecutor);
+
+        CompletableFuture.allOf(customerFuture, cartFuture).join();
+
+        CustomerDetails customer = customerFuture.join();
+        log.info("[PLACE ORDER] Customer details {}", customer);
+        CartDetails cart = cartFuture.join();
+        log.info("[PLACE ORDER] Cart details {}", cart);
 
         Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
 
@@ -64,7 +80,20 @@ public class OrderService {
 
         if (paymentFailed) {
             // TODO cancel / release books reservation
-            // InventoryService.releaseReservation(...)
+            inventoryService.releaseReservation(order.getId().toString());
+        }
+
+
+        if (paymentFailed) {
+            // TODO cancel / release books reservation
+//            CompletableFuture.runAsync(() ->
+//                    inventoryService.releaseReservation(order.getId().toString()),
+//                    taskExecutor
+//            );
+        }
+        else {
+            // Publier événement de manière asynchrone
+            // CompletableFuture.runAsync(() -> publishOrderPlacedEvent(order), taskExecutor);
         }
 
         // TODO publish event OrderPlaced
@@ -76,11 +105,15 @@ public class OrderService {
     }
 
     private boolean processOrderPayment(CustomerDetails customer, Order order, CartDetails cart) {
+        BigDecimal total = cart.items().stream()
+                .map(CartDetails.CartItem::price)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
                 .paymentMethod(order.getPaymentInfo().paymentMethod())
+                .customerId(customer.id())
                 .customerEmail(customer.email())
                 .orderId(order.getId().toString())
-                .amount(cart.totalPrice())
+                .amount(total)
                 .build();
 
         try {
@@ -130,7 +163,7 @@ public class OrderService {
                 request.getAddress().country()
         );
         return Order.builder()
-                .customerId(customer.id().toString())
+                .customerId(customer.id())
                 .orderLines(orderLines)
                 .totalAmount(cart.totalPrice())
                 .paymentInfo(paymentInfo)
