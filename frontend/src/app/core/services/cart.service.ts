@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throw
 import Keycloak from 'keycloak-js';
 
 import { Cart, CartEntryAPI, CartItem, CreateCartRequestAPI, CreateCartResponseAPI, GetCartResponseAPI } from '@/app/core/models/cart.model';
+import { environment } from '@/app/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { Cart, CartEntryAPI, CartItem, CreateCartRequestAPI, CreateCartResponseA
 export class CartService {
   private readonly keycloak = inject(Keycloak);
   private readonly CART_LOCAL_KEY = 'cart_items';
-  private API_URL = 'http://localhost:8080/api/carts';
+  private API_URL = `${environment.apiBaseUrl}/api/carts`;
 
   private readonly cartSubject = new BehaviorSubject<Cart>({ id: 0, items: [], local: true, persisted: false });
   private readonly cartIdSubject = new BehaviorSubject<string | null>(null);

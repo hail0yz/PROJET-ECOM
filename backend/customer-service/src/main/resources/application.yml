@@ -13,7 +13,7 @@ keycloak:
   realm: ecom
   url: http://localhost:8088
   client-id: customer-service-client
-  client-secret: KyYLFjqYApLNCqVu1yQ81c69XvxonmyF
+  client-secret: wpClBi39eouKPHASUZ4k4nQyJEADtX1G
 
 spring.security:
   oauth2:

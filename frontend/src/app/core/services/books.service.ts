@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, Observable, throwError } from 'rxjs';
 import { Page } from '@core/models/page.model';
 import { Router } from '@angular/router';
+import { environment } from '@/app/environment';
 
 export const MOCK_BOOKS: Book[] = [
   /*{
@@ -62,7 +63,7 @@ export const MOCK_BOOKS: Book[] = [
 @Injectable({ providedIn: 'root' })
 export class BooksService {
 
-  private bookServiceURL = "http://localhost:8080/api/books";
+  private bookServiceURL = `${environment.apiBaseUrl}/api/books`;
 
   constructor(private http: HttpClient, private router: Router) { }
 

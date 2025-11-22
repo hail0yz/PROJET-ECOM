@@ -10,9 +10,10 @@ public class OrderMapper {
 
     public OrderResponse fromOrder(Order order) {
         return OrderResponse.builder()
+                .orderId(order.getId().toString())
                 .amount(order.getTotalAmount())
-//                .payment_method(order.getPaymentMethod())
                 .customerId(order.getCustomerId())
+                //.payment_method(order.getPaymentInfo() != null ? order.getPaymentInfo().paymentMethod() : null)
                 .build();
     }
 

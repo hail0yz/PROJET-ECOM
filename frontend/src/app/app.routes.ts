@@ -8,6 +8,11 @@ import { AdminDashboardPage } from '@/app/features/admin/dashboard/dashboard.pag
 import { AdminCategoriesPage } from '@/app/features/admin/categories/categories.page';
 import { RegistrationPage } from '@/app/features/registration/registration.page';
 import { AdminProductListPage } from '@/app/features/admin/products/product-list/product-list.page';
+import { AdminOrdersPage } from '@/app/features/admin/orders/orders.page';
+import { AdminCustomersPage } from '@/app/features/admin/customers/customers.page';
+import { ProfilePage } from '@/app/features/profile/profile.page';
+import { OrdersPage } from '@/app/features/orders/orders.page';
+import { CheckoutPage } from '@/app/features/checkout/checkout.page';
 
 import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
 
@@ -32,6 +37,26 @@ export const routes: Routes = [
         path: 'cart',
         component: CartPage,
         data: { public: true }
+    },
+    {
+        path: 'checkout',
+        component: CheckoutPage,
+        data: { public: false }
+    },
+    {
+        path: 'orders',
+        component: OrdersPage,
+        data: { public: false }
+    },
+    {
+        path: 'orders/:id',
+        component: OrdersPage,
+        data: { public: false }
+    },
+    {
+        path: 'profile',
+        component: ProfilePage,
+        data: { public: false }
     },
     {
         path: 'signup',
@@ -60,6 +85,22 @@ export const routes: Routes = [
             role: ['admin']
         },
         component: AdminProductListPage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'admin/orders',
+        data: {
+            role: ['admin']
+        },
+        component: AdminOrdersPage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'admin/customers',
+        data: {
+            role: ['admin']
+        },
+        component: AdminCustomersPage,
         canActivate: [canActivateAuthRole]
     },
 ];

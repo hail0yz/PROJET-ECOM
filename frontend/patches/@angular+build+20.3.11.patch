@@ -1,0 +1,13 @@
+diff --git a/node_modules/@angular/build/node_modules/vite/dist/node/chunks/config.js b/node_modules/@angular/build/node_modules/vite/dist/node/chunks/config.js
+index 0000000..1111111 100644
+--- a/node_modules/@angular/build/node_modules/vite/dist/node/chunks/config.js
++++ b/node_modules/@angular/build/node_modules/vite/dist/node/chunks/config.js
+@@ -2605,7 +2605,7 @@ const requestQueryMaybeEscapedSplitRE = /\\?\?(?!.*[/|}])/;
+ const blankReplacer = (match) => " ".repeat(match.length);
+ function getHash(text, length = 8) {
+-	const h$2 = crypto.hash("sha256", text, "hex").substring(0, length);
++	const h$2 = crypto.createHash("sha256").update(text).digest("hex").substring(0, length);
+ 	if (length <= 64) return h$2;
+ 	return h$2.padEnd(length, "_");
+ }
+

@@ -1,28 +1,40 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PlaceOrderRequestAPI } from '@/app/core/models/order.model';
+import { Observable } from 'rxjs';
+import { PlaceOrderRequestAPI, PlaceOrderResponseAPI, OrderResponse } from '@/app/core/models/order.model';
+import { environment } from '@/app/environment';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
 
-    private orderServiceURL = "http://localhost:8080/api/orders";
+    private orderServiceURL = `${environment.apiBaseUrl}/api/orders`;
 
     constructor(private http: HttpClient) { }
 
-    placeOrder(
-        cartId: number,
-        address: {
-            street: string;
-            city: string;
-            postalCode: string;
-            country: string;
-        },
-        paymentDetails: {
-            paymentMethod: string
-        }
-    ) {
-        const request: PlaceOrderRequestAPI = { cartId, address, paymentDetails }
-        return this.http.post<void>(this.orderServiceURL, request);
+    placeOrder(request: PlaceOrderRequestAPI): Observable<PlaceOrderResponseAPI> {
+        return this.http.post<PlaceOrderResponseAPI>(this.orderServiceURL, request);
+    }
+
+    getAllOrders(): Observable<OrderResponse[]> {
+        return this.http.get<OrderResponse[]>(this.orderServiceURL);
+    }
+
+    getOrderById(orderId: string): Observable<OrderResponse> {
+        return this.http.get<OrderResponse>(`${this.orderServiceURL}/${orderId}`);
+    }
+
+    getOrdersByCustomerId(customerId: string, page: number = 0, size: number = 20): Observable<OrderResponse[]> {
+        return this.http.get<OrderResponse[]>(`${this.orderServiceURL}/customer/${customerId}`, {
+            params: { page: page.toString(), size: size.toString() }
+        });
+    }
+
+    getMyOrders(page: number = 0, size: number = 20): Observable<OrderResponse[]> {
+        return this.http.get<OrderResponse[]>(`${this.orderServiceURL}/my-orders`, {
+            params: { page: page.toString(), size: size.toString() }
+        });
     }
 
 }

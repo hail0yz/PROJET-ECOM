@@ -72,6 +72,16 @@
                         <a href="/categories"
                             class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Catégories</a>
                     </li>
+                    @if(isLoggedIn) {
+                    <li>
+                        <a routerLink="/orders"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">My Orders</a>
+                    </li>
+                    <li>
+                        <a routerLink="/profile"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Profile</a>
+                    </li>
+                    }
                 </ul>
             </div>
         </div>
