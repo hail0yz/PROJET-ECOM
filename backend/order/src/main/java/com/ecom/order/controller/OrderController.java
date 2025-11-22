@@ -8,9 +8,8 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +50,7 @@ public class OrderController {
         return ResponseEntity.ok(this.orderService.findAllOrders());
     }
 
+    @PreAuthorize("@orderService.isOrderOwner(#orderId, authentication.principal.getClaim('sub'))")
     @GetMapping("/{order-id}")
     public ResponseEntity<OrderResponse> findById(
             @PathVariable("order-id") UUID orderId
@@ -67,7 +67,7 @@ public class OrderController {
         return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size).getContent());
     }
 
-    @GetMapping("/my-orders")
+    @GetMapping("/me")
     public ResponseEntity<List<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal(expression = "subject") String customerId,
             @RequestParam(defaultValue = "0") int page,
@@ -75,4 +75,5 @@ public class OrderController {
     ) {
         return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size).getContent());
     }
+
 }

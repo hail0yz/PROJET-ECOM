@@ -189,4 +189,10 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("No order found with the provided ID: " + id)));
     }
 
+    public boolean isOrderOwner(UUID orderId, String customerId) {
+        return orderRepo.findByIdAndCustomerId(orderId, customerId)
+                .map(order -> customerId.equals(order.getCustomerId()))
+                .orElse(true);
+    }
+
 }
