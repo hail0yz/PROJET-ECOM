@@ -32,7 +32,7 @@ export class OrderService {
     }
 
     getMyOrders(page: number = 0, size: number = 20): Observable<OrderResponse[]> {
-        return this.http.get<OrderResponse[]>(`${this.orderServiceURL}/my-orders`, {
+        return this.http.get<OrderResponse[]>(`${this.orderServiceURL}/me`, {
             params: { page: page.toString(), size: size.toString() }
         });
     }
