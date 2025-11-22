@@ -71,37 +71,23 @@ public class OrderService {
         Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
 
         if (!reserveStockAndHandleFailure(cart, order)) {
-            return PlaceOrderResponse.builder()
-                    .orderId(order.getId())
-                    .build();
+            return orderMapper.mapToPlaceOrderResponse(order);
         }
 
         boolean paymentFailed = !processOrderPayment(customer, order, cart);
 
         if (paymentFailed) {
-            // TODO cancel / release books reservation
             inventoryService.releaseReservation(order.getId().toString());
-        }
-
-
-        if (paymentFailed) {
-            // TODO cancel / release books reservation
-//            CompletableFuture.runAsync(() ->
-//                    inventoryService.releaseReservation(order.getId().toString()),
-//                    taskExecutor
-//            );
-        }
-        else {
-            // Publier événement de manière asynchrone
-            // CompletableFuture.runAsync(() -> publishOrderPlacedEvent(order), taskExecutor);
+            CompletableFuture.runAsync(
+                    () -> inventoryService.releaseReservation(order.getId().toString()),
+                    taskExecutor
+            );
         }
 
         // TODO publish event OrderPlaced
 
-        return PlaceOrderResponse.builder()
-                .orderId(order.getId())
-                .paymentId(order.getPaymentInfo().paymentId())
-                .build();
+        log.info("Order placed successfully customerId={}, orderId={}", customerId, order.getId());
+        return orderMapper.mapToPlaceOrderResponse(order);
     }
 
     private boolean processOrderPayment(CustomerDetails customer, Order order, CartDetails cart) {
@@ -117,11 +103,13 @@ public class OrderService {
                 .build();
 
         try {
+            log.info("Payment created successfully paymentId={}", order.getPaymentInfo().paymentId());
             Long paymentId = paymentService.createPayment(createPaymentRequest);
             order.setStatus(OrderStatus.PAYMENT_PENDING);
             order.setPaymentInfo(order.getPaymentInfo().withPaymentId(paymentId));
         }
         catch (PaymentFailedException exception) {
+            log.info("Payment failed paymentId={}", order.getPaymentInfo().paymentId());
             order.setStatus(OrderStatus.PAYMENT_FAILED);
             orderRepo.save(order);
             return false;
@@ -139,7 +127,7 @@ public class OrderService {
 
         if (!reserveStockResponse.success()) {
             log.error("Reserving stock failed [orderId={}]: {}", order.getId(), reserveStockResponse.message());
-            order.setStatus(OrderStatus.FAILED);
+            order.setStatus(OrderStatus.RESERVATION_FAILED);
             return false;
         }
         return true;

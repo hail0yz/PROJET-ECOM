@@ -3,6 +3,7 @@ package com.ecom.order.mapper;
 import org.springframework.stereotype.Service;
 
 import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.model.Order;
 
 @Service
@@ -13,6 +14,13 @@ public class OrderMapper {
                 .amount(order.getTotalAmount())
 //                .payment_method(order.getPaymentMethod())
                 .customerId(order.getCustomerId())
+                .build();
+    }
+
+    public PlaceOrderResponse mapToPlaceOrderResponse(Order order) {
+        return PlaceOrderResponse.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getStatus())
                 .build();
     }
 

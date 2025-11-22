@@ -2,6 +2,7 @@ package com.ecom.order.dto;
 
 import java.util.UUID;
 
+import com.ecom.order.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +17,7 @@ public class PlaceOrderResponse {
     private UUID orderId;
 
     private Long paymentId;
+
+    private OrderStatus orderStatus;
 
 }

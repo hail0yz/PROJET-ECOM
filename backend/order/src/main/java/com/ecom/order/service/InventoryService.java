@@ -9,9 +9,11 @@ import com.ecom.order.product.InventoryClient;
 import com.ecom.order.product.ReserveStockRequest;
 import com.ecom.order.product.ReserveStockResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class InventoryService {
 
     private final InventoryClient inventoryClient;
@@ -21,6 +23,7 @@ public class InventoryService {
     }
 
     public void releaseReservation(String orderId) {
+        log.info("Releasing reservation orderId={}", orderId);
         inventoryClient.cancelStock(new CancelStockRequest(orderId));
     }
 
