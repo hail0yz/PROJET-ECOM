@@ -4,6 +4,7 @@ package com.ecom.order.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -19,6 +20,7 @@ import com.ecom.order.dto.OrderRequest;
 import com.ecom.order.dto.OrderResponse;
 import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.exception.EntityNotFoundException;
+import com.ecom.order.exception.OrderAlreadyExistsException;
 import com.ecom.order.mapper.OrderMapper;
 import com.ecom.order.model.DeliveryInfo;
 import com.ecom.order.model.Order;
@@ -54,6 +56,11 @@ public class OrderService {
 
     public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
         log.info("Placing order customerId={}, request={}", customerId, orderRequest);
+
+        Optional<Order> optionalOrder = orderRepo.findByCartIdAndCustomerId(orderRequest.getCartId(), customerId);
+        if (optionalOrder.isPresent()) {
+            throw new OrderAlreadyExistsException(optionalOrder.get().getId(), "Order already exists");
+        }
 
         CompletableFuture<CustomerDetails> customerFuture = CompletableFuture
                 .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor);
@@ -152,6 +159,7 @@ public class OrderService {
         );
         return Order.builder()
                 .customerId(customer.id())
+                .cartId(cart.id())
                 .orderLines(orderLines)
                 .totalAmount(cart.totalPrice())
                 .paymentInfo(paymentInfo)
