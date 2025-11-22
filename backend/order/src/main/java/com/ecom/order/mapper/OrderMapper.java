@@ -1,28 +1,27 @@
 package com.ecom.order.mapper;
 
-import com.ecom.order.dto.OrderRequest;
-import com.ecom.order.dto.OrderResponse;
-import com.ecom.order.model.Order;
 import org.springframework.stereotype.Service;
+
+import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.PlaceOrderResponse;
+import com.ecom.order.model.Order;
 
 @Service
 public class OrderMapper {
 
-    public Order toOrder(OrderRequest orderRequest) {
-        return Order.builder()
-                .reference(orderRequest.getReference())
-                .paymentMethod(orderRequest.getPaymentMethod())
-                .totalAmount(orderRequest.getAmmount())
-                .customerId(orderRequest.getCustomerId())
+    public OrderResponse fromOrder(Order order) {
+        return OrderResponse.builder()
+                .amount(order.getTotalAmount())
+//                .payment_method(order.getPaymentMethod())
+                .customerId(order.getCustomerId())
                 .build();
     }
 
-    public OrderResponse fromOrder(Order order) {
-        return OrderResponse.builder()
-                .reference(order.getReference())
-                .amount(order.getTotalAmount())
-                .payment_method(order.getPaymentMethod())
-                .customer_id(order.getCustomerId())
+    public PlaceOrderResponse mapToPlaceOrderResponse(Order order) {
+        return PlaceOrderResponse.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getStatus())
                 .build();
     }
+
 }

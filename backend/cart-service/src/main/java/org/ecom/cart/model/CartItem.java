@@ -21,13 +21,15 @@ public class CartItem {
     @Column(nullable = false)
     private Long productId;
 
+    // product title
+    private String title;
+
+    // product image
+    private String image;
+
     @ManyToOne
     private Cart cart;
 
-    /**
-     * Product name
-     */
-    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)

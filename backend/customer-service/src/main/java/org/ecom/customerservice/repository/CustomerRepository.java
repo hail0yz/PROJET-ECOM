@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import org.ecom.customerservice.model.Customer;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSpecificationExecutor<Customer> {
+public interface CustomerRepository extends JpaRepository<Customer, String>, JpaSpecificationExecutor<Customer> {
 }

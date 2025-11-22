@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';

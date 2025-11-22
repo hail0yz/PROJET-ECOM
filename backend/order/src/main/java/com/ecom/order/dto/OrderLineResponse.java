@@ -13,5 +13,5 @@ import java.util.UUID;
 @NoArgsConstructor
 public class OrderLineResponse {
     private UUID id;
-    private BigDecimal quantity;
+    private Integer quantity;
 }

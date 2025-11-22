@@ -10,16 +10,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
-
 public class CreatePaymentRequest {
 
-    
 
     @NotNull(message = "Order ID is required")
 
-    private Integer orderId;
+    private String orderId;
 
-    
 
     @NotNull(message = "Amount is required")
 
@@ -27,13 +24,11 @@ public class CreatePaymentRequest {
 
     private BigDecimal amount;
 
-    
 
     @NotBlank(message = "Payment method is required")
 
     private String paymentMethod;
 
-    
 
     @Email(message = "Invalid email format")
 
@@ -41,21 +36,24 @@ public class CreatePaymentRequest {
 
     private String customerEmail;
 
-    
+
+    @NotBlank(message = "Customer id is required")
+
+    private String customerId;
+
 
     private String description;
 
-    
 
     // Constructeurs
 
-    public CreatePaymentRequest() {}
+    public CreatePaymentRequest() {
+    }
 
-    
 
-    public CreatePaymentRequest(Integer orderId, BigDecimal amount, String paymentMethod, 
+    public CreatePaymentRequest(String orderId, BigDecimal amount, String paymentMethod,
 
-                               String customerEmail, String description) {
+                                String customerEmail, String description) {
 
         this.orderId = orderId;
 
@@ -69,32 +67,58 @@ public class CreatePaymentRequest {
 
     }
 
-    
 
     // Getters
 
-    public Integer getOrderId() { return orderId; }
+    public String getOrderId() {
+        return orderId;
+    }
 
-    public BigDecimal getAmount() { return amount; }
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-    public String getPaymentMethod() { return paymentMethod; }
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
 
-    public String getCustomerEmail() { return customerEmail; }
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
 
-    public String getDescription() { return description; }
+    public String getCustomerId() {
+        return customerId;
+    }
 
-    
+    public String getDescription() {
+        return description;
+    }
+
 
     // Setters
 
-    public void setOrderId(Integer orderId) { this.orderId = orderId; }
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
 
-    public void setDescription(String description) { this.description = description; }
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

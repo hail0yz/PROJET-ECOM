@@ -17,10 +17,10 @@ import com.ecom.payment.entity.PaymentStatus;
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     
     // Trouver un paiement par ID de commande
-    Optional<Payment> findByOrderId(Integer orderId);
+    Optional<Payment> findByOrderId(String orderId);
     
     // Trouver tous les paiements d'une commande
-    List<Payment> findAllByOrderId(Integer orderId);
+    List<Payment> findAllByOrderId(String orderId);
     
     // Trouver par ID de transaction
     Optional<Payment> findByTransactionId(String transactionId);
@@ -52,9 +52,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     List<Payment> findByCustomerEmail(String customerEmail);
     
     // Vérifier si un paiement existe pour une commande avec un statut spécifique
-    boolean existsByOrderIdAndStatus(Integer orderId, PaymentStatus status);
+    boolean existsByOrderIdAndStatus(String orderId, PaymentStatus status);
     
     // Alternative si la méthode au-dessus ne fonctionne pas
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Payment p WHERE p.orderId = :orderId AND p.status = :status")
-    boolean checkIfPaymentExistsByOrderIdAndStatus(@Param("orderId") Integer orderId, @Param("status") PaymentStatus status);
+    boolean checkIfPaymentExistsByOrderIdAndStatus(@Param("orderId") String orderId, @Param("status") PaymentStatus status);
 }

@@ -21,9 +21,11 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID orderLineId;
 
-    private BigDecimal quantity;
+    private Integer quantity;
 
-    private UUID productId;
+    private Long productId;
+
+    private BigDecimal price; // TODO set price
 
     @ManyToOne
     @JoinColumn(name="order_id")

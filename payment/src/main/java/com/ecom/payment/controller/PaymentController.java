@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class PaymentController {
     
     private final PaymentService paymentService;
-    
+
     @PostMapping
     public ResponseEntity<PaymentResponse> createPayment(@Valid @RequestBody CreatePaymentRequest request) {
         PaymentResponse response = paymentService.createPayment(request);
@@ -54,7 +54,7 @@ public class PaymentController {
         PaymentResponse response = paymentService.refundPayment(request);
         return ResponseEntity.ok(response);
     }
-    
+
     @PutMapping("/{paymentId}/cancel")
     public ResponseEntity<Map<String, String>> cancelPayment(@PathVariable Integer paymentId) {
         paymentService.cancelPayment(paymentId);
@@ -74,13 +74,13 @@ public class PaymentController {
     }
     
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<PaymentDTO> getPaymentByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<PaymentDTO> getPaymentByOrderId(@PathVariable String orderId) {
         PaymentDTO payment = paymentService.getPaymentByOrderId(orderId);
         return ResponseEntity.ok(payment);
     }
     
     @GetMapping("/order/{orderId}/all")
-    public ResponseEntity<List<PaymentDTO>> getAllPaymentsByOrderId(@PathVariable Integer orderId) {
+    public ResponseEntity<List<PaymentDTO>> getAllPaymentsByOrderId(@PathVariable String orderId) {
         List<PaymentDTO> payments = paymentService.getAllPaymentsByOrderId(orderId);
         return ResponseEntity.ok(payments);
     }

@@ -47,7 +47,9 @@ cd PROJECT-ECOM
 6. Selectionnez :
    - `view-users`
    - `query-users`
-   - `manage-users`.
+   - `manage-users`
+   - `manage-realm`
+   - `query-realm`
 
 ### Mise à jour du client secret
 

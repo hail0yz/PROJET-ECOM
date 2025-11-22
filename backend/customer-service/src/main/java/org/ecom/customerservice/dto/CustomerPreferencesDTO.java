@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerPreferencesDTO {
 
-    private Long id;
+    private String id;
 
     private boolean emailNotificationsEnabled;
 

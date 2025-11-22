@@ -18,7 +18,7 @@ import lombok.Setter;
 @Builder
 public class PaymentDTO {
     private Integer paymentId;
-    private Integer orderId;
+    private String orderId;
     private BigDecimal amount;
     private String paymentMethod;
     private PaymentStatus status;
@@ -26,6 +26,7 @@ public class PaymentDTO {
     private String transactionId;
     private String failureReason;
     private String customerEmail;
+    private String customerId;
     private String currency;
     private String stripePaymentIntentId;
     private String stripeChargeId;

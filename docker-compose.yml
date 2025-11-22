@@ -1,4 +1,5 @@
 services:
+
   cart-postgres:
     image: postgres:13.22-alpine3.21
     volumes:
@@ -6,7 +7,55 @@ services:
     ports:
       - 5433:5432
     environment:
-      POSTGRES_DB: products_db
+      POSTGRES_DB: carts_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  order-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - order-postgres:/var/lib/postgresql/data
+    ports:
+      - 5436:5432
+    environment:
+      POSTGRES_DB: orders_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  book-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - book-postgres:/var/lib/postgresql/data
+    ports:
+      - 5437:5432
+    environment:
+      POSTGRES_DB: books_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  payment-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - payment-postgres:/var/lib/postgresql/data
+    ports:
+      - 5438:5432
+    environment:
+      POSTGRES_DB: payment_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     healthcheck:
@@ -105,6 +154,9 @@ services:
 volumes:
   cart-postgres:
   customer-postgres:
+  order-postgres:
+  book-postgres:
+  payment-postgres:
   sonarqube_data:
   sonarqube_logs:
   sonarqube_extensions:

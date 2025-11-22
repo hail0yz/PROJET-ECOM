@@ -1,13 +1,12 @@
 package com.ecom.order.dto;
 
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -16,6 +15,9 @@ import java.util.UUID;
 public class OrderLineRequest {
 
     private UUID orderId;
-    private UUID productId;
-    private BigDecimal quantity;
+
+    private Long productId;
+
+    private Integer quantity;
+
 }

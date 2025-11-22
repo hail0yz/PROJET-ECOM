@@ -3,9 +3,11 @@
 <main
     class="container max-w-screen-xl min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] mx-auto px-4 py-8 space-y-6">
     <div class="flex flex-col gap-6 lg:flex-row">
-        <product-list-sidebar [categories]="categories" />
+        @if (!loadingBooks() && !loadingCategories()) {
+        <product-list-sidebar [categories]="categories()" [selectedCategory]="filters().category"
+            (categoryChange)="updateFilters({ category: $event, page: 1 })" />
 
-        <main class="flex-1">
+        <div class="flex-1">
             <div class="mb-4 flex flex-col gap-4 sm:mb-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -19,8 +21,11 @@
                                 <path
                                     d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z">
                                 </path>
-                            </svg>Filters</button>
-                        <div class="text-muted-foreground flex items-center gap-2 text-sm">{{ numProducts }} livres
+                            </svg>
+                            Filters
+                        </button>
+                        <div class="text-muted-foreground flex items-center gap-2 text-sm">{{
+                            pagedBooks()!.totalElements ?? 0 }} livres
                         </div>
                     </div>
                 </div>
@@ -32,10 +37,21 @@
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="m21 21-4.3-4.3"></path>
                         </svg>
-                        <input data-slot="input"
+                        <input
                             class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border border-gray-100 bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive w-full pl-10 sm:w-64"
-                            placeholder="Search products..." value="">
+                            placeholder="Search products..." [value]="searchText" #searchInput>
                     </div>
+
+                    <button (click)="onSearchClick(searchInput.value)"
+                        class="inline-flex items-center justify-center p-2 gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] border bg-gray-900 text-white shadow-xs hover:bg-accent hover:text-accent-foreground">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="h-4 w-4">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                    </button>
+
                     <div class="sm:hidden">
                         <div role="group"
                             class="group/toggle-group flex w-fit items-center rounded-md data-[variant=outline]:shadow-xs"
@@ -72,61 +88,90 @@
                 </div>
             </div>
             <div class="grid gap-3 sm:gap-5 xs:grid-cols-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                @for (book of books; track book.id) {
+                @for (book of pagedBooks()?.content ?? []; track book.id) {
                 <book-card [book]="book"></book-card>
                 }
             </div>
 
+            @if (pagedBooks()?.content?.length) {
             <nav class="mt-5 mx-auto flex w-full justify-center">
                 <ul data-slot="pagination-content" class="flex flex-row items-center gap-1">
                     <li>
-                        <a class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pl-2.5"
-                            aria-label="Go to previous page" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left">
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pl-2.5"
+                            [disabled]="pagedBooks()?.first" aria-label="Go to previous page" type="button"
+                            (click)="goToPage(1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevrons-left-icon lucide-chevrons-left">
+                                <path d="m11 17-5-5 5-5" />
+                                <path d="m18 17-5-5 5-5" />
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5"
+                            [disabled]="pagedBooks()?.first" aria-label="Go to previous page" type="button"
+                            (click)="goToPage(filters().page - 1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-left">
                                 <path d="m15 18-6-6 6-6"></path>
                             </svg>
-                            <span class="hidden sm:block">Previous</span>
-                        </a>
+                        </button>
                     </li>
+
+                    @for(p of pages(); track p) {
                     <li>
-                        <a class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"
-                            href="#">1</a>
+                        <button
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"
+                            [class.bg-accent]="p === pagedBooks()!.number + 1"
+                            [class.text-accent-foreground]="p === pagedBooks()!.number + 1" (click)="goToPage(p)">
+                            {{ p }}
+                        </button>
                     </li>
-                    <li data-slot="pagination-item">
-                        <a class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 size-9"
-                            href="#">2</a>
-                    </li>
-                    <li data-slot="pagination-item">
-                        <a class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"
-                            href="#">3</a>
-                    </li>
-                    <li data-slot="pagination-item">
-                        <span aria-hidden="true" data-slot="pagination-ellipsis"
-                            class="flex size-9 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg"
-                                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="lucide lucide-ellipsis size-4">
-                                <circle cx="12" cy="12" r="1"></circle>
-                                <circle cx="19" cy="12" r="1"></circle>
-                                <circle cx="5" cy="12" r="1"></circle>
-                            </svg>
-                            <span class="sr-only">More pages</span>
-                        </span>
-                    </li>
+                    }
                     <li>
-                        <a class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
-                            aria-label="Go to next page" href="#">
-                            <span class="hidden sm:block">Next</span><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right">
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
+                            [disabled]="pagedBooks()?.last" (click)="goToPage(filters().page + 1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-right">
                                 <path d="m9 18 6-6-6-6"></path>
                             </svg>
-                        </a>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
+                            [disabled]="pagedBooks()?.last" (click)="goToPage(pagedBooks()!.totalPages)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevrons-right-icon lucide-chevrons-right">
+                                <path d="m6 17 5-5-5-5" />
+                                <path d="m13 17 5-5-5-5" />
+                            </svg>
+                        </button>
                     </li>
                 </ul>
             </nav>
-        </main>
+            }
+        </div>
+        }
+        @else {
+        <div class="flex flex-1 items-center justify-center">
+            <p class="text-center text-lg font-medium text-muted-foreground">
+                @if (errorMessage) {
+                {{ errorMessage }}
+                }
+                @else {
+                Loading products...
+                }
+            </p>
+        </div>
+        }
     </div>
 </main>
 

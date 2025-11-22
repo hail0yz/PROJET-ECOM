@@ -36,6 +36,10 @@ public class GetCartResponse {
 
         private double price;
 
+        private String image;
+
+        private String title;
+
     }
 
 }

@@ -12,8 +12,8 @@ import org.ecom.customerservice.model.Ticket;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
-    Optional<Ticket> findByIdAndCustomerId(Long ticketId, Long customerId);
+    Optional<Ticket> findByIdAndCustomerId(Long ticketId, String customerId);
 
-    Page<Ticket> findByCustomerId(Long customerId, Pageable pageable);
+    Page<Ticket> findByCustomerId(String customerId, Pageable pageable);
 
 }

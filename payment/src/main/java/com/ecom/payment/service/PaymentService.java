@@ -60,6 +60,7 @@ public class PaymentService {
                     .transactionId(transactionId)
                     .stripePaymentIntentId(paymentIntent.getId())
                     .customerEmail(request.getCustomerEmail())
+                    .customerId(request.getCustomerId())
                     .build();
             
             Payment savedPayment = paymentRepository.save(payment);
@@ -234,7 +235,7 @@ public class PaymentService {
     }
     
     @Transactional(readOnly = true)
-    public PaymentDTO getPaymentByOrderId(Integer orderId) {
+    public PaymentDTO getPaymentByOrderId(String orderId) {
         log.info("Fetching payment for order ID: {}", orderId);
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment not found for order ID: " + orderId));
@@ -242,7 +243,7 @@ public class PaymentService {
     }
     
     @Transactional(readOnly = true)
-    public List<PaymentDTO> getAllPaymentsByOrderId(Integer orderId) {
+    public List<PaymentDTO> getAllPaymentsByOrderId(String orderId) {
         log.info("Fetching all payments for order ID: {}", orderId);
         return paymentRepository.findAllByOrderId(orderId).stream()
                 .map(this::mapToDTO)
@@ -428,6 +429,7 @@ public class PaymentService {
                 .stripeChargeId(payment.getStripeChargeId())
                 .failureReason(payment.getFailureReason())
                 .customerEmail(payment.getCustomerEmail())
+                .customerId(payment.getCustomerId())
                 .build();
     }
 }

@@ -1,8 +1,11 @@
 package com.ecom.bookService.reader;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.Stream;
 
 import org.springframework.boot.CommandLineRunner;
@@ -10,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import com.ecom.bookService.model.Book;
+import com.ecom.bookService.model.BookInventory;
 import com.ecom.bookService.model.Category;
 import com.ecom.bookService.repository.BookRepository;
 import com.ecom.bookService.repository.CategoryRepository;
@@ -26,6 +30,8 @@ public class BookDataLoader implements CommandLineRunner {
     private final BookRepository bookRepository;
     private final BookCsvParser csvParser;
     private final BookDataValidator bookCsvValidator;
+    private final static Random random = new Random();
+    private final static RandomGenerator rg = RandomGenerator.getDefault();
 
     public void run(String... args) {
         if (bookRepository.count() > 0) {
@@ -138,6 +144,7 @@ public class BookDataLoader implements CommandLineRunner {
         book.setTitle(record.getTitle().trim());
         book.setSubtitle(record.getSubtitle() != null ? record.getSubtitle().trim() : null);
         book.setAuthor(record.getAuthors().trim());
+        book.setPrice(BigDecimal.valueOf((rg.nextDouble() * 100) + 99));
         // TODO book.setCategories(record.getCategories().trim());
         book.setThumbnail(record.getThumbnail());
         book.setSummary(record.getDescription());
@@ -149,6 +156,12 @@ public class BookDataLoader implements CommandLineRunner {
         if (record.getNumPages() != null) {
             book.setNumPages(Integer.parseInt(record.getNumPages()));
         }
+
+        BookInventory inventory = BookInventory.builder()
+                .availableQuantity(random.nextInt(100) + 10)
+                .reservedQuantity(0)
+                .build();
+        book.setInventory(inventory);
 
         return book;
     }

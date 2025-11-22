@@ -1,5 +1,5 @@
 import { Category } from '@/app/core/models/category.model';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'product-list-sidebar',
@@ -8,9 +8,13 @@ import { Component, Input } from '@angular/core';
 })
 export class SidebarComponent {
   @Input() categories: Category[] = [];
+  @Input() selectedCategory?: number | undefined;
 
-  onCategoryChange(categoryId: number): void {
+  @Output() categoryChange = new EventEmitter<number | undefined>();
+
+  onCategorySelect(categoryId: number | undefined) {
     console.log('Selected category ID:', categoryId);
+    this.categoryChange.emit(categoryId);
   }
 
 }

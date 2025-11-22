@@ -58,10 +58,25 @@ public class Book {
 
     private Integer numPages;
 
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    private BookInventory inventory;
+
+    // ----------- Optimistic Locking -----------
+
+    @Version
+    private Long version;
+
+    // ----------- Audit -----------
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void setInventory(BookInventory inventory) {
+        this.inventory = inventory;
+        inventory.setBook(this);
+    }
 
 }
