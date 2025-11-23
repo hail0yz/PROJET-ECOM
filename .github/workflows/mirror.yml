@@ -15,7 +15,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+          persist-credentials: false 
+
+      - name: Set git identity
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions"
+
       - name: Mirror to destination
         run: |
           git remote add mirror https://x-access-token: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@github.com/MedAfkir/ecom-deployment.git
