@@ -2,9 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from '../layout/layout.component';
-import { CustomerService, CustomerDTO } from '@/app/core/services/customer.service';
+import { CustomerService } from '@/app/core/services/customer.service';
 import { Page } from '@/app/core/models/page.model';
 import { catchError, finalize, of } from 'rxjs';
+import { CustomerAPI } from '@/app/core/models/customer.model';
 
 @Component({
     selector: 'admin-customers',
@@ -14,7 +15,7 @@ import { catchError, finalize, of } from 'rxjs';
 export class AdminCustomersPage implements OnInit {
     private customerService = inject(CustomerService);
 
-    customers: CustomerDTO[] = [];
+    customers: CustomerAPI[] = [];
     loading = false;
     error: string | null = null;
     currentPage = 0;
@@ -54,7 +55,7 @@ export class AdminCustomersPage implements OnInit {
                         numberOfElements: 0,
                         first: true,
                         last: true
-                    } as Page<CustomerDTO>);
+                    } as Page<CustomerAPI>);
                 }),
                 finalize(() => this.loading = false)
             )

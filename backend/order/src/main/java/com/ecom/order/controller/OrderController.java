@@ -7,6 +7,7 @@ import java.util.UUID;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,21 +60,29 @@ public class OrderController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByCustomerId(
+    public ResponseEntity<Page<OrderResponse>> getOrdersByCustomerId(
             @PathVariable String customerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size).getContent());
+        return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<OrderResponse>> getMyOrders(
+    public ResponseEntity<Page<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal(expression = "subject") String customerId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size).getContent());
+        return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size));
+    }
+
+    @PreAuthorize("@orderService.isOrderOwner(#orderId, authentication.principal.getClaim('sub'))")
+    @PostMapping("/{order-id}/confirm-payment")
+    public ResponseEntity<com.ecom.order.payment.PaymentResponse> confirmPayment(
+            @PathVariable("order-id") UUID orderId
+    ) {
+        return ResponseEntity.ok(this.orderService.confirmOrderPayment(orderId));
     }
 
 }

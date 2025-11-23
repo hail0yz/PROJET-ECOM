@@ -18,7 +18,7 @@ public class PaymentService {
 
     private final PaymentClient paymentClient;
 
-    public Long createPayment(CreatePaymentRequest request) {
+    public PaymentResponse createPayment(CreatePaymentRequest request) {
         ResponseEntity<PaymentResponse> response = paymentClient.createPayment(request);
 
         if (!response.getStatusCode().isSameCodeAs(HttpStatus.CREATED)) {
@@ -30,7 +30,17 @@ public class PaymentService {
             throw new PaymentFailedException();
         }
 
-        return response.getBody().paymentId();
+        return response.getBody();
+    }
+
+    public PaymentResponse syncPayment(Long paymentId) {
+        ResponseEntity<PaymentResponse> response = paymentClient.syncPayment(paymentId);
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new PaymentFailedException();
+        }
+
+        return response.getBody();
     }
 
 }

@@ -53,6 +53,8 @@ public class Order {
 
     private String customerId;
 
+    private Long cartId;
+
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime modifiedDate;

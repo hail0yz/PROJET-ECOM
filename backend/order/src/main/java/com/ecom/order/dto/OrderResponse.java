@@ -1,5 +1,6 @@
 package com.ecom.order.dto;
 
+import com.ecom.order.model.OrderStatus;
 import com.ecom.order.model.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +16,23 @@ import java.util.List;
 @Builder
 public class OrderResponse {
     private String orderId;
+    private Long cartId;
     private String reference;
     private String customerId;
     private PaymentMethod payment_method;
     private BigDecimal amount;
     private List<OrderLineResponse> lines;
+    private OrderStatus status;
+    private DeliveryInfo deliveryInfo;
+
+    public record DeliveryInfo(
+            String address1,
+            String address2,
+            String city,
+            String state,
+            String postalCode,
+            String country
+    ) {
+    }
+
 }

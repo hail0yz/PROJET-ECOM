@@ -36,6 +36,8 @@ public class Cart {
     @Builder.Default
     private CartStatus status = CartStatus.OPEN;
 
+    private LocalDateTime resolvedAt;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

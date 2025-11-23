@@ -35,7 +35,7 @@ export class AdminOrdersPage implements OnInit {
                 }),
                 finalize(() => this.loading = false)
             )
-            .subscribe(orders => {
+            .subscribe((orders: OrderResponse[]) => {
                 this.orders = orders;
             });
     }

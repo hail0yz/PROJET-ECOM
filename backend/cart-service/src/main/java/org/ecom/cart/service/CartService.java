@@ -1,5 +1,6 @@
 package org.ecom.cart.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -58,6 +59,14 @@ public class CartService {
         return cartMapper.mapCart(cart);
     }
 
+    public void completeCart(Long cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found with ID: " + cartId));
+        cart.setStatus(CartStatus.COMPLETE);
+        cart.setResolvedAt(LocalDateTime.now());
+        cartRepository.save(cart);
+    }
+
     public CreateCartResponse createCart(CreateCartRequest request, String customerId) {
         log.info("Creating Cart customerId={}, Request={}", customerId, request);
         boolean exists = cartRepository.existsByUserIdAndStatus(customerId, CartStatus.OPEN);
@@ -99,7 +108,7 @@ public class CartService {
     }
 
     public boolean isCartOwner(Long cartId, String customerId) {
-        return cartRepository.existsByIdAndUserIdAndStatus(cartId, customerId, CartStatus.OPEN);
+        return cartRepository.existsByIdAndUserId(cartId, customerId);
     }
 
     public boolean isCurrentCartOwner(String customerId) {

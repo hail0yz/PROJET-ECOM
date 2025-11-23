@@ -50,20 +50,17 @@ export class CartPage implements OnInit {
     console.log('place order')
     const cart = this.cart();
     if (cart != undefined) {
-      const orderRequest = {
-        cartId: cart.id,
-        address: {
-          street: 'string',
-          city: 'string',
-          postalCode: 'string',
-          country: 'string'
-        },
-        paymentDetails: {
-          paymentMethod: "VISA"
-        }
-      }
+      const address = {
+        street: 'string',
+        city: 'string',
+        postalCode: 'string',
+        country: 'string'
+      };
+      const paymentDetails = {
+        paymentMethod: "VISA"
+      };
       console.log('place order 2')
-      this.orderService.placeOrder(orderRequest)
+      this.orderService.placeOrder(cart.id, address, paymentDetails)
         .subscribe({
           next: () => console.log('order placed'),
           error: () => console.error('failed to place order'),

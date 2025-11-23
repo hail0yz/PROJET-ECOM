@@ -2,6 +2,8 @@ package com.ecom.order.dto;
 
 import java.util.UUID;
 
+import com.ecom.order.model.OrderStatus;
+import com.ecom.order.payment.PaymentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +17,21 @@ public class PlaceOrderResponse {
 
     private UUID orderId;
 
-    private Long paymentId;
+    private PaymentDetails paymentDetails;
+
+    private OrderStatus orderStatus;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PaymentDetails {
+        private Long paymentId;
+        private String paymentStatus;
+        private String transactionId;
+        private String paymentMethod;
+        private String stripePaymentIntentId;
+        private String clientSecret;
+    }
 
 }

@@ -6,7 +6,7 @@ import { OrderService } from '@/app/core/services/order.service';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { catchError, finalize, of } from 'rxjs';
-import { OrderResponse } from '@/app/core/models/order.model';
+import { OrderResponse, OrderStatus } from '@/app/core/models/order.model';
 
 @Component({
     selector: 'app-orders',
@@ -46,12 +46,12 @@ export class OrdersPage implements OnInit {
                 catchError(err => {
                     this.error = 'Failed to load orders';
                     console.error(err);
-                    return of([]);
+                    return of({ content: [], totalElements: 0, totalPages: 0 });
                 }),
                 finalize(() => this.loading = false)
             )
-            .subscribe(orders => {
-                this.orders = orders;
+            .subscribe(page => {
+                this.orders = page.content;
             });
     }
 
@@ -67,8 +67,37 @@ export class OrdersPage implements OnInit {
     formatCurrency(amount: number): string {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD'
+            currency: 'EUR'
         }).format(amount);
     }
+
+    getStatusClass(status?: string): string {
+        if (!status) return 'bg-gray-100 text-gray-800';
+
+        const statusUpper = status.toUpperCase();
+        switch (statusUpper) {
+            case OrderStatus.PENDING:
+            case OrderStatus.PAYMENT_PENDING:
+                return 'bg-yellow-100 text-yellow-800';
+            case OrderStatus.FAILED:
+            case OrderStatus.PAYMENT_FAILED:
+                return 'bg-red-100 text-red-800';
+            case OrderStatus.CANCELLED:
+                return 'bg-gray-100 text-gray-800';
+            case OrderStatus.COMPLETED:
+                return 'bg-green-100 text-green-800';
+            case OrderStatus.PROCESSING:
+                return 'bg-blue-100 text-blue-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
+    }
+
+    getStatusLabel(status?: string): string {
+        if (!status) return 'Unknown';
+        return status.replace(/_/g, ' ').toLowerCase()
+            .replace(/\b\w/g, l => l.toUpperCase());
+    }
+
 }
 

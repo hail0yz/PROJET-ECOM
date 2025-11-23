@@ -18,7 +18,7 @@ public class CartService {
 
     private final RestClient.Builder restClient;
 
-    public CartDetails getCartById(Long cartId) { // TODO set Authorization Header - Bearer token
+    public CartDetails getCartById(Long cartId) {
         log.info("Getting cart by id {}", cartId);
         return restClient.build().get()
                 .uri("http://cart-service/api/v1/carts/{cartId}", cartId)
@@ -36,6 +36,26 @@ public class CartService {
                     throw new BadREquestException();
                 })
                 .body(CartDetails.class);
+    }
+
+    public void completeCart(Long cartId) {
+        log.info("Completing cart : {}", cartId);
+        restClient.build().patch()
+                .uri("http://cart-service/api/v1/carts/{cartId}/complete", cartId)
+                .retrieve()
+                .onStatus(httpStatusCode -> !httpStatusCode.isSameCodeAs(HttpStatus.OK), (request, response) -> {
+                    if (response.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                        log.error("Cart not found (cartId={})", cartId);
+                        throw new EntityNotFoundException("Cart not found with id : " + cartId);
+                    }
+                    if (response.getStatusCode().is5xxServerError()) {
+                        log.error("Failed to get cart : Server Error " + response);
+                        throw new ExternalServiceException("Customer service unavailable");
+                    }
+
+                    throw new BadREquestException();
+                })
+                .toBodilessEntity();
     }
 
 }

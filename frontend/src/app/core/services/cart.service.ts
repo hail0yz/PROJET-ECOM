@@ -97,6 +97,10 @@ export class CartService {
     return this.cart$.pipe(map(cart => cart.items));
   }
 
+  getCartById(cartId: number): Observable<GetCartResponseAPI> {
+    return this.http.get<GetCartResponseAPI>(this.getCartByIdUrl(cartId));
+  }
+
   refreshCart() {
     if (!this.isAuthenticated()) {
       this.loadLocalCart();
@@ -523,6 +527,12 @@ export class CartService {
 
   private handleLogout(): void {
     //this.saveToLocalOnLogout();
+  }
+
+  markCartAsCompleted() {
+    // empty the cart upon order completion (not persisted !)
+    const emptyCart: Cart = { id: 0, items: [], local: true, persisted: false }
+    this.cartSubject.next(emptyCart);
   }
 
 }

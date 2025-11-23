@@ -1,7 +1,7 @@
 import { Book } from '@/app/core/models/book.model';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, forkJoin, map, Observable, throwError } from 'rxjs';
 import { Page } from '@core/models/page.model';
 import { Router } from '@angular/router';
 import { environment } from '@/app/environment';
@@ -110,6 +110,36 @@ export class BooksService {
         }
         return throwError(() => error);
       })
+    );
+  }
+
+  public getBooksByIds(ids: number[]): Observable<Book[]> {
+    if (ids.length === 0) {
+      return new Observable(observer => {
+        observer.next([]);
+        observer.complete();
+      });
+    }
+    
+    // Remove duplicates
+    const uniqueIds = [...new Set(ids)];
+    
+    // Fetch all books in parallel
+    const requests = uniqueIds.map(id => 
+      this.getBookById(id).pipe(
+        catchError((error: HttpErrorResponse) => {
+          console.warn(`Failed to fetch book with id ${id}:`, error);
+          // Return null for failed requests, we'll filter them out
+          return new Observable<Book | null>(observer => {
+            observer.next(null);
+            observer.complete();
+          });
+        })
+      )
+    );
+    
+    return forkJoin(requests).pipe(
+      map(books => books.filter((book): book is Book => book !== null))
     );
   }
 

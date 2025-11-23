@@ -15,7 +15,9 @@
     </div>
     } @else if(orders.length === 0) {
     <div class="bg-white rounded-lg shadow p-12 text-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="mx-auto mb-4 text-gray-400">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -23,7 +25,8 @@
         </svg>
         <h3 class="text-xl font-semibold text-gray-900 mb-2">No orders yet</h3>
         <p class="text-gray-600 mb-6">You haven't placed any orders yet.</p>
-        <a routerLink="/products" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+        <a routerLink="/products"
+            class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-gray-900 text-white shadow-xs hover:bg-gray-900/90 h-9 px-4 py-2">
             Browse Products
         </a>
     </div>
@@ -41,8 +44,9 @@
                 <div class="text-right">
                     <p class="text-lg font-semibold text-gray-900">{{ formatCurrency(order.amount) }}</p>
                     @if(order.status) {
-                    <span class="inline-block mt-1 px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                        {{ order.status }}
+                    <span
+                        [class]="'inline-block mt-1 px-3 py-1 text-xs font-medium rounded-full ' + getStatusClass(order.status)">
+                        {{ getStatusLabel(order.status) }}
                     </span>
                     }
                 </div>
@@ -63,4 +67,3 @@
     }
 </div>
 <app-footer></app-footer>
-

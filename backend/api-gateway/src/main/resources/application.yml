@@ -68,6 +68,13 @@ spring:
               - RewritePath=/api/customers/?(?<segment>.*), /api/v1/customers/$\{segment}
               - RemoveRequestHeader=Cookie
 
+          - id: payment-service
+            uri: lb://payment-service
+            predicates:
+              - Path=/api/payments/**
+            filters:
+              - RemoveRequestHeader=Cookie
+
 eureka:
   instance:
     prefer-ip-address: true

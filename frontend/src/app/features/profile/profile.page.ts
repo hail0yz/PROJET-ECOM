@@ -1,12 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import Keycloak from 'keycloak-js';
-import { CustomerService, CustomerProfileDTO, CustomerPreferencesDTO, UpdatePreferencesRequest } from '@/app/core/services/customer.service';
+
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { catchError, finalize, of } from 'rxjs';
+import { CustomerService } from '@/app/core/services/customer.service';
+import { CustomerPreferencesAPI, CustomerProfileAPI, UpdatePreferencesRequest } from '@/app/core/models/customer.model';
 
 @Component({
     selector: 'app-profile',
@@ -18,8 +20,8 @@ export class ProfilePage implements OnInit {
     private customerService = inject(CustomerService);
     private fb = inject(FormBuilder);
 
-    profile: CustomerProfileDTO | null = null;
-    preferences: CustomerPreferencesDTO | null = null;
+    profile: CustomerProfileAPI | null = null;
+    preferences: CustomerPreferencesAPI | null = null;
     preferencesForm!: FormGroup;
     loading = false;
     error: string | null = null;

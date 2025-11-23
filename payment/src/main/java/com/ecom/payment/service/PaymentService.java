@@ -198,6 +198,65 @@ public class PaymentService {
             throw new RefundFailedException("Failed to refund payment with Stripe: " + e.getMessage());
         }
     }
+
+    @Transactional
+    public PaymentResponse confirmPayment(ConfirmPaymentRequest request) {
+        log.info("Confirming payment from client for paymentIntentId: {}", request.getPaymentIntentId());
+
+        Payment payment = null;
+
+        if (request.getPaymentIntentId() != null) {
+            payment = paymentRepository.findByStripePaymentIntentId(request.getPaymentIntentId()).orElse(null);
+        }
+
+        if (payment == null && request.getTransactionId() != null) {
+            payment = paymentRepository.findByTransactionId(request.getTransactionId()).orElse(null);
+        }
+
+        if (payment == null && request.getOrderId() != null) {
+            payment = paymentRepository.findByOrderId(request.getOrderId()).orElse(null);
+        }
+
+        if (payment == null) {
+            throw new PaymentNotFoundException("Payment not found for provided identifiers");
+        }
+
+        // Update transactionId if provided by client
+        if (request.getTransactionId() != null && (payment.getTransactionId() == null || !payment.getTransactionId().equals(request.getTransactionId()))) {
+            payment.setTransactionId(request.getTransactionId());
+        }
+
+        String status = request.getPaymentStatus() != null ? request.getPaymentStatus().toLowerCase() : "";
+
+        switch (status) {
+            case "succeeded":
+            case "success":
+                payment.setStatus(PaymentStatus.COMPLETED);
+                break;
+            case "processing":
+                payment.setStatus(PaymentStatus.PROCESSING);
+                break;
+            case "requires_action":
+            case "requires_payment_method":
+                payment.setStatus(PaymentStatus.REQUIRES_ACTION);
+                break;
+            case "canceled":
+            case "cancelled":
+                payment.setStatus(PaymentStatus.CANCELLED);
+                break;
+            case "refunded":
+                payment.setStatus(PaymentStatus.REFUNDED);
+                break;
+            default:
+                payment.setStatus(PaymentStatus.FAILED);
+                payment.setFailureReason("Client reported status: " + request.getPaymentStatus());
+        }
+
+        paymentRepository.save(payment);
+
+        log.info("Payment confirmed/updated - ID: {}, new status: {}", payment.getPaymentId(), payment.getStatus());
+        return buildPaymentResponse(payment, "Payment status updated from client confirmation");
+    }
     
     @Transactional
     public void cancelPayment(Integer paymentId) {

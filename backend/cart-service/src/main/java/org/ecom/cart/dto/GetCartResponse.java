@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -19,13 +20,18 @@ public class GetCartResponse {
 
     private String userId;
 
-    private List<CartItem> items;
+    @Builder.Default
+    private List<CartItem> items = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    private BigDecimal totalPrice;
+    public BigDecimal getTotalPrice() {
+        return items.stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
     @Data
     public static class CartItem {
@@ -34,7 +40,7 @@ public class GetCartResponse {
 
         private int quantity;
 
-        private double price;
+        private BigDecimal price;
 
         private String image;
 

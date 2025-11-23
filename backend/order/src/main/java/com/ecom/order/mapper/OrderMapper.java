@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ecom.order.dto.OrderLineResponse;
 import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.model.Order;
 import com.ecom.order.model.OrderLine;
 
@@ -22,8 +23,18 @@ public class OrderMapper {
         return OrderResponse.builder()
                 .orderId(order.getId().toString())
                 .amount(order.getTotalAmount())
+                .cartId(order.getCartId())
                 .customerId(order.getCustomerId())
                 .lines(lines)
+                .status(order.getStatus())
+                .deliveryInfo(new OrderResponse.DeliveryInfo(
+                        order.getDeliveryInfo().address1(),
+                        order.getDeliveryInfo().address2(),
+                        order.getDeliveryInfo().city(),
+                        order.getDeliveryInfo().state(),
+                        order.getDeliveryInfo().postalCode(),
+                        order.getDeliveryInfo().country()
+                ))
                 //.payment_method(order.getPaymentInfo() != null ? order.getPaymentInfo().paymentMethod() : null)
                 .build();
     }

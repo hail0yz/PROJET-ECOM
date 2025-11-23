@@ -1,5 +1,7 @@
 package org.ecom.cart.model;
 
 public enum CartStatus {
-    OPEN
+    OPEN,
+    COMPLETE,
+    TEST
 }
