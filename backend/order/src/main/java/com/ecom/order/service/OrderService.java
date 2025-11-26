@@ -4,7 +4,6 @@ package com.ecom.order.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -61,10 +60,7 @@ public class OrderService {
     public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
         log.info("Placing order customerId={}, request={}", customerId, orderRequest);
 
-        Optional<Order> optionalOrder = orderRepo.findByCartIdAndCustomerId(orderRequest.getCartId(), customerId);
-        if (optionalOrder.isPresent()) {
-            throw new OrderAlreadyExistsException(optionalOrder.get().getId(), "Order already exists");
-        }
+        validateOrderDoesNotExist(orderRequest.getCartId(), customerId);
 
         CompletableFuture<CustomerDetails> customerFuture = CompletableFuture
                 .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor);
@@ -77,69 +73,98 @@ public class OrderService {
         CustomerDetails customer = customerFuture.join();
         CartDetails cart = cartFuture.join();
 
-        Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
+        Order order = createAndSaveOrder(orderRequest, customer, cart);
 
         if (!reserveStockAndHandleFailure(cart, order)) {
             return orderMapper.mapToPlaceOrderResponse(order);
         }
 
-        var paymentDetails = processOrderPayment(customer, order, cart);
+        var paymentDetails = processPayment(customer, order, cart);
 
-        if (paymentDetails == null) {
-            CompletableFuture.runAsync(
-                    () -> inventoryService.releaseReservation(order.getId().toString()),
-                    taskExecutor
-            );
-        }
-        else {
-            CompletableFuture.runAsync(() -> cartService.completeCart(cart.id()), taskExecutor);
-        }
+        handlePostPaymentActions(order, cart, paymentDetails);
 
         // TODO publish event OrderPlaced
 
         log.info("Order placed successfully customerId={}, orderId={}", customerId, order.getId());
-        return PlaceOrderResponse.builder()
-                .orderId(order.getId())
-                .orderStatus(order.getStatus())
-                .paymentDetails(paymentDetails)
-                .build();
+        return buildPlaceOrderResponse(order, paymentDetails);
     }
 
-    private PlaceOrderResponse.PaymentDetails processOrderPayment(CustomerDetails customer, Order order, CartDetails cart) {
-        log.info("Process order payment for orderId={}", order.getId());
-        BigDecimal total = cart.items().stream()
+    private void validateOrderDoesNotExist(Long cartId, String customerId) {
+        orderRepo.findByCartIdAndCustomerId(cartId, customerId)
+                .ifPresent(order -> {
+                    throw new OrderAlreadyExistsException(order.getId(), "Order already exists");
+                });
+    }
+
+    private Order createAndSaveOrder(OrderRequest request, CustomerDetails customer, CartDetails cart) {
+        Order order = createOrderFromCart(request, customer, cart);
+        return orderRepo.save(order);
+    }
+
+    private PlaceOrderResponse.PaymentDetails processPayment(CustomerDetails customer, Order order, CartDetails cart) {
+        BigDecimal total = calculateTotal(cart);
+        CreatePaymentRequest paymentRequest = buildPaymentRequest(customer, order, total);
+
+        try {
+            PaymentResponse paymentResponse = paymentService.createPayment(paymentRequest);
+            updateOrderWithPayment(order, paymentResponse);
+            return buildPaymentDetails(paymentResponse);
+        }
+        catch (PaymentFailedException e) {
+            log.error("Payment failed for orderId={}", order.getId(), e);
+            order.setStatus(OrderStatus.PAYMENT_FAILED);
+            orderRepo.save(order);
+            return null;
+        }
+    }
+
+    private BigDecimal calculateTotal(CartDetails cart) {
+        return cart.items().stream()
                 .map(CartDetails.CartItem::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
+    }
+
+    private CreatePaymentRequest buildPaymentRequest(CustomerDetails customer, Order order, BigDecimal total) {
+        return CreatePaymentRequest.builder()
                 .paymentMethod(order.getPaymentInfo().getPaymentMethod())
                 .customerId(customer.id())
                 .customerEmail(customer.email())
                 .orderId(order.getId().toString())
                 .amount(total)
                 .build();
+    }
 
-        try {
-            log.info("Payment created successfully paymentId={}", order.getPaymentInfo().getPaymentId());
-            PaymentResponse paymentResponse = paymentService.createPayment(createPaymentRequest);
-            order.setStatus(OrderStatus.PAYMENT_PENDING);
-            order.getPaymentInfo().setPaymentId(paymentResponse.paymentId());
+    private void updateOrderWithPayment(Order order, PaymentResponse paymentResponse) {
+        order.setStatus(OrderStatus.PAYMENT_PENDING);
+        order.getPaymentInfo().setPaymentId(paymentResponse.paymentId());
+        orderRepo.save(order);
+    }
 
-            orderRepo.save(order);
+    private PlaceOrderResponse.PaymentDetails buildPaymentDetails(PaymentResponse paymentResponse) {
+        return PlaceOrderResponse.PaymentDetails.builder()
+                .paymentId(paymentResponse.paymentId())
+                .paymentStatus(paymentResponse.status().toString())
+                .stripePaymentIntentId(paymentResponse.stripePaymentIntentId())
+                .clientSecret(paymentResponse.clientSecret())
+                .transactionId(paymentResponse.transactionId())
+                .build();
+    }
 
-            return PlaceOrderResponse.PaymentDetails.builder()
-                    .paymentId(paymentResponse.paymentId())
-                    .paymentStatus(paymentResponse.status().toString())
-                    .stripePaymentIntentId(paymentResponse.stripePaymentIntentId())
-                    .clientSecret(paymentResponse.clientSecret())
-                    .transactionId(paymentResponse.transactionId())
-                    .build();
+    private void handlePostPaymentActions(Order order, CartDetails cart, PlaceOrderResponse.PaymentDetails paymentDetails) {
+        if (paymentDetails == null) {
+            CompletableFuture.runAsync(() -> inventoryService.releaseReservation(order.getId().toString()), taskExecutor);
         }
-        catch (PaymentFailedException exception) {
-            log.info("Payment failed paymentId={}", order.getPaymentInfo().getPaymentId());
-            order.setStatus(OrderStatus.PAYMENT_FAILED);
-            orderRepo.save(order);
-            return null;
+        else {
+            CompletableFuture.runAsync(() -> cartService.completeCart(cart.id()), taskExecutor);
         }
+    }
+
+    private PlaceOrderResponse buildPlaceOrderResponse(Order order, PlaceOrderResponse.PaymentDetails paymentDetails) {
+        return PlaceOrderResponse.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getStatus())
+                .paymentDetails(paymentDetails)
+                .build();
     }
 
     private boolean reserveStockAndHandleFailure(CartDetails cart, Order order) {
