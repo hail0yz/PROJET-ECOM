@@ -215,7 +215,7 @@ public class OrderService {
 
         switch (paymentResponse.status()) {
             case COMPLETED:
-                order.setStatus(OrderStatus.COMPLETED);
+                order.setStatus(OrderStatus.CONFIRMED);
                 break;
             case PROCESSING:
             case PENDING:

@@ -15,5 +15,5 @@ public enum OrderStatus {
     RETURN_REQUESTED,
     REFUNDED,
     RETURNED,
-    COMPLETED
+    CONFIRMED
 }
