@@ -40,10 +40,19 @@ cd PROJECT-ECOM
 ### Attribution des rôles
 
 1. Aller sur [Realms](http://localhost:8088/admin/master/console/#/master/realms) et sélectionner le realm `ecom`
+   
+    ![Select ecom realm](./select-ecom-realm.png)
+    *Sélectionner le realm `ecom` dans l'interface Keycloak.*
 2. Accéder aux [Clients](http://localhost:8088/admin/master/console/#/ecom/clients)
+
+    ![Clients list for ecom realm](./ecom-realm-clients.png)
+    *Liste des clients du realm `ecom`.*
 3. Sélectionner le client `customer-service-client`
 4. Aller sur l'onglet `Service accounts roles`
 5. Cliquer sur `Assign role` > `Client roles`
+   
+    ![Assign service account roles](./assign-client-roles.png)
+    *Attribuer les rôles de service au compte de service du client `customer-service-client`.*
 6. Selectionnez :
    - `view-users`
    - `query-users`
@@ -54,10 +63,26 @@ cd PROJECT-ECOM
 ### Mise à jour du client secret
 
 1. Onglet Credentials 
-2. Cliquer sur Regenerate 
-3. Copier le nouveau secret 
-4. Mettre à jour dans : `backend/customer-service/src/main/resources/application.yml` la propriété `keycloak.client-secret`:
-    ```yml
-    keycloak:
-        client-secret: <nouveau-secret>
-   ```
+2. Cliquer sur `Regenerate` (ou `Copy secret`) et copier le nouveau code secret
+
+    ![Copy client secret](./copy-client-secret.png)
+    *Copier le secret du client depuis l'onglet `Credentials`.*
+3. Définir la variable d'environnement dans IntelliJ pour le service `customer-service` :
+
+    ```bash
+    KEYCLOAK_CLIENT_SECRET=<votre_secret>
+    ```
+
+### Exemple : ajouter la variable d'environnement dans IntelliJ
+
+Ouvrez la configuration d'exécution (`Run -> Edit Configurations`) pour l'application `CustomerServiceApplication`, puis utilisez `Modify options -> Environment variables` pour ajouter `KEYCLOAK_CLIENT_SECRET`.
+
+*Cliquer sur `Modify options` puis activer `Environment variables`.*
+
+![IntelliJ - run configuration (2)](./customer-service-modify-options.png)
+![IntelliJ - run configuration (2)](./customer-service-enable-env-vars.png)
+
+*Ouvrir la configuration d'exécution et repérer le champ `Environment variables`.*
+
+*Saisir `KEYCLOAK_CLIENT_SECRET=<votre_secret>` dans le champ `Environment variables`.*
+![IntelliJ - run configuration (1)](./customer-service-set-var-env.png)
