@@ -125,7 +125,7 @@ export class ProductListPage implements OnInit {
   }
 
   onSearchClick(searchText: string) {
-    this.updateFilters({ search: searchText, page: 1 });
+    this.updateFilters({ search: searchText.trim(), page: 1 });
   }
 
 }

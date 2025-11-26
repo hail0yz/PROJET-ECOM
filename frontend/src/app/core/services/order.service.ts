@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { PlaceOrderRequestAPI } from '@/app/core/models/order.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { PlaceOrderRequestAPI, PlaceOrderResponseAPI, OrderResponse } from '@/app/core/models/order.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -20,9 +21,35 @@ export class OrderService {
         paymentDetails: {
             paymentMethod: string
         }
-    ) {
+    ): Observable<PlaceOrderResponseAPI> {
         const request: PlaceOrderRequestAPI = { cartId, address, paymentDetails }
-        return this.http.post<void>(this.orderServiceURL, request);
+        return this.http.post<PlaceOrderResponseAPI>(this.orderServiceURL, request);
+    }
+
+    getOrders(page: number = 0, size: number = 10): Observable<{ content: OrderResponse[], totalElements: number, totalPages: number }> {
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+        return this.http.get<{ content: OrderResponse[], totalElements: number, totalPages: number }>(this.orderServiceURL, { params });
+    }
+
+    getOrderById(orderId: string): Observable<OrderResponse> {
+        return this.http.get<OrderResponse>(`${this.orderServiceURL}/${orderId}`);
+    }
+
+    getMyOrders(page: number = 0, size: number = 10): Observable<{ content: OrderResponse[], totalElements: number, totalPages: number }> {
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+        return this.http.get<{ content: OrderResponse[], totalElements: number, totalPages: number }>(`${this.orderServiceURL}/me`, { params });
+    }
+
+    getAllOrders(): Observable<OrderResponse[]> {
+        return this.http.get<OrderResponse[]>(this.orderServiceURL);
+    }
+
+    confirmPayment(orderId: string): Observable<any> {
+        return this.http.post<any>(`${this.orderServiceURL}/${orderId}/confirm-payment`, {});
     }
 
 }

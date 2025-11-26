@@ -186,4 +186,11 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/{cartId}/complete")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or @cartService.isCartOwner(#cartId, authentication.principal.getClaim('sub'))")
+    public ResponseEntity<Void> completeCart(@PathVariable Long cartId) {
+        cartService.completeCart(cartId);
+        return ResponseEntity.ok().build();
+    }
+
 }

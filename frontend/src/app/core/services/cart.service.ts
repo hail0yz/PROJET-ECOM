@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throw
 import Keycloak from 'keycloak-js';
 
 import { Cart, CartEntryAPI, CartItem, CreateCartRequestAPI, CreateCartResponseAPI, GetCartResponseAPI } from '@/app/core/models/cart.model';
+import { environment } from '@/app/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { Cart, CartEntryAPI, CartItem, CreateCartRequestAPI, CreateCartResponseA
 export class CartService {
   private readonly keycloak = inject(Keycloak);
   private readonly CART_LOCAL_KEY = 'cart_items';
-  private API_URL = 'http://localhost:8080/api/carts';
+  private API_URL = `${environment.apiBaseUrl}/api/carts`;
 
   private readonly cartSubject = new BehaviorSubject<Cart>({ id: 0, items: [], local: true, persisted: false });
   private readonly cartIdSubject = new BehaviorSubject<string | null>(null);
@@ -94,6 +95,10 @@ export class CartService {
 
   getCartItems(): Observable<CartItem[]> {
     return this.cart$.pipe(map(cart => cart.items));
+  }
+
+  getCartById(cartId: number): Observable<GetCartResponseAPI> {
+    return this.http.get<GetCartResponseAPI>(this.getCartByIdUrl(cartId));
   }
 
   refreshCart() {
@@ -522,6 +527,12 @@ export class CartService {
 
   private handleLogout(): void {
     //this.saveToLocalOnLogout();
+  }
+
+  markCartAsCompleted() {
+    // empty the cart upon order completion (not persisted !)
+    const emptyCart: Cart = { id: 0, items: [], local: true, persisted: false }
+    this.cartSubject.next(emptyCart);
   }
 
 }

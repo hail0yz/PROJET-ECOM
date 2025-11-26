@@ -13,23 +13,19 @@ const isAccessAllowed = async (
     __: RouterStateSnapshot,
     authData: AuthGuardData
 ): Promise<boolean | UrlTree> => {
-    console.log('Auth Guard - route data:', route.data);
     if (route.data['public']) {
-        console.log('Auth Guard - route data: public');
         return true;
     }
-
-    const { authenticated, grantedRoles } = authData;
-    console.log('Auth Guard - authenticated:', authenticated);
-    console.log('Auth Guard - grantedRoles:', { grantedRoles });
 
     const requiredRole = route.data['role'];
     if (!requiredRole) {
         return false;
     }
 
+    const { authenticated, keycloak } = authData;
+
     const hasRequiredRole = (role: string): boolean =>
-        Object.values(grantedRoles.resourceRoles).some((roles) => roles.includes(role));
+        (keycloak.realmAccess?.roles ?? []).includes(role[0]);
 
     if (authenticated && hasRequiredRole(requiredRole)) {
         return true;

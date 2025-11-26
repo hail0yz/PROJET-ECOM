@@ -4,11 +4,19 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
-@Embeddable
-public record PaymentInfo(Long paymentId, String paymentMethod) {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public PaymentInfo withPaymentId(Long paymentId) {
-        return new PaymentInfo(paymentId, this.paymentMethod);
-    }
+@Embeddable
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PaymentInfo {
+    private Long paymentId;
+
+    private String paymentMethod;
 
 }

@@ -90,6 +90,7 @@ public class InventoryService {
 
             StockReservation reservation = StockReservation.builder()
                     .orderId(orderId)
+                    .status(ReservationStatus.RESERVED)
                     .expiresAt(Instant.now().plus(RESERVATION_DURATION_EXPIRE))
                     .build();
 

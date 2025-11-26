@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
@@ -9,7 +10,7 @@ import { OrderService } from '@/app/core/services/order.service';
 
 @Component({
   selector: 'app-cart-page',
-  imports: [NavbarComponent, FooterComponent, CurrencyPipe],
+  imports: [NavbarComponent, FooterComponent, CurrencyPipe, RouterModule],
   templateUrl: './cart.page.html',
 })
 export class CartPage implements OnInit {
@@ -54,10 +55,10 @@ export class CartPage implements OnInit {
         city: 'string',
         postalCode: 'string',
         country: 'string'
-      }
+      };
       const paymentDetails = {
         paymentMethod: "VISA"
-      }
+      };
       console.log('place order 2')
       this.orderService.placeOrder(cart.id, address, paymentDetails)
         .subscribe({

@@ -16,4 +16,7 @@ public interface InventoryClient {
     @PostMapping("/api/v1/inventory/cancel")
     void cancelStock(@RequestBody CancelStockRequest request);
 
+    @PostMapping("/api/v1/inventory/confirm")
+    void confirmReservation(@RequestBody ConfirmStockRequest request);
+
 }

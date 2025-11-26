@@ -14,5 +14,7 @@ public enum OrderStatus {
     FAILED,
     RESERVATION_FAILED,
     RETURN_REQUESTED,
-    RETURNED
+    REFUNDED,
+    RETURNED,
+    CONFIRMED
 }

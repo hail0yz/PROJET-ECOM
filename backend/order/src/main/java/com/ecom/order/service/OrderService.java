@@ -4,11 +4,12 @@ package com.ecom.order.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
+
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import com.ecom.order.model.OrderStatus;
 import com.ecom.order.model.PaymentInfo;
 import com.ecom.order.payment.CreatePaymentRequest;
 import com.ecom.order.payment.PaymentFailedException;
+import com.ecom.order.payment.PaymentResponse;
 import com.ecom.order.product.ReserveStockResponse;
 import com.ecom.order.repository.OrderRepo;
 import static java.util.stream.Collectors.toMap;
@@ -54,13 +56,11 @@ public class OrderService {
 
     private final Executor taskExecutor;
 
+    @Transactional
     public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
         log.info("Placing order customerId={}, request={}", customerId, orderRequest);
 
-        Optional<Order> optionalOrder = orderRepo.findByCartIdAndCustomerId(orderRequest.getCartId(), customerId);
-        if (optionalOrder.isPresent()) {
-            throw new OrderAlreadyExistsException(optionalOrder.get().getId(), "Order already exists");
-        }
+        validateOrderDoesNotExist(orderRequest.getCartId(), customerId);
 
         CompletableFuture<CustomerDetails> customerFuture = CompletableFuture
                 .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor);
@@ -71,58 +71,100 @@ public class OrderService {
         CompletableFuture.allOf(customerFuture, cartFuture).join();
 
         CustomerDetails customer = customerFuture.join();
-        log.info("[PLACE ORDER] Customer details {}", customer);
         CartDetails cart = cartFuture.join();
-        log.info("[PLACE ORDER] Cart details {}", cart);
 
-        Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
+        Order order = createAndSaveOrder(orderRequest, customer, cart);
 
         if (!reserveStockAndHandleFailure(cart, order)) {
             return orderMapper.mapToPlaceOrderResponse(order);
         }
 
-        boolean paymentFailed = !processOrderPayment(customer, order, cart);
+        var paymentDetails = processPayment(customer, order, cart);
 
-        if (paymentFailed) {
-            inventoryService.releaseReservation(order.getId().toString());
-            CompletableFuture.runAsync(
-                    () -> inventoryService.releaseReservation(order.getId().toString()),
-                    taskExecutor
-            );
-        }
+        handlePostPaymentActions(order, cart, paymentDetails);
 
         // TODO publish event OrderPlaced
 
         log.info("Order placed successfully customerId={}, orderId={}", customerId, order.getId());
-        return orderMapper.mapToPlaceOrderResponse(order);
+        return buildPlaceOrderResponse(order, paymentDetails);
     }
 
-    private boolean processOrderPayment(CustomerDetails customer, Order order, CartDetails cart) {
-        BigDecimal total = cart.items().stream()
+    private void validateOrderDoesNotExist(Long cartId, String customerId) {
+        orderRepo.findByCartIdAndCustomerId(cartId, customerId)
+                .ifPresent(order -> {
+                    throw new OrderAlreadyExistsException(order.getId(), "Order already exists");
+                });
+    }
+
+    private Order createAndSaveOrder(OrderRequest request, CustomerDetails customer, CartDetails cart) {
+        Order order = createOrderFromCart(request, customer, cart);
+        return orderRepo.save(order);
+    }
+
+    private PlaceOrderResponse.PaymentDetails processPayment(CustomerDetails customer, Order order, CartDetails cart) {
+        BigDecimal total = calculateTotal(cart);
+        CreatePaymentRequest paymentRequest = buildPaymentRequest(customer, order, total);
+
+        try {
+            PaymentResponse paymentResponse = paymentService.createPayment(paymentRequest);
+            updateOrderWithPayment(order, paymentResponse);
+            return buildPaymentDetails(paymentResponse);
+        }
+        catch (PaymentFailedException e) {
+            log.error("Payment failed for orderId={}", order.getId(), e);
+            order.setStatus(OrderStatus.PAYMENT_FAILED);
+            orderRepo.save(order);
+            return null;
+        }
+    }
+
+    private BigDecimal calculateTotal(CartDetails cart) {
+        return cart.items().stream()
                 .map(CartDetails.CartItem::price)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        CreatePaymentRequest createPaymentRequest = CreatePaymentRequest.builder()
-                .paymentMethod(order.getPaymentInfo().paymentMethod())
+    }
+
+    private CreatePaymentRequest buildPaymentRequest(CustomerDetails customer, Order order, BigDecimal total) {
+        return CreatePaymentRequest.builder()
+                .paymentMethod(order.getPaymentInfo().getPaymentMethod())
                 .customerId(customer.id())
                 .customerEmail(customer.email())
                 .orderId(order.getId().toString())
                 .amount(total)
                 .build();
+    }
 
-        try {
-            log.info("Payment created successfully paymentId={}", order.getPaymentInfo().paymentId());
-            Long paymentId = paymentService.createPayment(createPaymentRequest);
-            order.setStatus(OrderStatus.PAYMENT_PENDING);
-            order.setPaymentInfo(order.getPaymentInfo().withPaymentId(paymentId));
-        }
-        catch (PaymentFailedException exception) {
-            log.info("Payment failed paymentId={}", order.getPaymentInfo().paymentId());
-            order.setStatus(OrderStatus.PAYMENT_FAILED);
-            orderRepo.save(order);
-            return false;
-        }
+    private void updateOrderWithPayment(Order order, PaymentResponse paymentResponse) {
+        order.setStatus(OrderStatus.PAYMENT_PENDING);
+        order.getPaymentInfo().setPaymentId(paymentResponse.paymentId());
+        orderRepo.save(order);
+    }
 
-        return true;
+    private PlaceOrderResponse.PaymentDetails buildPaymentDetails(PaymentResponse paymentResponse) {
+        return PlaceOrderResponse.PaymentDetails.builder()
+                .paymentId(paymentResponse.paymentId())
+                .paymentStatus(paymentResponse.status().toString())
+                .stripePaymentIntentId(paymentResponse.stripePaymentIntentId())
+                .clientSecret(paymentResponse.clientSecret())
+                .transactionId(paymentResponse.transactionId())
+                .build();
+    }
+
+    private void handlePostPaymentActions(Order order, CartDetails cart, PlaceOrderResponse.PaymentDetails paymentDetails) {
+        if (paymentDetails == null) {
+            CompletableFuture.runAsync(() -> inventoryService.releaseReservation(order.getId().toString()), taskExecutor);
+        }
+        else {
+            CompletableFuture.runAsync(() -> cartService.completeCart(cart.id()), taskExecutor);
+        }
+    }
+
+    private PlaceOrderResponse buildPlaceOrderResponse(Order order, PlaceOrderResponse.PaymentDetails paymentDetails) {
+        return PlaceOrderResponse.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getStatus())
+                .paymentDetails(paymentDetails)
+                .build();
     }
 
     private boolean reserveStockAndHandleFailure(CartDetails cart, Order order) {
@@ -135,8 +177,10 @@ public class OrderService {
         if (!reserveStockResponse.success()) {
             log.error("Reserving stock failed [orderId={}]: {}", order.getId(), reserveStockResponse.message());
             order.setStatus(OrderStatus.RESERVATION_FAILED);
+            orderRepo.save(order);
             return false;
         }
+
         return true;
     }
 
@@ -146,7 +190,7 @@ public class OrderService {
                         .quantity(item.quantity())
                         .productId(item.productId())
                         .build())
-                .toList();
+                .collect(Collectors.toList());
 
         PaymentInfo paymentInfo = new PaymentInfo(null, request.getPaymentDetails().paymentMethod());
         DeliveryInfo deliveryInfo = new DeliveryInfo(
@@ -164,6 +208,7 @@ public class OrderService {
                 .totalAmount(cart.totalPrice())
                 .paymentInfo(paymentInfo)
                 .deliveryInfo(deliveryInfo)
+                .totalAmount(cart.totalPrice())
                 .build();
     }
 
@@ -183,6 +228,53 @@ public class OrderService {
         return this.orderRepo.findById(id)
                 .map(this.orderMapper::fromOrder)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("No order found with the provided ID: " + id)));
+    }
+
+    public PaymentResponse confirmOrderPayment(UUID orderId) {
+        log.info("Confirming order payment for orderId={}", orderId);
+
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderId));
+
+        PaymentInfo paymentInfo = order.getPaymentInfo();
+        if (paymentInfo == null || paymentInfo.getPaymentId() == null) {
+            throw new EntityNotFoundException("No payment associated with order: " + orderId);
+        }
+
+        PaymentResponse paymentResponse = this.paymentService.syncPayment(paymentInfo.getPaymentId());
+
+        log.info("Payment response received after [payment-sync]: {}", paymentResponse);
+
+        switch (paymentResponse.status()) {
+            case COMPLETED:
+                order.setStatus(OrderStatus.CONFIRMED);
+                break;
+            case PROCESSING:
+            case PENDING:
+            case REQUIRES_ACTION:
+                order.setStatus(OrderStatus.PAYMENT_PENDING);
+                break;
+            case REFUNDED:
+                order.setStatus(OrderStatus.REFUNDED);
+                break;
+            case CANCELLED:
+                order.setStatus(OrderStatus.CANCELLED);
+                break;
+            default:
+                order.setStatus(OrderStatus.PAYMENT_FAILED);
+        }
+
+        orderRepo.save(order);
+
+        CompletableFuture.runAsync(() -> inventoryService.confirmReservation(order.getId()), taskExecutor);
+
+        return paymentResponse;
+    }
+
+    public boolean isOrderOwner(UUID orderId, String customerId) {
+        return orderRepo.findById(orderId)
+                .map(order -> customerId.equals(order.getCustomerId()))
+                .orElse(true);
     }
 
 }

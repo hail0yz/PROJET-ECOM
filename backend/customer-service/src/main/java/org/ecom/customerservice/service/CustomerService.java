@@ -63,7 +63,7 @@ public class CustomerService {
                 .id(customer.getId())
                 .email(customer.getEmail())
                 .firstname(customer.getFirstname())
-                .lastname(customer.getFirstname())
+                .lastname(customer.getLastname())
                 .active(customer.isActive())
                 .paymentDetails(null) // TODO
                 .addressDetails(null) // TODO

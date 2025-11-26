@@ -210,4 +210,38 @@ class CustomerServiceUnitTest {
                 .build();
     }
 
+    // -------------------- CustomerService.getCustomerDetails --------------------
+
+    @Test
+    void getCustomerDetails_ShouldReturnDetailsDTO_WhenCustomerExists() {
+        Customer c = Customer.builder()
+                .id(CUSTOMER_ID)
+                .firstname("First")
+                .lastname("Last")
+                .email("first@example.com")
+                .active(true)
+                .build();
+
+        when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(c));
+
+        var result = customerService.getCustomerDetails(CUSTOMER_ID);
+
+        assertNotNull(result);
+        assertEquals(CUSTOMER_ID, result.getId());
+        assertEquals("first@example.com", result.getEmail());
+        assertEquals("First", result.getFirstname());
+        assertEquals("Last", result.getLastname());
+        assertTrue(result.isActive());
+        assertNotNull(result.getBlacklistDetails());
+        assertFalse(result.getBlacklistDetails().isBlacklisted());
+        verify(customerRepository).findById(CUSTOMER_ID);
+    }
+
+    @Test
+    void getCustomerDetails_ShouldThrowException_WhenCustomerDoesNotExist() {
+        when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> customerService.getCustomerDetails(CUSTOMER_ID));
+    }
+
 }

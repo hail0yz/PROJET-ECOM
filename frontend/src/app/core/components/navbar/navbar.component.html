@@ -2,8 +2,8 @@
     <nav class="bg-white border-b border-gray-200">
         <div class="max-w-screen-xl h-15 flex flex-wrap items-center justify-between mx-auto px-4">
             <a routerLink="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-              <img src="assets/bookLogo.png" class="h-12" />
-              <em>Book Castle</em>
+                <img src="assets/bookLogo.png" class="h-12" />
+                <em>Book Castle</em>
             </a>
             <div class="flex items-center md:order-2 space-x-2">
                 <div class="flex items-center space-x-1">
@@ -16,7 +16,7 @@
                             <path d="m21 21-4.3-4.3"></path>
                         </svg>
                     </button>
-                    <a href="/cart"
+                    <a routerLink="/cart"
                         class="inline-flex items-center justify-center text-muted-foreground/80 h-8 rounded-md bg-transparent hover:bg-neutral-100 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -65,13 +65,24 @@
                             aria-current="page">Accueil</a>
                     </li>
                     <li>
-                        <a href="/products"
+                        <a routerLink="/products"
                             class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Produits</a>
                     </li>
                     <li>
-                        <a href="/categories"
+                        <a routerLink="/categories"
                             class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Catégories</a>
                     </li>
+                    @if(isLoggedIn) {
+                    <li>
+                        <a routerLink="/orders"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">My
+                            Orders</a>
+                    </li>
+                    <li>
+                        <a routerLink="/profile"
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Profile</a>
+                    </li>
+                    }
                 </ul>
             </div>
         </div>
