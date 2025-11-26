@@ -50,6 +50,10 @@ public class OrderMapper {
     }
 
     public PlaceOrderResponse mapToPlaceOrderResponse(Order order) {
+        if (order == null) {
+            return null;
+        }
+
         return PlaceOrderResponse.builder()
                 .orderId(order.getId())
                 .orderStatus(order.getStatus())

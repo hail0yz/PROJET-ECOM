@@ -21,11 +21,13 @@ import com.ecom.order.payment.PaymentResponse;
 import com.ecom.order.product.ReserveStockResponse;
 import com.ecom.order.repository.OrderRepo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
@@ -67,14 +69,18 @@ class OrderServiceTest {
     void placeOrder_reserveStockFails_returnsFailed() {
         OrderRequest.PaymentDetails pay = new OrderRequest.PaymentDetails("card");
         OrderRequest.Address addr = new OrderRequest.Address("street", "city", "zip", "country");
-        OrderRequest req = OrderRequest.builder().cartId(1L).paymentDetails(pay).address(addr).build();
+        OrderRequest req = OrderRequest.builder()
+                .cartId(1L)
+                .paymentDetails(pay)
+                .address(addr)
+                .build();
 
         CustomerDetails customer = new CustomerDetails("cust-1", "ext-1", "Fn", "Ln", "mail@example.com", null, null, true, null);
-        when(customerService.getCustomerDetails("cust-1")).thenReturn(customer);
+        when(customerService.getCustomerDetails(anyString())).thenReturn(customer);
 
         CartDetails.CartItem item = new CartDetails.CartItem(100L, 1, new BigDecimal("10.00"));
         CartDetails cart = new CartDetails(1L, "cust-1", List.of(item), LocalDateTime.now(), LocalDateTime.now(), new BigDecimal("10.00"));
-        when(cartService.getCartById(1L)).thenReturn(cart);
+        when(cartService.getCartById(anyLong())).thenReturn(cart);
 
         when(orderRepo.save(any())).thenAnswer(invocation -> {
             Order o = invocation.getArgument(0);
@@ -85,25 +91,34 @@ class OrderServiceTest {
         when(inventoryService.reserveProducts(anyString(), anyMap()))
                 .thenReturn(new ReserveStockResponse(null, false, "no stock"));
 
+        when(orderMapper.mapToPlaceOrderResponse(any()))
+                .thenAnswer(invocation -> {
+                    Order o = invocation.getArgument(0);
+                    return PlaceOrderResponse.builder()
+                            .orderId(o.getId())
+                            .orderStatus(o.getStatus())
+                            .paymentDetails(null)
+                            .build();
+                });
+
         PlaceOrderResponse response = orderService.placeOrder(req, "cust-1");
 
-        assertThat(response).isNotNull();
-        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.FAILED);
+        assertNotNull(response);
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.RESERVATION_FAILED);
     }
 
     @Test
     void placeOrder_paymentSuccess_callsCompleteCart_and_returnsPaymentDetails() {
-        // prepare request
         OrderRequest.PaymentDetails pay = new OrderRequest.PaymentDetails("card");
         OrderRequest.Address addr = new OrderRequest.Address("street", "city", "zip", "country");
         OrderRequest req = OrderRequest.builder().cartId(1L).paymentDetails(pay).address(addr).build();
 
         CustomerDetails customer = new CustomerDetails("cust-1", "ext-1", "Fn", "Ln", "mail@example.com", null, null, true, null);
-        when(customerService.getCustomerDetails("cust-1")).thenReturn(customer);
+        when(customerService.getCustomerDetails(anyString())).thenReturn(customer);
 
         CartDetails.CartItem item = new CartDetails.CartItem(100L, 1, new BigDecimal("10.00"));
         CartDetails cart = new CartDetails(1L, "cust-1", List.of(item), LocalDateTime.now(), LocalDateTime.now(), new BigDecimal("10.00"));
-        when(cartService.getCartById(1L)).thenReturn(cart);
+        when(cartService.getCartById(anyLong())).thenReturn(cart);
 
         when(orderRepo.save(any())).thenAnswer(invocation -> {
             Order o = invocation.getArgument(0);
@@ -132,11 +147,11 @@ class OrderServiceTest {
         OrderRequest req = OrderRequest.builder().cartId(1L).paymentDetails(pay).address(addr).build();
 
         CustomerDetails customer = new CustomerDetails("cust-1", "ext-1", "Fn", "Ln", "mail@example.com", null, null, true, null);
-        when(customerService.getCustomerDetails("cust-1")).thenReturn(customer);
+        when(customerService.getCustomerDetails(anyString())).thenReturn(customer);
 
         CartDetails.CartItem item = new CartDetails.CartItem(100L, 1, new BigDecimal("10.00"));
         CartDetails cart = new CartDetails(1L, "cust-1", List.of(item), LocalDateTime.now(), LocalDateTime.now(), new BigDecimal("10.00"));
-        when(cartService.getCartById(1L)).thenReturn(cart);
+        when(cartService.getCartById(anyLong())).thenReturn(cart);
 
         when(orderRepo.save(any())).thenAnswer(invocation -> {
             Order o = invocation.getArgument(0);
