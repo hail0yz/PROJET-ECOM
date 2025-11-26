@@ -1,11 +1,5 @@
 package org.ecom.customerservice.service;
 
-import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.net.URI;
 import java.util.List;
 
@@ -15,22 +9,25 @@ import org.ecom.customerservice.config.KeycloakProperties;
 import org.ecom.customerservice.dto.RegistrationRequest;
 import org.ecom.customerservice.model.Customer;
 import org.ecom.customerservice.repository.CustomerRepository;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.RoleResource;
+import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class RegistrationServiceTest {
@@ -105,10 +102,12 @@ class RegistrationServiceTest {
 
         UserResource userResource = mock(UserResource.class);
         var roleMapping = mock(org.keycloak.admin.client.resource.RoleMappingResource.class);
+        var roleScope = mock(org.keycloak.admin.client.resource.RoleScopeResource.class);
         when(realmResource.users()).thenReturn(usersResource);
         when(usersResource.get("abc123")).thenReturn(userResource);
         when(userResource.roles()).thenReturn(roleMapping);
-        when(roleMapping.realmLevel()).thenReturn(roleMapping);
+        when(roleMapping.realmLevel()).thenReturn(roleScope);
+        org.mockito.Mockito.doNothing().when(roleScope).add(any());
 
         registrationService.registerUser(req);
 
