@@ -49,4 +49,11 @@ public class OrderMapper {
                 .build();
     }
 
+    public PlaceOrderResponse mapToPlaceOrderResponse(Order order) {
+        return PlaceOrderResponse.builder()
+                .orderId(order.getId())
+                .orderStatus(order.getStatus())
+                .build();
+    }
+
 }

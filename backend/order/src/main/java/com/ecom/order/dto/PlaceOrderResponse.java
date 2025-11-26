@@ -3,7 +3,6 @@ package com.ecom.order.dto;
 import java.util.UUID;
 
 import com.ecom.order.model.OrderStatus;
-import com.ecom.order.payment.PaymentResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

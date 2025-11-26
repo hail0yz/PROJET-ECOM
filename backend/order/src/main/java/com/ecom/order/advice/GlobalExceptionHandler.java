@@ -3,6 +3,7 @@ package com.ecom.order.advice;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolation;
@@ -20,6 +21,7 @@ import com.ecom.order.exception.BadREquestException;
 import com.ecom.order.exception.BusinessException;
 import com.ecom.order.exception.EntityNotFoundException;
 import com.ecom.order.exception.ExternalServiceException;
+import com.ecom.order.exception.OrderAlreadyExistsException;
 import lombok.Builder;
 import lombok.Value;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -32,8 +34,21 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.NOT_FOUND;
         APIErrorResponse errorResponse = APIErrorResponse.builder()
                 .status(status.value())
-                .error(ex.getMessage())
+                .error("ENTITY_NOT_FOUND")
                 .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(OrderAlreadyExistsException.class)
+    public ResponseEntity<APIErrorResponse> handle(OrderAlreadyExistsException ex) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        APIErrorResponse errorResponse = APIErrorResponse.builder()
+                .status(status.value())
+                .error("ORDER_ALREADY_EXISTS")
+                .message(ex.getMessage())
+                .details(new OrderId(ex.getOrderId()))
                 .build();
 
         return ResponseEntity.status(status).body(errorResponse);
@@ -44,7 +59,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         APIErrorResponse errorResponse = APIErrorResponse.builder()
                 .status(status.value())
-                .error(ex.getMessage())
+                .error("BAD_REQUEST")
                 .message(ex.getMessage())
                 .build();
 
@@ -56,7 +71,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         APIErrorResponse errorResponse = APIErrorResponse.builder()
                 .status(status.value())
-                .error(ex.getMessage())
+                .error("INTERNAL_SERVER_ERROR")
                 .message(ex.getMessage())
                 .build();
 
@@ -76,8 +91,8 @@ public class GlobalExceptionHandler {
 
         APIErrorResponse errorResponse = APIErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(ex.getMessage())
-                .message("Validation failed")
+                .error("REQUEST_BODY_INVALID")
+                .message("Validation failed : " + ex.getMessage())
                 .details(details)
                 .build();
 
@@ -92,7 +107,7 @@ public class GlobalExceptionHandler {
 
         APIErrorResponse errorResponse = APIErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(ex.getMessage())
+                .error("REQUEST_PARAMETERS_INVALID")
                 .message("Path variable or request parameter type mismatch")
                 .details(details)
                 .build();
@@ -112,8 +127,8 @@ public class GlobalExceptionHandler {
 
         var error = APIErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error(e.getMessage())
-                .message("Constraint violation")
+                .error("REQUEST_BODY_INVALID")
+                .message("Constraint violation : " + e.getMessage())
                 .details(violations)
                 .build();
 
@@ -146,5 +161,7 @@ public class GlobalExceptionHandler {
         Object details;
 
     }
+
+    private record OrderId(UUID orderId) {}
 
 }

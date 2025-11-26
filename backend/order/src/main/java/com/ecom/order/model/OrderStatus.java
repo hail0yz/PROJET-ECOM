@@ -12,6 +12,7 @@ public enum OrderStatus {
     DELIVERED,
     CANCELLED,
     FAILED,
+    RESERVATION_FAILED,
     RETURN_REQUESTED,
     REFUNDED,
     RETURNED,

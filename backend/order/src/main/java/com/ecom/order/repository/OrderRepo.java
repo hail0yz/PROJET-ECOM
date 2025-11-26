@@ -17,4 +17,6 @@ public interface OrderRepo extends JpaRepository<Order, UUID> {
 
     Optional<Order> findByIdAndCustomerId(UUID orderId, String customerId);
 
+    Optional<Order> findByCartIdAndCustomerId(Long cartId, String customerId);
+
 }

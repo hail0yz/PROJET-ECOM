@@ -4,6 +4,7 @@ package com.ecom.order.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -21,6 +22,7 @@ import com.ecom.order.dto.OrderRequest;
 import com.ecom.order.dto.OrderResponse;
 import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.exception.EntityNotFoundException;
+import com.ecom.order.exception.OrderAlreadyExistsException;
 import com.ecom.order.mapper.OrderMapper;
 import com.ecom.order.model.DeliveryInfo;
 import com.ecom.order.model.Order;
@@ -59,6 +61,11 @@ public class OrderService {
     public PlaceOrderResponse placeOrder(OrderRequest orderRequest, String customerId) {
         log.info("Placing order customerId={}, request={}", customerId, orderRequest);
 
+        Optional<Order> optionalOrder = orderRepo.findByCartIdAndCustomerId(orderRequest.getCartId(), customerId);
+        if (optionalOrder.isPresent()) {
+            throw new OrderAlreadyExistsException(optionalOrder.get().getId(), "Order already exists");
+        }
+
         CompletableFuture<CustomerDetails> customerFuture = CompletableFuture
                 .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor);
 
@@ -73,10 +80,7 @@ public class OrderService {
         Order order = orderRepo.save(createOrderFromCart(orderRequest, customer, cart));
 
         if (!reserveStockAndHandleFailure(cart, order)) {
-            return PlaceOrderResponse.builder()
-                    .orderId(order.getId())
-                    .orderStatus(order.getStatus())
-                    .build();
+            return orderMapper.mapToPlaceOrderResponse(order);
         }
 
         var paymentDetails = processOrderPayment(customer, order, cart);
@@ -93,6 +97,7 @@ public class OrderService {
 
         // TODO publish event OrderPlaced
 
+        log.info("Order placed successfully customerId={}, orderId={}", customerId, order.getId());
         return PlaceOrderResponse.builder()
                 .orderId(order.getId())
                 .orderStatus(order.getStatus())
@@ -114,6 +119,7 @@ public class OrderService {
                 .build();
 
         try {
+            log.info("Payment created successfully paymentId={}", order.getPaymentInfo().getPaymentId());
             PaymentResponse paymentResponse = paymentService.createPayment(createPaymentRequest);
             order.setStatus(OrderStatus.PAYMENT_PENDING);
             order.getPaymentInfo().setPaymentId(paymentResponse.paymentId());
@@ -129,6 +135,7 @@ public class OrderService {
                     .build();
         }
         catch (PaymentFailedException exception) {
+            log.info("Payment failed paymentId={}", order.getPaymentInfo().getPaymentId());
             order.setStatus(OrderStatus.PAYMENT_FAILED);
             orderRepo.save(order);
             return null;
@@ -144,7 +151,7 @@ public class OrderService {
 
         if (!reserveStockResponse.success()) {
             log.error("Reserving stock failed [orderId={}]: {}", order.getId(), reserveStockResponse.message());
-            order.setStatus(OrderStatus.FAILED);
+            order.setStatus(OrderStatus.RESERVATION_FAILED);
             orderRepo.save(order);
             return false;
         }
