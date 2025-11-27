@@ -88,7 +88,7 @@ class TicketServiceTest {
                 .build();
 
         when(ticketRepository.findByIdAndCustomerId(TICKET_ID, CUSTOMER_ID)).thenReturn(Optional.of(ticket));
-        when(ticketMapper.mapToTicketDTO(ticket)).thenReturn(expected);
+        when(ticketMapper.mapToTicketDTOWithMessages(ticket)).thenReturn(expected);
 
         TicketDTO result = ticketService.getTicketById(CUSTOMER_ID, TICKET_ID);
 
@@ -96,7 +96,7 @@ class TicketServiceTest {
         assertEquals(TICKET_ID, result.getId());
         assertEquals(CUSTOMER_ID, result.getCustomerId());
         verify(ticketRepository).findByIdAndCustomerId(TICKET_ID, CUSTOMER_ID);
-        verify(ticketMapper).mapToTicketDTO(ticket);
+        verify(ticketMapper).mapToTicketDTOWithMessages(ticket);
     }
 
     @Test

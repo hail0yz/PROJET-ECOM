@@ -1,11 +1,13 @@
 package org.ecom.customerservice.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ecom.customerservice.model.Ticket;
 
 @Data
 @Builder
@@ -21,6 +23,30 @@ public class TicketDTO {
 
     private String description;
 
+    private Ticket.Status status;
+
+    private List<Message> messages;
+
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Message {
+
+        private Long id;
+
+        private String authorId;
+        
+        private String role;
+
+        private String content;
+
+        private LocalDateTime createdAt;
+
+    }
 
 }

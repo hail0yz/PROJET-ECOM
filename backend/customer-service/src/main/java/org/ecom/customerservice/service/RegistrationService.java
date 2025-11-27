@@ -16,6 +16,7 @@ import org.ecom.customerservice.dto.RegistrationRequest;
 import org.ecom.customerservice.exception.CustomerRegistrationFailedException;
 import org.ecom.customerservice.exception.EmailAlreadyExistsException;
 import org.ecom.customerservice.model.Customer;
+import org.ecom.customerservice.model.Preferences;
 import org.ecom.customerservice.repository.CustomerRepository;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -67,6 +68,10 @@ public class RegistrationService {
                 .lastname(request.lastname())
                 .email(request.email())
                 .externalId(keycloakUserId)
+                .preferences(Preferences.builder()
+                        .emailNotificationsEnabled(true)
+                        .smsNotificationsEnabled(false)
+                        .build())
                 .build();
         customerRepository.save(customer);
     }

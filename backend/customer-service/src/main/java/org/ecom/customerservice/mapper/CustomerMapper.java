@@ -42,7 +42,7 @@ public class CustomerMapper {
     }
 
     public CustomerPreferencesDTO mapToCustomerPreferencesDTO(Customer customer) {
-        if (customer == null) {
+        if (customer == null || customer.getPreferences() == null) {
             return null;
         }
 

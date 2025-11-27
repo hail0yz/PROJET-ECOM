@@ -1,0 +1,181 @@
+<app-navbar />
+
+<main
+  class="container max-w-screen-xl min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] mx-auto px-4 py-8 space-y-6">
+  @if (loading()) {
+  <div class="bg-white shadow rounded-lg p-12 text-center">
+    <p class="text-gray-500">Chargement du ticket...</p>
+  </div>
+  } @else {
+  @if (errorMessage()) {
+  <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded"> {{ errorMessage() }} </div>
+  } @else {
+  <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 shadow rounded-lg">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Tickets</h1>
+        <p class="mt-2 text-sm text-gray-600">Gérez et suivez tous vos tickets de support</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-1">
+                <p class="text-sm font-medium text-gray-500">Total</p>
+                <p class="mt-1 text-3xl font-semibold text-gray-900">{{ pagedTickets()!.totalElements || 0 }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-1">
+                <p class="text-sm font-medium text-gray-500">En cours</p>
+                <p class="mt-1 text-3xl font-semibold text-blue-600">{{
+                  getTicketsByStatus(TicketStatus.IN_PROGRESS).length }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-1">
+                <p class="text-sm font-medium text-gray-500">Résolus</p>
+                <p class="mt-1 text-3xl font-semibold text-green-600">{{
+                  getTicketsByStatus(TicketStatus.RESOLVED).length }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-1">
+                <p class="text-sm font-medium text-gray-500">Escaladés</p>
+                <p class="mt-1 text-3xl font-semibold text-red-600">{{ getTicketsByStatus(TicketStatus.ESCALATED).length
+                  }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900">Liste des tickets</h2>
+        </div>
+
+        <ul class="divide-y divide-gray-200">
+          <li *ngFor="let ticket of pagedTickets()!.content" class="hover:bg-gray-50 transition-colors duration-150">
+            <div class="px-4 py-4 sm:px-6">
+              <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-3">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                      #{{ ticket.id }} - {{ ticket.subject }}
+                    </p>
+                    <span [ngClass]="getStatusClass(ticket.status)"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
+                      {{ getStatusLabel(ticket.status) }}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-500 line-clamp-2">
+                    {{ ticket.description }}
+                  </p>
+                  <div class="mt-2 flex items-center gap-4 text-xs text-gray-500">
+                    <span>Client: {{ ticket.customerId }}</span>
+                    <span>Créé le: {{ formatDate(ticket.createdAt) }}</span>
+                    <span>Mis à jour le: {{ formatDate(ticket.updatedAt) }}</span>
+                  </div>
+                </div>
+                <div class="ml-4 flex-shrink-0">
+                  <button class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                    Voir détails →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <nav class="mt-5 mx-auto flex w-full justify-center">
+        <ul data-slot="pagination-content" class="flex flex-row items-center gap-1">
+          <li>
+            <button
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pl-2.5"
+              [disabled]="pagedTickets()!.first" aria-label="Go to previous page" type="button" (click)="goToPage(1)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevrons-left-icon lucide-chevrons-left">
+                <path d="m11 17-5-5 5-5" />
+                <path d="m18 17-5-5 5-5" />
+              </svg>
+            </button>
+          </li>
+          <li>
+            <button
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5"
+              [disabled]="pagedTickets()!.first" aria-label="Go to previous page" type="button"
+              (click)="goToPage(pagedTickets()!.number - 1)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-left">
+                <path d="m15 18-6-6 6-6"></path>
+              </svg>
+            </button>
+          </li>
+
+          @for(p of pages(); track p) {
+          <li>
+            <button
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"
+              [disabled]="p === pagedTickets()!.number + 1" [class.bg-accent]="p === pagedTickets()!.number + 1"
+              [class.shadow]="p === pagedTickets()!.number + 1"
+              [class.text-accent-foreground]="p === pagedTickets()!.number + 1" (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          </li>
+          }
+          <li>
+            <button
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
+              [disabled]="pagedTickets()!.last" (click)="goToPage(pagedTickets()!.number + 2)"
+              aria-label="Go to next page">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevron-right">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+            </button>
+          </li>
+          <li>
+            <button
+              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
+              [disabled]="pagedTickets()!.last" (click)="goToPage(pagedTickets()!.totalPages)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevrons-right-icon lucide-chevrons-right">
+                <path d="m6 17 5-5-5-5" />
+                <path d="m13 17 5-5-5-5" />
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    @if (pagedTickets()!.totalElements === 0) {
+    <div class="px-4 py-12 text-center">
+      <p class="text-gray-500">Aucun ticket trouvé</p>
+    </div>
+    }
+  </div>
+  }
+  }
+</main>

@@ -12,10 +12,14 @@ import { RegistrationPage } from '@/app/features/registration/registration.page'
 import { AdminProductListPage } from '@/app/features/admin/products/product-list/product-list.page';
 import { AdminOrdersPage } from '@/app/features/admin/orders/orders.page';
 import { AdminCustomersPage } from '@/app/features/admin/customers/customers.page';
-
-import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
+import { AdminTicketListPage } from '@/app/features/admin/tickets/ticket-list.page';
+import { TicketListUserPage } from '@/app/features/support/ticket-list/tickets.page';
+import { TicketDetailsUserPage } from '@/app/features/support/ticket-details/ticket.page';
 import { OrdersPage } from '@/app/features/orders/orders.page';
 import { OrderDetailsPage } from '@/app/features/orders/order-details.page';
+import { CreateTicketPage } from './features/support/create-ticket/create-ticket.page';
+
+import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -99,11 +103,35 @@ export const routes: Routes = [
         canActivate: [canActivateAuthRole]
     },
     {
+        path: 'admin/tickets',
+        data: { role: ['ADMIN', 'SUPPORT'] },
+        component: AdminTicketListPage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
         path: 'admin/customers',
         data: {
             role: ['ADMIN']
         },
         component: AdminCustomersPage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'tickets',
+        component: TicketListUserPage,
+        data: { role: ['USER'] },
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'tickets/create',
+        component: CreateTicketPage,
+        data: { role: ['USER'] },
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'tickets/:id',
+        component: TicketDetailsUserPage,
+        data: { role: ['USER'] },
         canActivate: [canActivateAuthRole]
     },
     {

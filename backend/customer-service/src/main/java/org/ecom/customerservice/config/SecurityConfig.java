@@ -22,7 +22,16 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/v3/api-docs*/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/register").permitAll()
-                .requestMatchers("/api/v1/customers/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER"));
+                .requestMatchers("/api/v1/customers/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+                .requestMatchers(
+                        "/api/v1/tickets/customers/{customerId}/tickets",
+                        "/api/v1/tickets/customers/{customerId}/tickets/**",
+                        "/api/v1/tickets/{id}/messages"
+                ).hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPPORT", "ROLE_USER")
+                .requestMatchers(HttpMethod.GET, "/api/v1/tickets", "/api/v1/tickets/", "/api/v1/tickets/stats").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPPORT")
+                .requestMatchers(HttpMethod.POST, "/api/v1/tickets", "/api/v1/tickets/")
+                    .hasAuthority("ROLE_USER")
+                .requestMatchers("/api/v1/tickets/me").hasAuthority("ROLE_USER"));
 
         http.oauth2ResourceServer(c -> c.jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakAuthenticationConverter())));
 
