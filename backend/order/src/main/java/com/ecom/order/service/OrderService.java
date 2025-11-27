@@ -63,15 +63,20 @@ public class OrderService {
         validateOrderDoesNotExist(orderRequest.getCartId(), customerId);
 
         CompletableFuture<CustomerDetails> customerFuture = CompletableFuture
-                .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor);
+                .supplyAsync(() -> customerService.getCustomerDetails(customerId), taskExecutor)
+                .orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
 
         CompletableFuture<CartDetails> cartFuture = CompletableFuture
-                .supplyAsync(() -> cartService.getCartById(orderRequest.getCartId()), taskExecutor);
+                .supplyAsync(() -> cartService.getCartById(orderRequest.getCartId()), taskExecutor)
+                .orTimeout(10, java.util.concurrent.TimeUnit.SECONDS);
 
         CompletableFuture.allOf(customerFuture, cartFuture).join();
 
         CustomerDetails customer = customerFuture.join();
         CartDetails cart = cartFuture.join();
+        
+        validateCartNotEmpty(cart);
+        validateAmountPositive(cart.totalPrice());
 
         Order order = createAndSaveOrder(orderRequest, customer, cart);
 
@@ -96,32 +101,46 @@ public class OrderService {
                 });
     }
 
+    private void validateCartNotEmpty(CartDetails cart) {
+        if (cart.items() == null || cart.items().isEmpty()) {
+            throw new IllegalArgumentException("Cannot place order with empty cart");
+        }
+    }
+
+    private void validateAmountPositive(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Order total must be positive");
+        }
+    }
+
     private Order createAndSaveOrder(OrderRequest request, CustomerDetails customer, CartDetails cart) {
         Order order = createOrderFromCart(request, customer, cart);
         return orderRepo.save(order);
     }
 
     private PlaceOrderResponse.PaymentDetails processPayment(CustomerDetails customer, Order order, CartDetails cart) {
-        BigDecimal total = calculateTotal(cart);
+        BigDecimal total = cart.totalPrice();
         CreatePaymentRequest paymentRequest = buildPaymentRequest(customer, order, total);
 
         try {
             PaymentResponse paymentResponse = paymentService.createPayment(paymentRequest);
+            log.info("Payment created successfully for orderId={}, paymentId={}, amount={}",
+                order.getId(), paymentResponse.paymentId(), total);
             updateOrderWithPayment(order, paymentResponse);
             return buildPaymentDetails(paymentResponse);
         }
         catch (PaymentFailedException e) {
-            log.error("Payment failed for orderId={}", order.getId(), e);
+            log.error("Payment failed for orderId={}, amount={}", order.getId(), total, e);
             order.setStatus(OrderStatus.PAYMENT_FAILED);
             orderRepo.save(order);
             return null;
         }
-    }
-
-    private BigDecimal calculateTotal(CartDetails cart) {
-        return cart.items().stream()
-                .map(CartDetails.CartItem::price)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        catch (Exception e) {
+            log.error("Unexpected error during payment for orderId={}", order.getId(), e);
+            order.setStatus(OrderStatus.PAYMENT_FAILED);
+            orderRepo.save(order);
+            return null;
+        }
     }
 
     private CreatePaymentRequest buildPaymentRequest(CustomerDetails customer, Order order, BigDecimal total) {
@@ -152,10 +171,26 @@ public class OrderService {
 
     private void handlePostPaymentActions(Order order, CartDetails cart, PlaceOrderResponse.PaymentDetails paymentDetails) {
         if (paymentDetails == null) {
-            CompletableFuture.runAsync(() -> inventoryService.releaseReservation(order.getId().toString()), taskExecutor);
+            // Payment failed - release reserved stock
+            CompletableFuture.runAsync(() -> {
+                try {
+                    inventoryService.releaseReservation(order.getId().toString());
+                    log.info("Stock released for failed order {}", order.getId());
+                } catch (Exception e) {
+                    log.error("Failed to release stock for order {}", order.getId(), e);
+                }
+            }, taskExecutor);
         }
         else {
-            CompletableFuture.runAsync(() -> cartService.completeCart(cart.id()), taskExecutor);
+            // Payment successful - mark cart as completed
+            CompletableFuture.runAsync(() -> {
+                try {
+                    cartService.completeCart(cart.id());
+                    log.info("Cart {} marked as completed", cart.id());
+                } catch (Exception e) {
+                    log.error("Failed to complete cart {}", cart.id(), e);
+                }
+            }, taskExecutor);
         }
     }
 
@@ -172,26 +207,29 @@ public class OrderService {
                 CartDetails.CartItem::productId,
                 CartDetails.CartItem::quantity
         ));
-        ReserveStockResponse reserveStockResponse = inventoryService.reserveProducts(order.getId().toString(), productsWithQuantities);
+        
+        try {
+            ReserveStockResponse reserveStockResponse = inventoryService.reserveProducts(order.getId().toString(), productsWithQuantities);
 
-        if (!reserveStockResponse.success()) {
-            log.error("Reserving stock failed [orderId={}]: {}", order.getId(), reserveStockResponse.message());
+            if (!reserveStockResponse.success()) {
+                log.error("Stock reservation failed [orderId={}, products={}]: {}", 
+                    order.getId(), productsWithQuantities.keySet(), reserveStockResponse.message());
+                order.setStatus(OrderStatus.RESERVATION_FAILED);
+                orderRepo.save(order);
+                return false;
+            }
+            
+            log.info("Stock reserved successfully for orderId={}", order.getId());
+            return true;
+        } catch (Exception e) {
+            log.error("Exception during stock reservation for orderId={}", order.getId(), e);
             order.setStatus(OrderStatus.RESERVATION_FAILED);
             orderRepo.save(order);
             return false;
         }
-
-        return true;
     }
 
     private Order createOrderFromCart(OrderRequest request, CustomerDetails customer, CartDetails cart) {
-        List<OrderLine> orderLines = cart.items().stream()
-                .map(item -> OrderLine.builder()
-                        .quantity(item.quantity())
-                        .productId(item.productId())
-                        .build())
-                .collect(Collectors.toList());
-
         PaymentInfo paymentInfo = new PaymentInfo(null, request.getPaymentDetails().paymentMethod());
         DeliveryInfo deliveryInfo = new DeliveryInfo(
                 request.getAddress().street(),
@@ -201,15 +239,27 @@ public class OrderService {
                 request.getAddress().postalCode(),
                 request.getAddress().country()
         );
-        return Order.builder()
+        
+        Order order = Order.builder()
                 .customerId(customer.id())
                 .cartId(cart.id())
-                .orderLines(orderLines)
                 .totalAmount(cart.totalPrice())
                 .paymentInfo(paymentInfo)
                 .deliveryInfo(deliveryInfo)
-                .totalAmount(cart.totalPrice())
                 .build();
+        
+        // Create order lines with bidirectional relationship and prices
+        List<OrderLine> orderLines = cart.items().stream()
+                .map(item -> OrderLine.builder()
+                        .quantity(item.quantity())
+                        .productId(item.productId())
+                        .price(item.price())
+                        .order(order)
+                        .build())
+                .collect(Collectors.toList());
+        
+        order.setOrderLines(orderLines);
+        return order;
     }
 
     public Page<OrderResponse> getCustomerOrders(String customerId, int page, int size) {
@@ -266,7 +316,14 @@ public class OrderService {
 
         orderRepo.save(order);
 
-        CompletableFuture.runAsync(() -> inventoryService.confirmReservation(order.getId()), taskExecutor);
+        CompletableFuture.runAsync(() -> {
+            try {
+                inventoryService.confirmReservation(order.getId());
+                log.info("Stock reservation confirmed for orderId={}", orderId);
+            } catch (Exception e) {
+                log.error("Failed to confirm stock reservation for orderId={}", orderId, e);
+            }
+        }, taskExecutor);
 
         return paymentResponse;
     }
