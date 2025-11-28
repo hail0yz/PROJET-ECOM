@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ecom.bookService.dto.APIErrorResponse;
 import com.ecom.bookService.exception.EntityNotFoundException;
+import com.ecom.bookService.exception.InsufficientAvailableStockException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -70,6 +71,17 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(InsufficientAvailableStockException.class)
+    public ResponseEntity<APIErrorResponse> handle(InsufficientAvailableStockException e) {
+        var error = APIErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error(e.getMessage())
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
 }
