@@ -6,15 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.ecom.bookService.dto.*;
+import com.ecom.bookService.mapper.BookInvetoryMapper;
+import com.ecom.bookService.mapper.BookMapper;
 import jakarta.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
-import com.ecom.bookService.dto.ReservationResult;
 import com.ecom.bookService.exception.EntityNotFoundException;
 import com.ecom.bookService.exception.InsufficientStockException;
 import com.ecom.bookService.model.Book;
@@ -28,6 +32,7 @@ import com.ecom.bookService.repository.StockReservationItemRepository;
 import com.ecom.bookService.repository.StockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.persistence.OptimisticLockException;
 
 @Service
 @Transactional
@@ -43,7 +48,14 @@ public class InventoryService {
 
     private final BookRepository bookRepository;
 
+    @Autowired
     private final BookInventoryRepository bookInventoryRepository;
+
+    @Autowired
+    private final BookServiceImpl bookServiceImpl;
+
+    @Autowired
+    private BookMapper bookMapper;
 
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, backoff = @Backoff(delay = 100))
     public ReservationResult reserveStock(String orderId, Map<Long, Integer> products) {
@@ -172,5 +184,121 @@ public class InventoryService {
 
         log.info("Reservation successfully released [reservationId:{}]", reservation.getId());
     }
+
+   //admin Gestion d'inventaire
+
+    //get all inventaire
+    public List<InventaireResponseDto> getAllInventory() {
+        return this.bookInventoryRepository.findAll().stream()
+                .map(BookInvetoryMapper::toResponseInv)
+                .collect(Collectors.toList());
+    }
+
+    //get all inventaire by category
+    public List<InventaireResponseDto> findINvertoryByTilte(String tilte) {
+        return this.bookInventoryRepository.findByBookTitle(tilte).stream()
+                .map(BookInvetoryMapper::toResponseInv)
+                .collect(Collectors.toList());
+    }
+
+    //get inventaire by id
+    public InventaireDto getInvById(Long id){
+       return InventaireDto.toInvetaire(bookInventoryRepository.findById(id)
+               .orElseThrow(()->new EntityNotFoundException("Inventory not found.")));
+    }
+
+
+    //add book inventory
+    @Transactional
+    public Long addInventory(InverntoryCreationDto inventaire){
+        BookDTO bookDto=BookDTO.builder()
+                .title(inventaire.getTitle())
+                .author(inventaire.getAuthor())
+                .price(inventaire.getPrice())
+                .summary(inventaire.getSummary())
+                .isbn10(inventaire.getIsbn10())
+                .isbn13(inventaire.getIsbn13())
+                .thumbnail(inventaire.getThumbnail())
+                .publishedYear(inventaire.getPublishedYear())
+                .numPages(inventaire.getNumPages())
+                .build();
+        Long bookid=bookServiceImpl.addBook(bookDto);
+
+        BookInventory inventory = BookInventory.builder()
+                .book(bookMapper.toBook(bookServiceImpl.getBookById(bookid)))
+                .availableQuantity(inventaire.getAvailableQuantity())
+                .minimumStockLevel(inventaire.getMinimumStockLevel())
+                .reservedQuantity(0)
+                .build();
+
+        return this.bookInventoryRepository.save(inventory).getId();
+
+    }
+
+    //add existed book to an invertory
+    @Transactional
+    public BookInventory createInventoryForExistingBook(CreateInvetoryExistedBookDto dto) {
+
+
+        Book book = bookRepository.findById(dto.getBookId())
+                .orElseThrow(() -> new EntityNotFoundException("Book not found"));
+
+
+        if (bookInventoryRepository.existsByBook(book)) {
+            throw new IllegalStateException("This book already has an inventory.");
+        }
+
+
+        BookInventory inventory = BookInventory.builder()
+                .book(book)
+                .availableQuantity(dto.getAvailableQuantity())
+                .minimumStockLevel(dto.getMinimumStockLevel())
+                .reservedQuantity(0)
+                .build();
+
+
+        return bookInventoryRepository.save(inventory);
+    }
+
+    //update an inventaire
+    @Transactional
+    public void updateINventaire(UpdateInventaireDto dto){
+
+        BookInventory inventory=bookInventoryRepository.findById(dto.getInventaireId())
+                .orElseThrow(()->new EntityNotFoundException("Inventory not found."));
+
+        if(dto.getBookId()!=null){
+            Book book=bookRepository.findById(dto.getBookId()).
+                    orElseThrow(()->new EntityNotFoundException("Book not found"));
+            if(bookInventoryRepository.existsByBook(book)){
+                throw new IllegalStateException("This book already has an inventory.");
+            }else {
+                inventory.setBook(book);
+
+            }
+        }
+
+        inventory.setAvailableQuantity(dto.getAvailableQuantity());
+        inventory.setMinimumStockLevel(dto.getMinimumStockLevel());
+        inventory.setReservedQuantity(dto.getReservedQuantity());
+    }
+
+    @Retryable(
+            value = OptimisticLockException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100)
+    )
+    @Transactional
+    public BookInventory addStock(Long bookId, int quantity) {
+        BookInventory inv = bookInventoryRepository.findByBookId(bookId)
+                .orElseThrow(()->new EntityNotFoundException("Inventory not found."));
+        inv.setAvailableQuantity(inv.getAvailableQuantity() + quantity);
+        return bookInventoryRepository.save(inv);
+    }
+
+
+
+
+
 
 }

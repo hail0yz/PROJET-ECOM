@@ -12,10 +12,11 @@ import { RegistrationPage } from '@/app/features/registration/registration.page'
 import { AdminProductListPage } from '@/app/features/admin/products/product-list/product-list.page';
 import { AdminOrdersPage } from '@/app/features/admin/orders/orders.page';
 import { AdminCustomersPage } from '@/app/features/admin/customers/customers.page';
-
-import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
+import { AdminInventoryPage } from '@/app/features/admin/inventory/inventory.page';
 import { OrdersPage } from '@/app/features/orders/orders.page';
 import { OrderDetailsPage } from '@/app/features/orders/order-details.page';
+
+import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -113,5 +114,13 @@ export const routes: Routes = [
         },
         component: AdminOrdersPage,
         canActivate: [canActivateAuthRole]
-    }
+    },
+    {
+        path: 'admin/inventory',
+        data: {
+            role: ['admin']
+        },
+        component: AdminInventoryPage,
+        canActivate: [canActivateAuthRole]
+    },
 ];
