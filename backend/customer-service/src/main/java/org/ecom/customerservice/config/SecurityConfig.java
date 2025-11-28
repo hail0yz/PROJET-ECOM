@@ -22,6 +22,7 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/v3/api-docs*/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/register").permitAll()
+                .requestMatchers("/api/v1/customers", "/api/v1/customers/").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/api/v1/customers/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                 .requestMatchers(
                         "/api/v1/tickets/customers/{customerId}/tickets",

@@ -86,7 +86,7 @@ public class CustomerController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Customers retrieved successfully")
     })
-    @GetMapping
+    @GetMapping(path = {"", "/"})
     public ResponseEntity<Page<CustomerDTO>> listCustomers(
             @Parameter(name = "The current result page requested.") @RequestParam(defaultValue = DEFAULT_CURRENT_PAGE) final int page,
             @Parameter(name = "The number of results returned per page.") @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) final int size
