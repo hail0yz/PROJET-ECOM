@@ -118,7 +118,7 @@ export const routes: Routes = [
     {
         path: 'admin/inventory',
         data: {
-            role: ['admin']
+            role: ['ADMIN']
         },
         component: AdminInventoryPage,
         canActivate: [canActivateAuthRole]
