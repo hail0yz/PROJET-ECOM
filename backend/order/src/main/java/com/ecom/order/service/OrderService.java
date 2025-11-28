@@ -243,7 +243,7 @@ public class OrderService {
         Order order = Order.builder()
                 .customerId(customer.id())
                 .cartId(cart.id())
-                .totalAmount(cart.totalPrice())
+                .totalAmount(calculateTotalAmount(cart))
                 .paymentInfo(paymentInfo)
                 .deliveryInfo(deliveryInfo)
                 .build();
@@ -260,6 +260,11 @@ public class OrderService {
         
         order.setOrderLines(orderLines);
         return order;
+    }
+
+    private BigDecimal calculateTotalAmount(CartDetails cart) {
+        return cart.items().stream()
+                .reduce(BigDecimal.ZERO, (sum, item) -> sum.add(item.price().multiply(BigDecimal.valueOf(item.quantity()))), BigDecimal::add);
     }
 
     public Page<OrderResponse> getCustomerOrders(String customerId, int page, int size) {
