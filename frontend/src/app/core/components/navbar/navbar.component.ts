@@ -21,12 +21,20 @@ export class NavbarComponent implements OnInit {
         this.keycloak.login();
     }
 
+    register() {
+        this.keycloak.register();
+    }
+
     logout() {
         this.keycloak.logout();
     }
 
     toggleMenu() {
         this.isMenuOpen = !this.isMenuOpen;
+    }
+
+    isUser(): boolean {
+        return this.keycloak.hasRealmRole('USER');
     }
 
 }

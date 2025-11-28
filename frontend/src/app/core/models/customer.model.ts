@@ -3,7 +3,7 @@ export interface CustomerProfileAPI {
     email: string;
     firstname: string;
     lastname: string;
-    phone?: string;
+    phoneNumber?: string;
     createdAt?: string;
 }
 
@@ -18,26 +18,28 @@ export interface CustomerDetailsAPI {
 }
 
 export interface CustomerPreferencesAPI {
-    language?: string;
-    currency?: string;
-    emailNotifications?: boolean;
-    smsNotifications?: boolean;
-    preferredCategories?: string[];
+    id?: string;
+    emailNotificationsEnabled: boolean;
+    smsNotificationsEnabled: boolean;
 }
 
 export interface UpdatePreferencesRequest {
-    language?: string;
-    currency?: string;
-    emailNotifications?: boolean;
-    smsNotifications?: boolean;
-    preferredCategories?: string[];
+    emailNotificationsEnabled: boolean;
+    smsNotificationsEnabled: boolean;
+}
+
+export interface UpdateProfileRequest {
+    firstname: string;
+    lastname: string;
+    email: string;
+    phone?: string;
 }
 
 export interface CustomerAPI {
     id: string;
     email: string;
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     phone?: string;
     createdAt?: string;
 }

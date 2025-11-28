@@ -103,4 +103,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, status);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<APIErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        APIErrorResponse error = APIErrorResponse.builder()
+                .error(e.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Bad request")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 }

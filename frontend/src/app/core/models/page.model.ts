@@ -25,3 +25,16 @@ export interface Page<T> {
     first: boolean;
     last: boolean;
 }
+
+export interface Pageable {
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+}
+
+export interface PageRequest {
+    page?: number;
+    size?: number;
+}

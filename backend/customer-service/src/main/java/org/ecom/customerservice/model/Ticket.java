@@ -1,6 +1,7 @@
 package org.ecom.customerservice.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -31,19 +32,26 @@ public class Ticket {
     @ManyToOne
     private Customer customer;
 
+    @Column(nullable = false)
     private String subject;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    private Status status = Status.OPEN;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ticket_type")
     private Type type;
 
-    @ManyToOne
-    private TicketCategory category;
+    private Priority priority;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<TicketMessage> messages;
+
+    private String assignedTo;
 
     // -------- Ticket Context --------
 
@@ -59,6 +67,9 @@ public class Ticket {
 
     private LocalDateTime closedAt;
 
+    @Version
+    private Long version;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -72,7 +83,8 @@ public class Ticket {
         WAITING_VENDOR,
         RESOLVED,
         CLOSED,
-        REOPENED
+        REOPENED,
+        ESCALATED
     }
 
     public enum Type {

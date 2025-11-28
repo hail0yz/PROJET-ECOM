@@ -30,7 +30,9 @@ class TicketMapperTest {
 
     @Test
     void mapToTicketDTO_populated_mapsCorrectly() {
-        Customer customer = Customer.builder().id("cust-1").build();
+        Customer customer = Customer.builder()
+                .id("cust-1")
+                .build();
 
         Ticket ticket = Ticket.builder()
                 .id(10L)

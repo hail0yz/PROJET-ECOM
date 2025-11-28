@@ -43,6 +43,7 @@ export class ProductListPage implements OnInit {
 
   numProducts = 0;
   errorMessage = '';
+  readonly Math = Math;
 
   constructor(
     private route: ActivatedRoute,

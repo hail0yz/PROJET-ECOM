@@ -68,6 +68,14 @@ spring:
               - RewritePath=/api/customers/?(?<segment>.*), /api/v1/customers/$\{segment}
               - RemoveRequestHeader=Cookie
 
+          - id: ticket-service
+            uri: lb://customer-service
+            predicates:
+              - Path=/api/tickets/**
+            filters:
+              - RewritePath=/api/tickets/?(?<segment>.*), /api/v1/tickets/$\{segment}
+              - RemoveRequestHeader=Cookie
+
           - id: payment-service
             uri: lb://payment-service
             predicates:

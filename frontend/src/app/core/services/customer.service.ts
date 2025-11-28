@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '@/app/environment';
 import { Page } from '@/app/core/models/page.model';
-import { CustomerAPI, CustomerDetailsAPI, CustomerPreferencesAPI, CustomerProfileAPI, UpdatePreferencesRequest } from '@/app/core/models/customer.model';
+import { CustomerAPI, CustomerDetailsAPI, CustomerPreferencesAPI, CustomerProfileAPI, UpdatePreferencesRequest, UpdateProfileRequest } from '@/app/core/models/customer.model';
 
 @Injectable({ providedIn: 'root' })
 export class CustomerService {
@@ -22,6 +22,10 @@ export class CustomerService {
 
     getCustomerPreferences(customerId: string): Observable<CustomerPreferencesAPI> {
         return this.http.get<CustomerPreferencesAPI>(`${this.apiUrl}/${customerId}/preferences`);
+    }
+
+    updateCustomerProfile(customerId: string, profile: UpdateProfileRequest): Observable<CustomerProfileAPI> {
+        return this.http.put<CustomerProfileAPI>(`${this.apiUrl}/${customerId}/profile`, profile);
     }
 
     updateCustomerPreferences(customerId: string, preferences: UpdatePreferencesRequest): Observable<void> {

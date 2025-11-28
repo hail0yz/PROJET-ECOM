@@ -15,7 +15,8 @@
         <div class="grid gap-5">
             <div class="grid gap-3">
                 <h1 class="text-3xl font-bold">{{ book.title }}</h1>
-                <div class="flex items-center gap-2">
+                <!-- Rating -->
+                <!-- <div class="flex items-center gap-2">
                     <div class="flex items-center gap-0.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -54,11 +55,11 @@
                         </svg>
                     </div>
                     <span class="text-sm text-gray-500">{{ book.rating }}</span>
-                </div>
+                </div> -->
             </div>
             <div class="flex items-baseline gap-2">
                 <span class="text-3xl font-bold">{{book.price | currency:'EUR'}}</span>
-                <span class="text-lg text-gray-500 line-through">{{book.price | currency:'EUR'}}</span>
+                <!-- <span class="text-lg text-gray-500 line-through">{{book.price | currency:'EUR'}}</span> -->
             </div>
             <div class="text-sm text-gray-500">498 products sold out</div>
             <div class="grid gap-4">
@@ -103,6 +104,7 @@
                 </div>
                 <div class="flex flex-col gap-2 min-[400px]:flex-row">
                     <button (click)="addToCart()"
+                        [disabled]="isInCart() || (book.stock !== undefined && book.stock === 0)"
                         class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 px-4 py-2 has-[&gt;svg]:px-3 h-12 flex-1 text-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -111,10 +113,11 @@
                             <path d="M3 6h18"></path>
                             <path d="M16 10a4 4 0 0 1-8 0"></path>
                         </svg>
-                        Add to Cart
+                        {{ isInCart() ? 'Dans le panier' : (book.stock !== undefined && book.stock === 0) ? 'Rupture de
+                        stock' : 'Add to Cart' }}
                     </button>
                     <button data-slot="button"
-                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 shadow-xs px-4 py-2 has-[&gt;svg]:px-3 h-12 flex-1 bg-gray-900 text-lg text-white hover:bg-gray-950">
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 shadow-xs px-4 py-2 has-[&gt;svg]:px-3 h-12 flex-1 bg-blue-600 text-lg text-white hover:bg-blue-700">
                         Buy Now
                     </button>
 

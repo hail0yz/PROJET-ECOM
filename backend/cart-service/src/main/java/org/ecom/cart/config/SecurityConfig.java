@@ -25,9 +25,11 @@ public class SecurityConfig {
                         "/v3/api-docs*/**").permitAll()
                 .requestMatchers("/api/v1/carts/user/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/carts").hasAuthority("ROLE_USER")
-                .requestMatchers(HttpMethod.GET, "/api/v1/carts/current").hasAuthority("ROLE_USER")
+                .requestMatchers("/api/v1/carts/current", "/api/v1/carts/current/**").hasAuthority("ROLE_USER")
                 .requestMatchers(HttpMethod.GET, "/api/v1/carts/{cartId}").hasAuthority("ROLE_USER")
-                .requestMatchers("/api/v1/carts/{cartId}/items").hasAuthority("ROLE_USER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/carts/{cartId}/items").hasAuthority("ROLE_USER")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/carts/{cartId}/items").hasAuthority("ROLE_USER")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/carts/{cartId}/items/{bookId}").hasAuthority("ROLE_USER")
                 .requestMatchers(HttpMethod.POST, "/api/v1/carts/{cartId}/clear").hasAuthority("ROLE_USER")
                 .anyRequest().authenticated());
 

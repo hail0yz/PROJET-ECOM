@@ -5,6 +5,7 @@ import Keycloak from 'keycloak-js';
 import { OrderService } from '@/app/core/services/order.service';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
+import { ErrorHandlerService } from '@/app/core/services/error-handler.service';
 import { catchError, finalize, of } from 'rxjs';
 import { OrderResponse, OrderStatus } from '@/app/core/models/order.model';
 
@@ -17,6 +18,7 @@ export class OrdersPage implements OnInit {
     private keycloak = inject(Keycloak);
     private orderService = inject(OrderService);
     private router = inject(Router);
+    private errorHandler = inject(ErrorHandlerService);
 
     orders: OrderResponse[] = [];
     loading = false;
@@ -44,7 +46,7 @@ export class OrdersPage implements OnInit {
         this.orderService.getMyOrders()
             .pipe(
                 catchError(err => {
-                    this.error = 'Failed to load orders';
+                    this.error = this.errorHandler.getErrorMessageText(err, 'chargement des commandes');
                     console.error(err);
                     return of({ content: [], totalElements: 0, totalPages: 0 });
                 }),
