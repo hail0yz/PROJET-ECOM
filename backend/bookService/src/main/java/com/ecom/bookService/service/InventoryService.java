@@ -8,19 +8,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.ecom.bookService.dto.*;
-import com.ecom.bookService.mapper.BookInvetoryMapper;
-import com.ecom.bookService.mapper.BookMapper;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
+import com.ecom.bookService.dto.BookDTO;
+import com.ecom.bookService.dto.CreateInvetoryExistedBookDto;
+import com.ecom.bookService.dto.InventaireDto;
+import com.ecom.bookService.dto.InventaireResponseDto;
+import com.ecom.bookService.dto.InverntoryCreationDto;
+import com.ecom.bookService.dto.ReservationResult;
+import com.ecom.bookService.dto.UpdateBookQuantityRequest;
 import com.ecom.bookService.exception.EntityNotFoundException;
 import com.ecom.bookService.exception.InsufficientStockException;
+import com.ecom.bookService.mapper.BookInvetoryMapper;
+import com.ecom.bookService.mapper.BookMapper;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.BookInventory;
 import com.ecom.bookService.model.ReservationStatus;
@@ -32,7 +38,6 @@ import com.ecom.bookService.repository.StockReservationItemRepository;
 import com.ecom.bookService.repository.StockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import jakarta.persistence.OptimisticLockException;
 
 @Service
 @Transactional
@@ -48,13 +53,10 @@ public class InventoryService {
 
     private final BookRepository bookRepository;
 
-    @Autowired
     private final BookInventoryRepository bookInventoryRepository;
 
-    @Autowired
     private final BookServiceImpl bookServiceImpl;
 
-    @Autowired
     private BookMapper bookMapper;
 
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, backoff = @Backoff(delay = 100))
@@ -185,8 +187,6 @@ public class InventoryService {
         log.info("Reservation successfully released [reservationId:{}]", reservation.getId());
     }
 
-   //admin Gestion d'inventaire
-
     //get all inventaire
     public List<InventaireResponseDto> getAllInventory() {
         return this.bookInventoryRepository.findAll().stream()
@@ -202,43 +202,15 @@ public class InventoryService {
     }
 
     //get inventaire by id
-    public InventaireDto getInvById(Long id){
-       return InventaireDto.toInvetaire(bookInventoryRepository.findById(id)
-               .orElseThrow(()->new EntityNotFoundException("Inventory not found.")));
-    }
-
-
-    //add book inventory
-    @Transactional
-    public Long addInventory(InverntoryCreationDto inventaire){
-        BookDTO bookDto=BookDTO.builder()
-                .title(inventaire.getTitle())
-                .author(inventaire.getAuthor())
-                .price(inventaire.getPrice())
-                .summary(inventaire.getSummary())
-                .isbn10(inventaire.getIsbn10())
-                .isbn13(inventaire.getIsbn13())
-                .thumbnail(inventaire.getThumbnail())
-                .publishedYear(inventaire.getPublishedYear())
-                .numPages(inventaire.getNumPages())
-                .build();
-        Long bookid=bookServiceImpl.addBook(bookDto);
-
-        BookInventory inventory = BookInventory.builder()
-                .book(bookMapper.toBook(bookServiceImpl.getBookById(bookid)))
-                .availableQuantity(inventaire.getAvailableQuantity())
-                .minimumStockLevel(inventaire.getMinimumStockLevel())
-                .reservedQuantity(0)
-                .build();
-
-        return this.bookInventoryRepository.save(inventory).getId();
-
+    public InventaireDto getInvById(Long id) {
+        return InventaireDto.toInvetaire(bookInventoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Inventory not found.")));
     }
 
     //add existed book to an invertory
     @Transactional
     public BookInventory createInventoryForExistingBook(CreateInvetoryExistedBookDto dto) {
-
+        log.info("Creating inventory for existing book - bookId: {}", dto.getBookId());
 
         Book book = bookRepository.findById(dto.getBookId())
                 .orElseThrow(() -> new EntityNotFoundException("Book not found"));
@@ -260,45 +232,34 @@ public class InventoryService {
         return bookInventoryRepository.save(inventory);
     }
 
-    //update an inventaire
     @Transactional
-    public void updateINventaire(UpdateInventaireDto dto){
+    public void updateQuantity(Long bookid, UpdateBookQuantityRequest request) {
+        log.info("Updating book inventory - bookId: {}, quantity: {}", bookid, request.quantity());
+        BookInventory inventory = bookInventoryRepository.findByBookBookId(bookid)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found !"));
 
-        BookInventory inventory=bookInventoryRepository.findById(dto.getInventaireId())
-                .orElseThrow(()->new EntityNotFoundException("Inventory not found."));
-
-        if(dto.getBookId()!=null){
-            Book book=bookRepository.findById(dto.getBookId()).
-                    orElseThrow(()->new EntityNotFoundException("Book not found"));
-            if(bookInventoryRepository.existsByBook(book)){
-                throw new IllegalStateException("This book already has an inventory.");
-            }else {
-                inventory.setBook(book);
-
-            }
+        if (request.quantity() < inventory.getReservedQuantity()) {
+            throw new IllegalArgumentException("Available quantity cannot be less than reserved quantity.");
         }
 
-        inventory.setAvailableQuantity(dto.getAvailableQuantity());
-        inventory.setMinimumStockLevel(dto.getMinimumStockLevel());
-        inventory.setReservedQuantity(dto.getReservedQuantity());
+        inventory.setAvailableQuantity(request.quantity());
+
+        bookInventoryRepository.save(inventory);
     }
 
     @Retryable(
-            value = OptimisticLockException.class,
+            retryFor = OptimisticLockException.class,
             maxAttempts = 3,
             backoff = @Backoff(delay = 100)
     )
     @Transactional
     public BookInventory addStock(Long bookId, int quantity) {
-        BookInventory inv = bookInventoryRepository.findByBookId(bookId)
-                .orElseThrow(()->new EntityNotFoundException("Inventory not found."));
+        log.info("Adding stock - bookId: {}, quantity: {}", bookId, quantity);
+        BookInventory inv = bookInventoryRepository.findByBookBookId(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found !"));
         inv.setAvailableQuantity(inv.getAvailableQuantity() + quantity);
         return bookInventoryRepository.save(inv);
     }
-
-
-
-
 
 
 }

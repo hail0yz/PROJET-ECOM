@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,13 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.bookService.dto.CancelStockRequest;
 import com.ecom.bookService.dto.ConfirmStockRequest;
-import com.ecom.bookService.dto.CreateInvetoryExistedBookDto;
 import com.ecom.bookService.dto.InventaireDto;
 import com.ecom.bookService.dto.InventaireResponseDto;
-import com.ecom.bookService.dto.InverntoryCreationDto;
 import com.ecom.bookService.dto.ReservationResult;
 import com.ecom.bookService.dto.ReserveStockRequest;
-import com.ecom.bookService.dto.UpdateInventaireDto;
+import com.ecom.bookService.dto.UpdateBookQuantityRequest;
 import com.ecom.bookService.model.BookInventory;
 import com.ecom.bookService.service.InventoryService;
 import lombok.RequiredArgsConstructor;
@@ -93,63 +90,36 @@ public class InventoryController {
     }
 
     /**
-     * GET /api/v1/inventory/admin/search
+     * GET /api/v1/inventory/search
      *
      * Returns inventory items by book title
      *
      * @param title The book title to search for
      * @return A ResponseEntity containing a list of matching inventory items
      */
-    @GetMapping("/admin/search")
+    @GetMapping("/search")
     public ResponseEntity<List<InventaireResponseDto>> searchInventoryByTitle(@RequestParam String title) {
         List<InventaireResponseDto> inventory = inventoryService.findINvertoryByTilte(title);
         return ResponseEntity.ok(inventory);
     }
 
     /**
-     * POST /api/v1/inventory/admin
-     *
-     * Creates a new inventory with a new book
-     *
-     * @param request The inventory creation request
-     * @return A ResponseEntity containing the created inventory ID
-     */
-    @PostMapping("/admin")
-    public ResponseEntity<Long> createInventory(@RequestBody @Valid InverntoryCreationDto request) {
-        Long inventoryId = inventoryService.addInventory(request);
-        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(inventoryId);
-    }
-
-    /**
-     * POST /api/v1/inventory/admin/existing-book
-     *
-     * Creates inventory for an existing book
-     *
-     * @param request The inventory creation request for existing book
-     * @return A ResponseEntity containing the created inventory
-     */
-    @PostMapping("/admin/existing-book")
-    public ResponseEntity<BookInventory> createInventoryForExistingBook(@RequestBody @Valid CreateInvetoryExistedBookDto request) {
-        BookInventory inventory = inventoryService.createInventoryForExistingBook(request);
-        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(inventory);
-    }
-
-    /**
-     * PUT /api/v1/inventory/admin
+     * PUT /api/v1/inventory/{bookId}
      *
      * Updates an existing inventory
      *
      * @param request The inventory update request
      * @return A ResponseEntity with no content
      */
-    @PutMapping("/admin")
-    public ResponseEntity<Void> updateInventory(@RequestBody @Valid UpdateInventaireDto request) {
-        inventoryService.updateINventaire(request);
+    @PutMapping("/{bookId}")
+    public ResponseEntity<Void> updateQuantity(@RequestBody @Valid UpdateBookQuantityRequest request,
+                                               @PathVariable Long bookId) {
+        inventoryService.updateQuantity(bookId, request);
         return ResponseEntity.ok().build();
     }
 
     /**
-     * PUT /api/v1/inventory/admin/{bookId}/add-stock
+     * PUT /api/v1/inventory/{bookId}/add-stock
      *
      * Adds stock to an existing inventory
      *
@@ -157,7 +127,7 @@ public class InventoryController {
      * @param quantity The quantity to add
      * @return A ResponseEntity containing the updated inventory
      */
-    @PutMapping("/admin/{bookId}/add-stock")
+    @PutMapping("/{bookId}/add-stock")
     public ResponseEntity<BookInventory> addStock(
             @PathVariable Long bookId,
             @RequestParam int quantity

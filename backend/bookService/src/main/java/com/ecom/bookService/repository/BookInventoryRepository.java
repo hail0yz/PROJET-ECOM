@@ -16,5 +16,6 @@ public interface BookInventoryRepository extends JpaRepository<BookInventory, Lo
 
     boolean existsByBook(Book book);
 
-    Optional<BookInventory> findByBookId(Long bookId);
+    Optional<BookInventory> findByBookBookId(Long bookId);
+
 }

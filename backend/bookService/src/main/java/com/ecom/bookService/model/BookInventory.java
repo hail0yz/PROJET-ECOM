@@ -38,7 +38,7 @@ public class BookInventory {
 
     private int reservedQuantity;
 
-    private int minimumStockLevel;
+    private int minimumStockLevel; // TODO not implemented yet
 
     // ----------- Optimistic Locking -----------
 
