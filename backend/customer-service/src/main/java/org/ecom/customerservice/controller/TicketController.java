@@ -32,6 +32,7 @@ import org.ecom.customerservice.dto.CreateTicketResponse;
 import org.ecom.customerservice.dto.TicketCategoryDTO;
 import org.ecom.customerservice.dto.TicketDTO;
 import org.ecom.customerservice.dto.TicketStatsResponse;
+import org.ecom.customerservice.model.Ticket;
 import org.ecom.customerservice.service.TicketService;
 
 @RestController
@@ -69,16 +70,25 @@ public class TicketController {
 
     @GetMapping(value = "/customers/{customerId}/tickets/{ticketId}")
     @Operation(summary = "Get a ticket by ticket id.")
-    public ResponseEntity<TicketDTO> getTicket(
+    @PreAuthorize("@ticketService.canAccessTicket(authentication, #customerId, #ticketId)")
+    public ResponseEntity<TicketDTO> getCustomerTicket(
             @PathVariable String customerId,
             @PathVariable final Long ticketId
     ) {
-        return ResponseEntity.ok(ticketService.getTicketById(customerId, ticketId)); //
+        return ResponseEntity.ok(ticketService.getCustomerTicket(customerId, ticketId)); //
+    }
+
+    @GetMapping(value = "/{ticketId}")
+    @Operation(summary = "Get a ticket by ticket id.")
+    @PreAuthorize("@ticketService.canAccessTicket(authentication, #customerId, #ticketId)")
+    public ResponseEntity<TicketDTO> getTicket(@PathVariable final Long ticketId,
+                                               @AuthenticationPrincipal(expression = "subject") final String customerId) {
+        return ResponseEntity.ok(ticketService.getTicketById(ticketId)); //
     }
 
     @GetMapping(path = {"", "/"})
     public ResponseEntity<Page<TicketDTO>> listAllTickets(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                               @RequestParam(name = "size", defaultValue = "20") int size) {
+                                                          @RequestParam(name = "size", defaultValue = "20") int size) {
         return ResponseEntity.ok(ticketService.listTickets(page, size));
     }
 
@@ -97,8 +107,9 @@ public class TicketController {
         return ResponseEntity.ok(stats);
     }
 
-    @PostMapping("/{id}/messages")
+    @PostMapping(value = "/{id}/messages", produces = "application/json", consumes = "application/json")
     @PreAuthorize("@ticketService.canAccessTicket(authentication, #userId, #id)")
+    @Operation(summary = "Add a message to a ticket")
     public ResponseEntity<CreateTicketMessageResponse> addMessage(@PathVariable("id") Long id,
                                                                   @RequestBody @Valid CreateTicketMessageRequest request,
                                                                   @AuthenticationPrincipal(expression = "subject") String userId) {
@@ -108,13 +119,28 @@ public class TicketController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-//    TODO implement status change
-//    @PostMapping("/{id}/status")
-//    @PreAuthorize("hasRole('SUPPORT') or hasRole('ADMIN')")
-//    public ResponseEntity<Ticket> changeStatus(@PathVariable("id") UUID id, @RequestParam("status") TicketStatus status) {
-//        Ticket t = ticketService.changeStatus(id, status);
-//        return ResponseEntity.ok(t);
-//    }
+    @PostMapping("/{id}/close")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPPORT')")
+    @Operation(summary = "Close a ticket (admin/support only)")
+    public ResponseEntity<TicketDTO> closeTicket(@PathVariable("id") Long id,
+                                                 @AuthenticationPrincipal(expression = "subject") String userId) {
+        TicketDTO ticket = ticketService.closeTicket(id, userId);
+        return ResponseEntity.ok(ticket);
+    }
+
+    @PostMapping("/{id}/status")
+    @Operation(summary = "Change ticket status (admin/support only)")
+    public ResponseEntity<TicketDTO> changeStatus(@PathVariable("id") Long id,
+                                                  @RequestParam("status") String status,
+                                                  @AuthenticationPrincipal(expression = "subject") String userId) {
+        try {
+            Ticket.Status newStatus = Ticket.Status.valueOf(status.toUpperCase());
+            TicketDTO ticket = ticketService.changeTicketStatus(id, newStatus, userId);
+            return ResponseEntity.ok(ticket);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+    }
 
     // TODO implement priority change
 //    @PostMapping("/{id}/assign")

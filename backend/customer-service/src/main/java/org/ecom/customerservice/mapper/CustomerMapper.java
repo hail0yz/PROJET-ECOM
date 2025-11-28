@@ -1,11 +1,15 @@
 package org.ecom.customerservice.mapper;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import org.ecom.customerservice.dto.CustomerDTO;
 import org.ecom.customerservice.dto.CustomerPreferencesDTO;
 import org.ecom.customerservice.dto.CustomerProfileDTO;
+import org.ecom.customerservice.model.Contact;
 import org.ecom.customerservice.model.Customer;
+import org.ecom.customerservice.model.PhoneNumber;
 
 @Component
 public class CustomerMapper {
@@ -31,6 +35,11 @@ public class CustomerMapper {
             return null;
         }
 
+        String phoneNumber = Optional.ofNullable(customer.getContact())
+                .map(Contact::getPhoneNumber)
+                .map(PhoneNumber::getNumber)
+                .orElse(null);
+
         return CustomerProfileDTO.builder()
                 .id(customer.getId())
                 .firstname(customer.getFirstname())
@@ -38,6 +47,7 @@ public class CustomerMapper {
                 .name(customer.getName())
                 .avatar(customer.getAvatar())
                 .email(customer.getEmail())
+                .phoneNumber(phoneNumber)
                 .build();
     }
 

@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import org.ecom.cart.dto.CartEntry;
 import org.ecom.cart.dto.CreateCartRequest;
@@ -94,7 +96,8 @@ public class CartController {
     }
 
     @PutMapping("/user/{userId}/items")
-    public ResponseEntity<Void> updateItemQuantity(
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Void> updateCustomerItemQuantity(
             @PathVariable String userId,
             @Valid @RequestBody CartEntry entry
     ) {
@@ -103,12 +106,10 @@ public class CartController {
     }
 
     @PutMapping("/{cartId}/items")
-    public ResponseEntity<Void> updateItemQuantity(
-            @PathVariable Long cartId,
-            @AuthenticationPrincipal(expression = "subject") String customerId,
-            @Valid @RequestBody CartEntry entry
-    ) {
-        cartService.updateItemQuantity(customerId, entry);
+    @PreAuthorize("@cartService.isCartOwner(#cartId, authentication.principal.getClaim('sub'))")
+    public ResponseEntity<Void> updateItemQuantity(@Valid @RequestBody CartEntry entry,
+                                                   @PathVariable Long cartId) {
+        cartService.updateCartItemQuantity(cartId, entry);
         return ResponseEntity.ok().build();
     }
 

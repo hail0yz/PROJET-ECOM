@@ -1,7 +1,12 @@
 package org.ecom.customerservice.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -11,9 +16,12 @@ import org.ecom.customerservice.dto.CustomerDetailsDTO;
 import org.ecom.customerservice.dto.CustomerPreferencesDTO;
 import org.ecom.customerservice.dto.CustomerProfileDTO;
 import org.ecom.customerservice.dto.UpdatePreferencesRequest;
+import org.ecom.customerservice.dto.UpdateProfileRequest;
 import org.ecom.customerservice.exception.EntityNotFoundException;
 import org.ecom.customerservice.mapper.CustomerMapper;
+import org.ecom.customerservice.model.Contact;
 import org.ecom.customerservice.model.Customer;
+import org.ecom.customerservice.model.PhoneNumber;
 import org.ecom.customerservice.model.Preferences;
 import org.ecom.customerservice.repository.CustomerRepository;
 
@@ -26,6 +34,25 @@ public class CustomerService {
 
     private final CustomerMapper customerMapper;
 
+    public boolean canAccessCustomerProfile(String customerId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof Jwt jwt) {
+            String authenticatedUserId = jwt.getSubject();
+            boolean canAccess = authenticatedUserId != null && authenticatedUserId.equals(customerId);
+            log.debug("Access check for customer {}: authenticated user {}, canAccess: {}",
+                    customerId, authenticatedUserId, canAccess);
+            return canAccess;
+        }
+
+        return false;
+    }
+
     public CustomerDTO getCustomerById(String customerId) {
         Customer customer = findCustomerById(customerId);
         return customerMapper.mapToCustomerDTO(customer);
@@ -36,14 +63,44 @@ public class CustomerService {
         return customerMapper.mapToCustomerProfileDTO(customer);
     }
 
+    public CustomerProfileDTO updateCustomerProfile(String customerId, UpdateProfileRequest request) {
+        Customer customer = findCustomerById(customerId);
+
+        customer.setFirstname(request.firstname());
+        customer.setLastname(request.lastname());
+        customer.setEmail(request.email());
+
+        if (request.phone() != null && !request.phone().isBlank()) {
+            String email = Optional.ofNullable(customer.getContact())
+                    .map(Contact::getEmail)
+                    .orElse(null);
+            customer.setContact(new Contact(email, new PhoneNumber(null, request.phone())));
+        }
+
+        Customer updatedCustomer = customerRepository.save(customer);
+        log.info("Customer profile updated: {}", customerId);
+
+        return customerMapper.mapToCustomerProfileDTO(updatedCustomer);
+    }
+
     public void updateCustomerPreferences(String customerId, UpdatePreferencesRequest request) {
-        Preferences preferences = Preferences.builder()
-                .emailNotificationsEnabled(request.emailNotificationsEnabled())
-                .smsNotificationsEnabled(request.smsNotificationsEnabled())
-                .build();
+        log.info("Updating preferences for customer {}: {}", customerId, request);
 
         Customer customer = findCustomerById(customerId);
-        customer.setPreferences(preferences);
+
+        if (customer.getPreferences() == null) {
+            log.info("No existing preferences found for customer {}. Creating new preferences.", customerId);
+            Preferences preferences = Preferences.builder()
+                    .emailNotificationsEnabled(request.emailNotificationsEnabled())
+                    .smsNotificationsEnabled(request.smsNotificationsEnabled())
+                    .build();
+            customer.setPreferences(preferences);
+        }
+        else {
+            customer.getPreferences().setEmailNotificationsEnabled(request.emailNotificationsEnabled());
+            customer.getPreferences().setSmsNotificationsEnabled(request.smsNotificationsEnabled());
+        }
+
         customerRepository.save(customer);
     }
 

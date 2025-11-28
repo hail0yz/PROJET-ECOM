@@ -3,6 +3,8 @@ package com.ecom.bookService.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .stream()
                 .map(categoryMapper::mapToDTO)
                 .toList();
+    }
+
+    @Override
+    public Page<CategoryDTO> getAllCategories(int page, int size) {
+        return categoryRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "categoryName"))
+        ).map(categoryMapper::mapToDTO);
     }
 
 }

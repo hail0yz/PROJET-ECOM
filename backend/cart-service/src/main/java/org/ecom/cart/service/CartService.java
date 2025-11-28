@@ -108,7 +108,10 @@ public class CartService {
     }
 
     public boolean isCartOwner(Long cartId, String customerId) {
-        return cartRepository.existsByIdAndUserId(cartId, customerId);
+        boolean exists = cartRepository.existsByIdAndUserIdAndStatus(cartId, customerId, CartStatus.OPEN);
+        log.info("Verifying cart ownership: cartId={}, customerId={}, isOwner={}",
+                cartId, customerId, exists);
+        return exists;
     }
 
     public boolean isCurrentCartOwner(String customerId) {
@@ -280,6 +283,35 @@ public class CartService {
                 .build();
 
         return bookClient.validateProducts(validationRequest);
+    }
+
+    public void updateCartItemQuantity(Long cartId, CartEntry entry) {
+        log.info("Updating quantity for productId={} in cartId={} to {}",
+                entry.productId(), cartId, entry.quantity());
+
+        Cart cart = cartRepository.findByIdAndStatus(cartId, CartStatus.OPEN)
+                .orElseThrow(() -> new EntityNotFoundException("Cart not found with ID: " + cartId));
+
+        if (cart.getStatus() != CartStatus.OPEN) {
+            throw new IllegalStateException("Cannot update items in a non-open cart");
+        }
+
+        CartItem item = cartItemRepository.findByProductIdAndCartId(entry.productId(), cart.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Cart Item not found in cart: " + entry.productId()));
+
+        var validationResponse = validateProduct(entry);
+
+        if (!validationResponse.valid()) {
+            log.error("Cart entry payload is not valid. Result = {}", validationResponse);
+            throw new ProductDetailsInvalidException(validationResponse);
+        }
+
+        item.setQuantity(entry.quantity());
+
+        cartRepository.save(cart);
+
+        log.info("Updated productId={} quantity to {} in cartId={}",
+                entry.productId(), entry.quantity(), cartId);
     }
 
 }

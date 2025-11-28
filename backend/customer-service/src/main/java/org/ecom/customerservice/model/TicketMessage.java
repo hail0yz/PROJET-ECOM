@@ -5,11 +5,13 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +30,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class TicketMessage {
 
     @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

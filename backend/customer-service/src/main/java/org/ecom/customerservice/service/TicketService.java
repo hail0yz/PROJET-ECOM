@@ -67,9 +67,16 @@ public class TicketService {
 
     private final TicketCategoryRepository ticketCategoryRepository;
 
-    public TicketDTO getTicketById(String customerId, Long ticketId) {
+    public TicketDTO getCustomerTicket(String customerId, Long ticketId) {
         log.info("Getting ticket {} for customer {}", ticketId, customerId);
         Ticket ticket = ticketRepository.findByIdAndCustomerId(ticketId, customerId)
+                .orElseThrow(() -> new EntityNotFoundException("Ticket not found : " + ticketId));
+        return ticketMapper.mapToTicketDTOWithMessages(ticket);
+    }
+
+    public TicketDTO getTicketById(Long ticketId) {
+        log.info("Getting ticket {}", ticketId);
+        Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new EntityNotFoundException("Ticket not found : " + ticketId));
         return ticketMapper.mapToTicketDTOWithMessages(ticket);
     }
@@ -204,9 +211,11 @@ public class TicketService {
     }
 
     private boolean hasAccess(Collection<String> roles, String userId, Long ticketId) {
+        log.info("Checking access for user {} to ticket {}", userId, ticketId);
         if (isCustomer(roles)) {
             Ticket ticket = ticketRepository.findById(ticketId)
                     .orElseThrow(() -> new EntityNotFoundException("Ticket not found"));
+            log.info("Ticket {} belongs to customer {}", ticketId, ticket.getCustomer().getId());
             return Objects.equals(ticket.getCustomer().getId(), userId);
         }
         return isSupportOrAdmin(roles);
@@ -220,6 +229,7 @@ public class TicketService {
         if (authentication == null) return false;
 
         Collection<String> roles = AuthorizationUtils.getAuthorities(authentication);
+        log.info("User {} with roles {} is requesting access to ticket {}", userId, roles, ticketId);
         return hasAccess(roles, userId, ticketId);
     }
 
@@ -303,6 +313,39 @@ public class TicketService {
                 ));
 
         return map;
+    }
+
+    @Transactional
+    public TicketDTO closeTicket(Long ticketId, String userId) {
+        log.info("Closing ticket {} by user {}", ticketId, userId);
+        
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new EntityNotFoundException("Ticket not found: " + ticketId));
+
+        if (ticket.getStatus() == Ticket.Status.CLOSED) {
+            log.warn("Ticket {} is already closed", ticketId);
+            throw new IllegalStateException("Le ticket est déjà fermé");
+        }
+
+        ticket.setStatus(Ticket.Status.CLOSED);
+        Ticket saved = ticketRepository.save(ticket);
+        
+        log.info("Ticket {} closed successfully", ticketId);
+        return ticketMapper.mapToTicketDTOWithMessages(saved);
+    }
+
+    @Transactional
+    public TicketDTO changeTicketStatus(Long ticketId, Ticket.Status newStatus, String userId) {
+        log.info("Changing ticket {} status to {} by user {}", ticketId, newStatus, userId);
+        
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new EntityNotFoundException("Ticket not found: " + ticketId));
+
+        ticket.setStatus(newStatus);
+        Ticket saved = ticketRepository.save(ticket);
+
+        log.info("Ticket {} status changed successfully to {}", ticketId, newStatus);
+        return ticketMapper.mapToTicketDTO(saved);
     }
 
 }
