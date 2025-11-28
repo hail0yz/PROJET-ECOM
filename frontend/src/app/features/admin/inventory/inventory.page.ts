@@ -8,7 +8,7 @@ import { catchError, finalize, of } from 'rxjs';
 
 @Component({
     selector: 'admin-inventory',
-    standalone:true,
+    standalone: true,
     imports: [AdminLayoutComponent, CommonModule, FormsModule, RouterModule],
     templateUrl: './inventory.page.html'
 })
@@ -22,9 +22,7 @@ export class AdminInventoryPage implements OnInit {
 
     // Edit modal state
     editingItem: InventoryResponseDTO | null = null;
-    editAvailableQuantity: number = 0;
-    editReservedQuantity: number = 0;
-    editMinimumStockLevel: number = 0;
+    editQuantity: number = 0;
 
     // Add stock modal state
     addingStockItem: InventoryResponseDTO | null = null;
@@ -85,9 +83,7 @@ export class AdminInventoryPage implements OnInit {
 
     openEditModal(item: InventoryResponseDTO) {
         this.editingItem = item;
-        this.editAvailableQuantity = item.availableQuantity;
-        this.editReservedQuantity = item.reservedQuantity;
-        this.editMinimumStockLevel = item.minimumStockLevel;
+        this.editQuantity = item.availableQuantity - item.reservedQuantity;
     }
 
     closeEditModal() {
@@ -100,12 +96,7 @@ export class AdminInventoryPage implements OnInit {
         this.loading = true;
         this.error = null;
 
-        this.inventoryService.updateInventory({
-            inventaireId: this.editingItem.id,
-            availableQuantity: this.editAvailableQuantity,
-            reservedQuantity: this.editReservedQuantity,
-            minimumStockLevel: this.editMinimumStockLevel
-        })
+        this.inventoryService.updateQuantity(this.editingItem.bookid, { quantity: this.editQuantity })
             .pipe(
                 catchError(err => {
                     this.error = 'Failed to update inventory';

@@ -15,7 +15,7 @@ export interface InventoryResponseDTO {
 
 export interface InventoryDTO {
     id: number;
-    book: any; 
+    book: any;
     availableQuantity: number;
     reservedQuantity: number;
     minimumStockLevel: number;
@@ -24,12 +24,8 @@ export interface InventoryDTO {
     updatedAt?: string;
 }
 
-export interface UpdateInventoryRequest {
-    inventaireId: number;
-    bookId?: number;
-    availableQuantity: number;
-    reservedQuantity: number;
-    minimumStockLevel: number;
+export interface UpdateQuantityRequest {
+    quantity: number;
 }
 
 export interface CreateInventoryForExistingBookRequest {
@@ -40,12 +36,12 @@ export interface CreateInventoryForExistingBookRequest {
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
-    private readonly apiUrl = `${environment.apiBaseUrl}/api/v1/inventory/admin`;
+    private readonly apiUrl = `${environment.apiBaseUrl}/api/inventory`;
 
     constructor(private http: HttpClient) { }
 
     getAllInventory(): Observable<InventoryResponseDTO[]> {
-        return this.http.get<InventoryResponseDTO[]>(this.apiUrl);
+        return this.http.get<InventoryResponseDTO[]>(`${this.apiUrl}/admin`);
     }
 
     getInventoryById(id: number): Observable<InventoryDTO> {
@@ -57,8 +53,8 @@ export class InventoryService {
         return this.http.get<InventoryResponseDTO[]>(`${this.apiUrl}/search`, { params });
     }
 
-    updateInventory(request: UpdateInventoryRequest): Observable<void> {
-        return this.http.put<void>(this.apiUrl, request);
+    updateQuantity(bookId: number, request: UpdateQuantityRequest): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${bookId}`, request);
     }
 
     addStock(bookId: number, quantity: number): Observable<any> {
