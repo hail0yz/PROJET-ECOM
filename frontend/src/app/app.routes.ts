@@ -10,6 +10,7 @@ import { RegistrationPage } from '@/app/features/registration/registration.page'
 import { AdminProductListPage } from '@/app/features/admin/products/product-list/product-list.page';
 import { AdminOrdersPage } from '@/app/features/admin/orders/orders.page';
 import { AdminCustomersPage } from '@/app/features/admin/customers/customers.page';
+import { AdminInventoryPage } from '@/app/features/admin/inventory/inventory.page';
 import { ProfilePage } from '@/app/features/profile/profile.page';
 import { OrdersPage } from '@/app/features/orders/orders.page';
 import { CheckoutPage } from '@/app/features/checkout/checkout.page';
@@ -101,6 +102,14 @@ export const routes: Routes = [
             role: ['admin']
         },
         component: AdminCustomersPage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'admin/inventory',
+        data: {
+            role: ['admin']
+        },
+        component: AdminInventoryPage,
         canActivate: [canActivateAuthRole]
     },
 ];

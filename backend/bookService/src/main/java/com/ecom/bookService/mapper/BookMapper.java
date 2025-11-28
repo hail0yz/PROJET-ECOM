@@ -6,6 +6,8 @@ import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.model.Book;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class BookMapper {
@@ -32,5 +34,24 @@ public class BookMapper {
                 .stock(book.getInventory().getAvailableQuantity() - book.getInventory().getReservedQuantity())
                 .build();
     }
+
+    public Book toBook(BookDTO bookDTO){
+        if (bookDTO == null) {
+            return null;
+        }
+        return Book.builder()
+                .bookId(bookDTO.getId())
+                .title(bookDTO.getTitle())
+                .author(bookDTO.getAuthor())
+                .isbn10(bookDTO.getIsbn10())
+                .isbn13(bookDTO.getIsbn13())
+                .summary(bookDTO.getSummary())
+                .numPages(bookDTO.getNumPages())
+                .publishedYear(bookDTO.getPublishedYear())
+                .createdAt(bookDTO.getCreatedAt())
+                .stock(bookDTO.getStock())
+                .build();
+    }
+
 
 }

@@ -3,12 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "postinstall": "patch-package",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless"
+    "start": "node start-with-patch.cjs serve",
+    "build": "node start-with-patch.cjs build",
+    "watch": "node start-with-patch.cjs build --watch --configuration development",
+    "test": "node start-with-patch.cjs test",
+    "test:ci": "node start-with-patch.cjs test --no-watch --no-progress --browsers=ChromeHeadless"
   },
   "prettier": {
     "printWidth": 100,

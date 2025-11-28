@@ -63,7 +63,7 @@ export const MOCK_BOOKS: Book[] = [
 @Injectable({ providedIn: 'root' })
 export class BooksService {
 
-  private bookServiceURL = `${environment.apiBaseUrl}/api/books`;
+  private bookServiceURL = `${environment.apiBaseUrl}/api/v1/books`;
 
   constructor(private http: HttpClient, private router: Router) { }
 
