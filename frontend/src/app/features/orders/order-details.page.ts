@@ -8,6 +8,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { OrderService } from '@/app/core/services/order.service';
 import { CartService } from '@/app/core/services/cart.service';
 import { BooksService } from '@/app/core/services/books.service';
+import { ErrorHandlerService } from '@/app/core/services/error-handler.service';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 
@@ -36,6 +37,7 @@ export class OrderDetailsPage implements OnInit {
     private orderService = inject(OrderService);
     private cartService = inject(CartService);
     private booksService = inject(BooksService);
+    private errorHandler = inject(ErrorHandlerService);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
 
@@ -69,7 +71,7 @@ export class OrderDetailsPage implements OnInit {
         this.orderService.getOrderById(this.orderId!)
             .pipe(
                 catchError(err => {
-                    this.error.set('Failed to load order details');
+                    this.error.set(this.errorHandler.getErrorMessageText(err, 'chargement des d\u00e9tails de la commande'));
                     console.error('Error fetching order:', err);
                     return of(null);
                 }),
@@ -154,7 +156,7 @@ export class OrderDetailsPage implements OnInit {
                 },
                 error: (err) => {
                     console.error('Error loading order details:', err);
-                    this.error.set('Failed to load order details');
+                    this.error.set(this.errorHandler.getErrorMessageText(err, 'chargement des d\u00e9tails de la commande'));
                     this.loading.set(false);
                 }
             });

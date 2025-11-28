@@ -1,17 +1,18 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { Page } from '@/app/core/models/page.model';
 import { TicketAPI, TicketStatus } from '@/app/core/models/ticket.model';
 import { TicketService } from '@/app/core/services/ticket.service';
+import { ErrorHandlerService } from '@/app/core/services/error-handler.service';
 import { AdminLayoutComponent } from '@/app/features/admin/layout/layout.component';
 
 @Component({
     selector: 'admin-ticket-list',
     standalone: true,
-    imports: [AdminLayoutComponent, CommonModule, FormsModule],
+    imports: [AdminLayoutComponent, CommonModule, FormsModule, RouterModule],
     templateUrl: './ticket-list.page.html',
 })
 export class AdminTicketListPage implements OnInit {
@@ -35,7 +36,8 @@ export class AdminTicketListPage implements OnInit {
     constructor(
         private ticketService: TicketService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private errorHandler: ErrorHandlerService
     ) { }
 
     ngOnInit(): void {
@@ -57,17 +59,18 @@ export class AdminTicketListPage implements OnInit {
         });
     }
 
-    loadTickets(page: number, size: number) {
+    loadTickets(page: number, size: number = 10) {
         this.loading.set(true);
         this.errorMessage.set('');
 
-        this.ticketService.listAllTickets({}).subscribe({
+        this.ticketService.listAllTickets({ page, size }, null).subscribe({
             next: (res: any) => {
                 this.pagedTickets.set(res);
                 this.loading.set(false);
             },
             error: (err) => {
-                this.errorMessage.set(err?.error?.message || err?.message || 'Erreur lors du chargement des tickets');
+                const errorMsg = this.errorHandler.getErrorMessage(err, 'chargement des tickets');
+                this.errorMessage.set(`${errorMsg.title}: ${errorMsg.message}`);
                 this.loading.set(false);
             }
         });

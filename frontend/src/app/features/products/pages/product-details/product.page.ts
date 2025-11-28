@@ -44,6 +44,12 @@ export class ProductDetailPage implements OnInit {
             next: (book) => {
                 this.book = book;
                 console.log(this.book);
+
+                // Si le produit est déjà dans le panier, afficher la quantité du panier
+                if (this.isInCart()) {
+                    const cartQuantity = this.cartService.getItemQuantity(bookId);
+                    this.quantity.set(cartQuantity);
+                }
             },
             error: (error) => {
                 console.error('Error fetching book details:', error);
@@ -89,10 +95,20 @@ export class ProductDetailPage implements OnInit {
 
     addToCart(): void {
         const currentBook = this.book;
-        console.log('add to cart')
-        if (!currentBook || (currentBook.stock && currentBook.stock === 0)) return;
+        if (!currentBook) return;
 
-        console.log('add to cart')
+        // Vérifier si le produit est disponible en stock
+        if (currentBook.stock !== undefined && currentBook.stock === 0) {
+            this.toastr.warning('Ce produit n\'est pas disponible en stock');
+            return;
+        }
+
+        // Vérifier si le produit est déjà dans le panier
+        if (this.isInCart()) {
+            this.toastr.info('Ce produit est déjà dans votre panier');
+            return;
+        }
+
         this.addingToCart.set(true);
         this.errorMessage.set(null);
         this.showSuccessMessage.set(false);

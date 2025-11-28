@@ -7,15 +7,6 @@
             </a>
             <div class="flex items-center md:order-2 space-x-2">
                 <div class="flex items-center space-x-1">
-                    <button
-                        class="inline-flex items-center justify-center text-muted-foreground/80 h-8 rounded-md bg-transparent hover:bg-neutral-100 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-search">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.3-4.3"></path>
-                        </svg>
-                    </button>
                     <a routerLink="/cart"
                         class="inline-flex items-center justify-center text-muted-foreground/80 h-8 rounded-md bg-transparent hover:bg-neutral-100 h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -30,7 +21,7 @@
                 </div>
                 @if(isLoggedIn) {
                 <button
-                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-gray-900 text-white shadow-xs hover:bg-gray-900/90 h-9 px-4 py-2"
+                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-blue-600 text-white shadow-xs hover:bg-blue-700 h-9 px-4 py-2"
                     (click)="logout()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -43,7 +34,20 @@
                 </button>
                 } @else {
                 <button
-                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-gray-900 text-white shadow-xs hover:bg-gray-900/90 h-9 px-4 py-2"
+                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 h-9 px-4 py-2"
+                    (click)="register()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-user-plus">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" x2="19" y1="8" y2="14" />
+                        <line x1="22" x2="16" y1="11" y2="11" />
+                    </svg>
+                    S'inscrire
+                </button>
+                <button
+                    class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-blue-600 text-white shadow-xs hover:bg-blue-700 h-9 px-4 py-2"
                     (click)="login()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -72,12 +76,14 @@
                         <a routerLink="/categories"
                             class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Catégories</a>
                     </li>
-                    @if(isLoggedIn) {
+                    @if(isLoggedIn && isUser()) {
                     <li>
                         <a routerLink="/orders"
-                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">My
-                            Orders</a>
+                            class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Mes
+                            commandes</a>
                     </li>
+                    }
+                    @if(isLoggedIn) {
                     <li>
                         <a routerLink="/profile"
                             class="transition-all font-medium block py-1.5 px-2.5 text-gray-900 rounded-sm hover:bg-gray-100 hover:text-accent-foreground hover:bg-accent/50">Profile</a>

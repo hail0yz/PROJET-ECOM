@@ -1,9 +1,101 @@
 <div class="admin-page">
     <admin-layout>
         @if (loading()) {
-        <div class="m-10">
-            <div class="bg-white shadow rounded-lg p-12 text-center">
-                <p class="text-gray-500">Chargement des tickets...</p>
+        <div class="min-h-screen bg-gray-50">
+            <!-- Header Skeleton -->
+            <div class="bg-white shadow-sm border-b border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="h-8 bg-gray-200 rounded w-64 mb-2 animate-pulse"></div>
+                            <div class="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
+                        </div>
+                        <div class="h-11 bg-gray-200 rounded w-40 animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Statistics Cards Skeleton -->
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                    @for (i of [1,2,3,4]; track i) {
+                    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 p-3 bg-gray-200 rounded-lg w-12 h-12 animate-pulse"></div>
+                                <div class="ml-5 flex-1">
+                                    <div class="h-4 bg-gray-200 rounded w-24 mb-2 animate-pulse"></div>
+                                    <div class="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                <!-- Filters Skeleton -->
+                <div class="bg-white shadow-sm rounded-lg mb-6 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="h-6 bg-gray-200 rounded w-20 animate-pulse"></div>
+                        <div class="h-5 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        @for (i of [1,2,3,4,5]; track i) {
+                        <div>
+                            <div class="h-4 bg-gray-200 rounded w-20 mb-2 animate-pulse"></div>
+                            <div class="h-10 bg-gray-200 rounded w-full animate-pulse"></div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Results Summary Skeleton -->
+                <div class="mb-4 flex items-center justify-between">
+                    <div class="h-5 bg-gray-200 rounded w-40 animate-pulse"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="h-5 bg-gray-200 rounded w-20 animate-pulse"></div>
+                        <div class="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Table Skeleton -->
+                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    @for (i of [1,2,3,4,5,6,7]; track i) {
+                                    <th class="px-6 py-3 text-left">
+                                        <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                                    </th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @for (row of [1,2,3,4,5,6,7,8]; track row) {
+                                <tr>
+                                    @for (col of [1,2,3,4,5,6,7]; track col) {
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="h-4 bg-gray-200 rounded animate-pulse"
+                                            [ngClass]="col === 1 ? 'w-12' : col === 2 ? 'w-32' : col === 3 || col === 4 ? 'w-20' : 'w-24'">
+                                        </div>
+                                    </td>
+                                    }
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination Skeleton -->
+                <div class="mt-6 flex items-center justify-between">
+                    <div class="h-5 bg-gray-200 rounded w-48 animate-pulse"></div>
+                    <div class="flex gap-2">
+                        <div class="h-10 bg-gray-200 rounded w-24 animate-pulse"></div>
+                        <div class="h-10 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    </div>
+                </div>
             </div>
         </div>
         } @else if (errorMessage()) {
@@ -299,7 +391,8 @@
                                         {{ formatDate(ticket.createdAt) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button class="text-blue-600 hover:text-blue-900">Voir</button>
+                                        <button [routerLink]="['/admin/tickets', ticket.id]"
+                                            class="text-blue-600 hover:text-blue-900">Voir</button>
                                     </td>
                                 </tr>
                             </tbody>

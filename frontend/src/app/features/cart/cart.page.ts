@@ -17,6 +17,8 @@ export class CartPage implements OnInit {
   cart = signal<Cart | undefined>(undefined);
   loading = true;
   error = ""
+  editableQuantities = signal<Map<number, number>>(new Map());
+  editingItem = signal<number | null>(null);
 
   constructor(
     private cartService: CartService,
@@ -25,7 +27,15 @@ export class CartPage implements OnInit {
 
   ngOnInit(): void {
     this.cartService.getCartAsObservable().subscribe({
-      next: (cart) => this.cart.set(cart),
+      next: (cart) => {
+        this.cart.set(cart);
+        // Initialiser les quantités éditables
+        const quantities = new Map<number, number>();
+        cart.items.forEach(item => {
+          quantities.set(item.book.id, item.quantity);
+        });
+        this.editableQuantities.set(quantities);
+      },
       error: err => this.error = err,
       complete: () => {
         this.loading = false
@@ -44,6 +54,60 @@ export class CartPage implements OnInit {
 
   removeItem(bookId: number) {
     this.cartService.removeItem(bookId).subscribe()
+  }
+
+  clearCart() {
+    if (confirm('Êtes-vous sûr de vouloir vider votre panier ?')) {
+      this.cartService.clearCart();
+    }
+  }
+
+  startEditing(bookId: number) {
+    this.editingItem.set(bookId);
+  }
+
+  cancelEditing() {
+    this.editingItem.set(null);
+    // Réinitialiser les quantités aux valeurs du panier
+    const quantities = new Map<number, number>();
+    this.cart()?.items.forEach(item => {
+      quantities.set(item.book.id, item.quantity);
+    });
+    this.editableQuantities.set(quantities);
+  }
+
+  updateEditableQuantity(bookId: number, newQuantity: number) {
+    const quantities = new Map(this.editableQuantities());
+    quantities.set(bookId, Math.max(1, newQuantity));
+    this.editableQuantities.set(quantities);
+  }
+
+  incrementQuantity(bookId: number) {
+    const current = this.editableQuantities().get(bookId) || 1;
+    this.updateEditableQuantity(bookId, current + 1);
+  }
+
+  decrementQuantity(bookId: number) {
+    const current = this.editableQuantities().get(bookId) || 1;
+    if (current > 1) {
+      this.updateEditableQuantity(bookId, current - 1);
+    }
+  }
+
+  saveQuantity(bookId: number) {
+    const newQuantity = this.editableQuantities().get(bookId);
+    if (newQuantity && newQuantity > 0) {
+      this.cartService.updateQuantity(bookId, newQuantity).subscribe({
+        next: () => {
+          this.editingItem.set(null);
+        },
+        error: (err) => {
+          console.error('Failed to update quantity:', err);
+          // Réinitialiser la quantité en cas d'erreur
+          this.cancelEditing();
+        }
+      });
+    }
   }
 
   placeOrder() {

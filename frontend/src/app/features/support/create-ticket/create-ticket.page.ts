@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { Router } from '@angular/router';
+import { TicketService } from '@/app/core/services/ticket.service';
+import { ErrorHandlerService } from '@/app/core/services/error-handler.service';
 
 @Component({
   selector: 'create-ticket-page',
@@ -30,24 +32,39 @@ export class CreateTicketPage {
 
   isSubmitting = false;
   showSuccess = false;
+  errorMessage: string | null = null;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private ticketService: TicketService,
+    private errorHandler: ErrorHandlerService
+  ) { }
 
   onSubmit() {
     if (this.isSubmitting) return;
 
     this.isSubmitting = true;
 
-    setTimeout(() => {
-      console.log('Ticket créé:', this.formData);
+    const payload = {
+      subject: this.formData.subject,
+      description: this.formData.description,
+      priority: this.formData.priority,
+      category: this.formData.category,
+      customerId: this.formData.customerId
+    };
 
-      this.showSuccess = true;
-      this.isSubmitting = false;
-
-      setTimeout(() => {
-        this.router.navigate(['/tickets']);
-      }, 2000);
-    }, 1500);
+    this.ticketService.createTicketForCustomer(payload).subscribe({
+      next: () => {
+        this.showSuccess = true;
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        console.error('Error creating ticket:', err);
+        const errorMsg = this.errorHandler.getErrorMessage(err, 'envoi du message');
+        this.errorMessage = `${errorMsg.title}: ${errorMsg.message}`;
+        this.isSubmitting = false;
+      }
+    });
   }
 
   onCancel() {

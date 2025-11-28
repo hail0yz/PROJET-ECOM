@@ -13,11 +13,13 @@ import { AdminProductListPage } from '@/app/features/admin/products/product-list
 import { AdminOrdersPage } from '@/app/features/admin/orders/orders.page';
 import { AdminCustomersPage } from '@/app/features/admin/customers/customers.page';
 import { AdminTicketListPage } from '@/app/features/admin/tickets/ticket-list.page';
+import { AdminTicketDetailsPage } from '@/app/features/admin/tickets/ticket-details/ticket-details.page';
 import { TicketListUserPage } from '@/app/features/support/ticket-list/tickets.page';
 import { TicketDetailsUserPage } from '@/app/features/support/ticket-details/ticket.page';
 import { OrdersPage } from '@/app/features/orders/orders.page';
 import { OrderDetailsPage } from '@/app/features/orders/order-details.page';
 import { CreateTicketPage } from './features/support/create-ticket/create-ticket.page';
+import { CategoriesPage } from '@/app/features/categories/categories.page';
 
 import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
 
@@ -27,6 +29,11 @@ export const routes: Routes = [
         component: HomeComponent,
         data: { public: true },
         canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'categories',
+        component: CategoriesPage,
+        data: { public: true }
     },
     {
         path: 'products',
@@ -106,6 +113,12 @@ export const routes: Routes = [
         path: 'admin/tickets',
         data: { role: ['ADMIN', 'SUPPORT'] },
         component: AdminTicketListPage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'admin/tickets/:id',
+        data: { role: ['ADMIN', 'SUPPORT'] },
+        component: AdminTicketDetailsPage,
         canActivate: [canActivateAuthRole]
     },
     {

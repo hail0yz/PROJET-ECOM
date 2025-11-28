@@ -1,9 +1,157 @@
 <app-navbar></app-navbar>
 
-<section class="bg-gray-50">
-    <div class="container max-w-screen-xl mx-auto px-4 py-8">
-        <app-bestsellers-books></app-bestsellers-books>
-        <app-categories-carousel></app-categories-carousel>
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative container max-w-screen-xl mx-auto px-4 py-20 md:py-32">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                    Découvrez Votre Prochaine
+                    <span class="text-blue-200">Aventure Littéraire</span>
+                </h1>
+                <p class="text-lg md:text-xl text-blue-100">
+                    Des milliers de livres à portée de main. Romans, essais, bandes dessinées et bien plus encore.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a routerLink="/products"
+                        class="px-8 py-4 bg-white text-blue-900 font-semibold rounded-lg hover:bg-blue-50 transition-all hover:scale-105 shadow-lg">
+                        Explorer le Catalogue
+                    </a>
+                    <a routerLink="/categories"
+                        class="px-8 py-4 bg-blue-800 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all border-2 border-white">
+                        Parcourir par Catégorie
+                    </a>
+                </div>
+                <div class="flex items-center gap-8 pt-4">
+                    <div>
+                        <p class="text-3xl font-bold">10k+</p>
+                        <p class="text-blue-200 text-sm">Livres disponibles</p>
+                    </div>
+                    <!-- <div>
+                        <p class="text-3xl font-bold">5k+</p>
+                        <p class="text-blue-200 text-sm">Clients satisfaits</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-bold">4.8★</p>
+                        <p class="text-blue-200 text-sm">Note moyenne</p>
+                    </div> -->
+                </div>
+            </div>
+            <div class="hidden lg:block">
+                <div class="relative">
+                    <div
+                        class="absolute -top-4 -left-4 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse">
+                    </div>
+                    <div
+                        class="absolute -bottom-4 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse animation-delay-2000">
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1" class="relative w-96 h-96 mx-auto text-white opacity-20">
+                        <path
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-16 bg-white">
+    <div class="container max-w-screen-xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Pourquoi Choisir Book Castle ?</h2>
+            <p class="text-lg text-gray-600">Votre librairie en ligne de confiance</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-gray-50">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" class="text-blue-600">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Livraison Rapide</h3>
+                <p class="text-gray-600">Recevez vos livres en 48h partout en France</p>
+            </div>
+            <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-gray-50">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" class="text-green-600">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Paiement Sécurisé</h3>
+                <p class="text-gray-600">Transactions 100% sécurisées et cryptées</p>
+            </div>
+            <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-gray-50">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" class="text-purple-600">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Support 24/7</h3>
+                <p class="text-gray-600">Notre équipe est toujours là pour vous aider</p>
+            </div>
+            <div class="text-center p-6 rounded-lg hover:shadow-lg transition-shadow bg-gray-50">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" class="text-yellow-600">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Meilleurs Prix</h3>
+                <p class="text-gray-600">Prix compétitifs et promotions régulières</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+    <div class="container max-w-screen-xl mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Prêt à Commencer Votre Aventure ?</h2>
+        <p class="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Rejoignez des milliers de lecteurs passionnés et découvrez notre sélection exclusive de livres
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a routerLink="/products"
+                class="px-8 py-4 bg-white text-blue-900 font-semibold rounded-lg hover:bg-blue-50 transition-all hover:scale-105 shadow-lg">
+                Découvrir les Livres
+            </a>
+            @if(!isLoggedIn) {
+            <button (click)="register()"
+                class="px-8 py-4 bg-transparent text-white font-semibold rounded-lg hover:bg-blue-700 transition-all border-2 border-white">
+                Créer un Compte
+            </button>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-16 bg-gray-100">
+    <div class="container max-w-screen-xl mx-auto px-4">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Restez Informé</h2>
+            <p class="text-lg text-gray-600 mb-8">
+                Inscrivez-vous à notre newsletter pour recevoir nos dernières nouveautés et offres exclusives
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input type="email" placeholder="Votre email"
+                    class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                <button
+                    class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                    S'inscrire
+                </button>
+            </div>
+        </div>
     </div>
 </section>
 

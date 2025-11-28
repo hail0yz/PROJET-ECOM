@@ -38,7 +38,7 @@ export class CartService {
       : this.addItemLocal(item);
   }
 
-  updateQuantity(bookId: number, quantity: number) {
+  updateQuantity(bookId: number, quantity: number): Observable<Cart> {
     if (quantity < 1)
       return throwError(() => new Error('Quantity must be at least 1'));
 
@@ -189,6 +189,8 @@ export class CartService {
     const updatedCart: Cart = { id: 0, items, local: true };
     this.saveLocalCart(updatedCart);
     this.setLoading(false);
+
+    return of(updatedCart)
   }
 
   private removeItemLocal(bookId: number): Observable<Cart> {
@@ -344,21 +346,23 @@ export class CartService {
       );
   }
 
-  private updateQuantityBackend(bookId: number, quantity: number) {
+  private updateQuantityBackend(bookId: number, quantity: number): Observable<Cart> {
     const currentCart = this.cartSubject.value;
     const currentCartId = currentCart.id;
 
     if (!currentCartId || currentCartId === 0) {
       this.setLoading(false);
-      throwError(() => new Error('Cart does not exist. Cannot update item.'));
+      return throwError(() => new Error('Cart does not exist. Cannot update item.'));
     }
 
     this.setLoading(true);
 
-    return this.http.put<void>(`${this.getCartByIdUrl(currentCartId)}/items`, {
-      bookId,
-      quantity
-    })
+    const entry: CartEntryAPI = {
+      productId: bookId,
+      quantity: quantity
+    };
+
+    return this.http.put<void>(`${this.getCartByIdUrl(currentCartId)}/items`, entry)
       .pipe(
         map(_ => {
           const updatedItems = currentCart.items.map(item =>
@@ -373,17 +377,14 @@ export class CartService {
           };
 
           this.setLoading(false);
+          this.cartSubject.next(updatedCart);
           return updatedCart;
         }),
         catchError(err => {
           this.setLoading(false);
           return this.handleBackendError('update quantity', err);
         })
-      )
-      .subscribe({
-        next: cart => this.cartSubject.next(cart),
-        error: err => console.error('Failed to update book quantity in cart [backend]', err)
-      });
+      );
   }
 
   private removeItemBackend(bookId: number): Observable<Cart> {

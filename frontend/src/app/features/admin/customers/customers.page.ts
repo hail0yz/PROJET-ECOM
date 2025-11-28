@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from '../layout/layout.component';
 import { CustomerService } from '@/app/core/services/customer.service';
+import { ErrorHandlerService } from '@/app/core/services/error-handler.service';
 import { Page } from '@/app/core/models/page.model';
 import { catchError, finalize, of } from 'rxjs';
 import { CustomerAPI } from '@/app/core/models/customer.model';
@@ -14,6 +15,7 @@ import { CustomerAPI } from '@/app/core/models/customer.model';
 })
 export class AdminCustomersPage implements OnInit {
     private customerService = inject(CustomerService);
+    private errorHandler = inject(ErrorHandlerService);
 
     customers: CustomerAPI[] = [];
     loading = false;
@@ -35,7 +37,8 @@ export class AdminCustomersPage implements OnInit {
         this.customerService.listCustomers(page, this.pageSize)
             .pipe(
                 catchError(err => {
-                    this.error = 'Failed to load customers';
+                    const errorMsg = this.errorHandler.getErrorMessage(err, 'chargement des clients');
+                    this.error = `${errorMsg.title}: ${errorMsg.message}`;
                     console.error(err);
                     return of({
                         content: [],
@@ -74,7 +77,8 @@ export class AdminCustomersPage implements OnInit {
         this.customerService.deleteCustomer(customerId)
             .pipe(
                 catchError(err => {
-                    this.error = 'Failed to delete customer';
+                    const errorMsg = this.errorHandler.getErrorMessage(err, 'suppression du client');
+                    this.error = `${errorMsg.title}: ${errorMsg.message}`;
                     console.error(err);
                     return of(null);
                 })

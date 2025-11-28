@@ -110,7 +110,7 @@
               Annuler
             </button>
             <button type="submit" [disabled]="!ticketForm.form.valid || isSubmitting"
-              class="px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-900/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <span *ngIf="isSubmitting">
                 <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -136,6 +136,20 @@
           <p class="text-sm text-green-800">
             Votre ticket a été créé. Vous recevrez une notification dès qu'un membre de notre équipe le prendra en
             charge.
+          </p>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+        <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M18.364 5.636l-1.414 1.414M6.343 17.657l-1.414 1.414M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 9v3m0 4h.01" />
+        </svg>
+        <div>
+          <h4 class="text-sm font-semibold text-red-900 mb-1">Erreur lors de la création du ticket</h4>
+          <p class="text-sm text-red-800">
+            {{ errorMessage }}
           </p>
         </div>
       </div>
