@@ -12,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +29,7 @@ import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.service.BookService;
+import com.ecom.bookService.service.BookServiceImpl;
 
 @RestController
 @RequestMapping("api/v1/books")
@@ -36,6 +39,9 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private BookServiceImpl bookServiceImpl;
 
 
     /**
@@ -140,6 +146,49 @@ public class BookController {
     ) {
         BulkBookValidationResponse response = bookService.validateProducts(request);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/v1/books
+     *
+     * Creates a new book
+     *
+     * @param bookDTO The book data to create
+     * @return A ResponseEntity containing the created book ID
+     */
+    @PostMapping
+    public ResponseEntity<Long> createBook(@RequestBody @Valid BookDTO bookDTO) {
+        Long bookId = bookServiceImpl.addBook(bookDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookId);
+    }
+
+    /**
+     * PUT /api/v1/books/:id
+     *
+     * Updates an existing book
+     *
+     * @param id The id of the book to update
+     * @param bookDTO The updated book data
+     * @return A ResponseEntity containing the updated book
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody @Valid BookDTO bookDTO) {
+        Book updatedBook = bookServiceImpl.updateBook(id, bookDTO);
+        return ResponseEntity.ok(updatedBook);
+    }
+
+    /**
+     * DELETE /api/v1/books/:id
+     *
+     * Deletes a book
+     *
+     * @param id The id of the book to delete
+     * @return A ResponseEntity with no content
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        bookServiceImpl.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

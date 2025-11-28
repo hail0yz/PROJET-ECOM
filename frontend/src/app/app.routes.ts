@@ -16,6 +16,7 @@ import { AdminTicketListPage } from '@/app/features/admin/tickets/ticket-list.pa
 import { AdminTicketDetailsPage } from '@/app/features/admin/tickets/ticket-details/ticket-details.page';
 import { TicketListUserPage } from '@/app/features/support/ticket-list/tickets.page';
 import { TicketDetailsUserPage } from '@/app/features/support/ticket-details/ticket.page';
+import { AdminInventoryPage } from '@/app/features/admin/inventory/inventory.page';
 import { OrdersPage } from '@/app/features/orders/orders.page';
 import { OrderDetailsPage } from '@/app/features/orders/order-details.page';
 import { CreateTicketPage } from './features/support/create-ticket/create-ticket.page';
@@ -154,5 +155,13 @@ export const routes: Routes = [
         },
         component: AdminOrdersPage,
         canActivate: [canActivateAuthRole]
-    }
+    },
+    {
+        path: 'admin/inventory',
+        data: {
+            role: ['ADMIN']
+        },
+        component: AdminInventoryPage,
+        canActivate: [canActivateAuthRole]
+    },
 ];
