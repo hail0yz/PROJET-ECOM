@@ -34,9 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrderController {
 
-
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<PlaceOrderResponse> placeOrder(
@@ -83,6 +81,16 @@ public class OrderController {
             @PathVariable("order-id") UUID orderId
     ) {
         return ResponseEntity.ok(this.orderService.confirmOrderPayment(orderId));
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') || (hasAuthority('ROLE_USER') && @orderService.isOrderOwner(#orderId, authentication.principal.getClaim('sub')))")
+    @PostMapping("/{order-id}/cancel")
+    public ResponseEntity<OrderResponse> cancelOrder(
+            @PathVariable("order-id") UUID orderId,
+            @AuthenticationPrincipal(expression = "subject") String userId
+    ) {
+        this.orderService.cancelOrder(orderId, userId);
+        return ResponseEntity.ok().build();
     }
 
 }

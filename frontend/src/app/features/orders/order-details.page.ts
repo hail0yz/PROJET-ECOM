@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import Keycloak from 'keycloak-js';
 import { catchError, finalize, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { ToastService } from 'ngx-toastr-notifier';
 
 import { OrderService } from '@/app/core/services/order.service';
 import { CartService } from '@/app/core/services/cart.service';
@@ -40,6 +41,7 @@ export class OrderDetailsPage implements OnInit {
     private errorHandler = inject(ErrorHandlerService);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
+    private toastr = inject(ToastService);
 
     order = signal<OrderResponse | null>(null);
     orderItems = signal<OrderItem[]>([]);
@@ -186,6 +188,56 @@ export class OrderDetailsPage implements OnInit {
 
     goBack() {
         this.router.navigate(['/orders']);
+    }
+
+    canCancelOrder(): boolean {
+        const order = this.order();
+        if (!order) return false;
+
+        const cancellableStatuses = [
+            OrderStatus.PENDING,
+            OrderStatus.PAYMENT_PENDING,
+            OrderStatus.RESERVED
+        ];
+
+        return cancellableStatuses.includes(order.status as OrderStatus);
+    }
+
+    isAdmin(): boolean {
+        return this.keycloak.hasRealmRole('ADMIN');
+    }
+
+    cancelOrder() {
+        if (!this.orderId) return;
+
+        const confirmed = confirm('Êtes-vous sûr de vouloir annuler cette commande ?');
+        if (!confirmed) return;
+
+        this.loading.set(true);
+        this.error.set(null);
+
+        this.orderService.cancelOrder(this.orderId)
+            .pipe(
+                catchError(err => {
+                    const errorMsg = this.errorHandler.getErrorMessageText(err, 'annulation de la commande');
+                    this.error.set(errorMsg);
+                    this.toastr.error(errorMsg);
+                    console.error('Error cancelling order:', err);
+                    return of(null);
+                }),
+                finalize(() => this.loading.set(false))
+            )
+            .subscribe(() => {
+                // Mettre à jour le status de la commande manuellement dans l'interface
+                this.order.update(current => {
+                    if (!current) return current;
+                    return {
+                        ...current,
+                        status: OrderStatus.CANCELLED
+                    };
+                });
+                this.toastr.success('Commande annulée avec succès');
+            });
     }
 
     getStatusClass(status?: string): string {

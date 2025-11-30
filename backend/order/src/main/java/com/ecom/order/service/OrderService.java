@@ -9,11 +9,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecom.order.cart.CartDetails;
 import com.ecom.order.customer.CustomerDetails;
@@ -74,7 +73,7 @@ public class OrderService {
 
         CustomerDetails customer = customerFuture.join();
         CartDetails cart = cartFuture.join();
-        
+
         validateCartNotEmpty(cart);
         validateAmountPositive(cart.totalPrice());
 
@@ -125,7 +124,7 @@ public class OrderService {
         try {
             PaymentResponse paymentResponse = paymentService.createPayment(paymentRequest);
             log.info("Payment created successfully for orderId={}, paymentId={}, amount={}",
-                order.getId(), paymentResponse.paymentId(), total);
+                    order.getId(), paymentResponse.paymentId(), total);
             updateOrderWithPayment(order, paymentResponse);
             return buildPaymentDetails(paymentResponse);
         }
@@ -145,7 +144,6 @@ public class OrderService {
 
     private CreatePaymentRequest buildPaymentRequest(CustomerDetails customer, Order order, BigDecimal total) {
         return CreatePaymentRequest.builder()
-                .paymentMethod(order.getPaymentInfo().getPaymentMethod())
                 .customerId(customer.id())
                 .customerEmail(customer.email())
                 .orderId(order.getId().toString())
@@ -155,7 +153,7 @@ public class OrderService {
 
     private void updateOrderWithPayment(Order order, PaymentResponse paymentResponse) {
         order.setStatus(OrderStatus.PAYMENT_PENDING);
-        order.getPaymentInfo().setPaymentId(paymentResponse.paymentId());
+        order.setPaymentInfo(new PaymentInfo(paymentResponse.paymentId(), null));
         orderRepo.save(order);
     }
 
@@ -176,7 +174,8 @@ public class OrderService {
                 try {
                     inventoryService.releaseReservation(order.getId().toString());
                     log.info("Stock released for failed order {}", order.getId());
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     log.error("Failed to release stock for order {}", order.getId(), e);
                 }
             }, taskExecutor);
@@ -187,7 +186,8 @@ public class OrderService {
                 try {
                     cartService.completeCart(cart.id());
                     log.info("Cart {} marked as completed", cart.id());
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     log.error("Failed to complete cart {}", cart.id(), e);
                 }
             }, taskExecutor);
@@ -207,21 +207,22 @@ public class OrderService {
                 CartDetails.CartItem::productId,
                 CartDetails.CartItem::quantity
         ));
-        
+
         try {
             ReserveStockResponse reserveStockResponse = inventoryService.reserveProducts(order.getId().toString(), productsWithQuantities);
 
             if (!reserveStockResponse.success()) {
-                log.error("Stock reservation failed [orderId={}, products={}]: {}", 
-                    order.getId(), productsWithQuantities.keySet(), reserveStockResponse.message());
+                log.error("Stock reservation failed [orderId={}, products={}]: {}",
+                        order.getId(), productsWithQuantities.keySet(), reserveStockResponse.message());
                 order.setStatus(OrderStatus.RESERVATION_FAILED);
                 orderRepo.save(order);
                 return false;
             }
-            
+
             log.info("Stock reserved successfully for orderId={}", order.getId());
             return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Exception during stock reservation for orderId={}", order.getId(), e);
             order.setStatus(OrderStatus.RESERVATION_FAILED);
             orderRepo.save(order);
@@ -230,7 +231,6 @@ public class OrderService {
     }
 
     private Order createOrderFromCart(OrderRequest request, CustomerDetails customer, CartDetails cart) {
-        PaymentInfo paymentInfo = new PaymentInfo(null, request.getPaymentDetails().paymentMethod());
         DeliveryInfo deliveryInfo = new DeliveryInfo(
                 request.getAddress().street(),
                 null,
@@ -239,15 +239,14 @@ public class OrderService {
                 request.getAddress().postalCode(),
                 request.getAddress().country()
         );
-        
+
         Order order = Order.builder()
                 .customerId(customer.id())
                 .cartId(cart.id())
                 .totalAmount(calculateTotalAmount(cart))
-                .paymentInfo(paymentInfo)
                 .deliveryInfo(deliveryInfo)
                 .build();
-        
+
         // Create order lines with bidirectional relationship and prices
         List<OrderLine> orderLines = cart.items().stream()
                 .map(item -> OrderLine.builder()
@@ -257,7 +256,7 @@ public class OrderService {
                         .order(order)
                         .build())
                 .collect(Collectors.toList());
-        
+
         order.setOrderLines(orderLines);
         return order;
     }
@@ -291,6 +290,10 @@ public class OrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderId));
 
+        if (order.getStatus() != OrderStatus.PAYMENT_PENDING) {
+            throw new IllegalStateException("Order is not in PAYMENT_PENDING status: " + orderId);
+        }
+
         PaymentInfo paymentInfo = order.getPaymentInfo();
         if (paymentInfo == null || paymentInfo.getPaymentId() == null) {
             throw new EntityNotFoundException("No payment associated with order: " + orderId);
@@ -321,22 +324,69 @@ public class OrderService {
 
         orderRepo.save(order);
 
-        CompletableFuture.runAsync(() -> {
-            try {
-                inventoryService.confirmReservation(order.getId());
-                log.info("Stock reservation confirmed for orderId={}", orderId);
-            } catch (Exception e) {
-                log.error("Failed to confirm stock reservation for orderId={}", orderId, e);
-            }
-        }, taskExecutor);
+        if (order.getStatus() == OrderStatus.CONFIRMED) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    inventoryService.confirmReservation(order.getId());
+                    log.info("Stock reservation confirmed for orderId={}", orderId);
+                }
+                catch (Exception e) {
+                    log.error("Failed to confirm stock reservation for orderId={}", orderId, e);
+                }
+            }, taskExecutor);
+        }
 
         return paymentResponse;
     }
 
+    @Transactional(readOnly = true)
     public boolean isOrderOwner(UUID orderId, String customerId) {
         return orderRepo.findById(orderId)
                 .map(order -> customerId.equals(order.getCustomerId()))
                 .orElse(true);
+    }
+
+    @Transactional
+    public void cancelOrder(UUID orderId, String userId) {
+        log.info("Cancelling order orderId={}, userId={}", orderId, userId);
+
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + orderId));
+
+        if (order.getStatus() == OrderStatus.PAID ||
+                order.getStatus() == OrderStatus.SHIPPED ||
+                order.getStatus() == OrderStatus.DELIVERED ||
+                order.getStatus() == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot cancel order in status: " + order.getStatus());
+        }
+
+        if (order.getStatus() == OrderStatus.PAYMENT_PENDING
+                && order.getPaymentInfo() != null
+                && order.getPaymentInfo().getPaymentId() != null) {
+            try {
+                paymentService.cancelPayment(order.getPaymentInfo().getPaymentId());
+                log.info("Payment cancelled for order {}", orderId);
+            }
+            catch (Exception e) {
+                log.error("Failed to cancel payment for order {}", orderId, e);
+                throw new IllegalStateException("Failed to cancel payment for order: " + orderId, e);
+            }
+        }
+
+        if (order.getStatus() == OrderStatus.RESERVED || order.getStatus() == OrderStatus.PAYMENT_PENDING) {
+            try {
+                inventoryService.releaseReservation(orderId.toString());
+                log.info("Stock released for order {}", orderId);
+            }
+            catch (Exception e) {
+                log.error("Failed to release stock for order {}", orderId, e);
+            }
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepo.save(order);
+
+        log.info("Order cancelled successfully orderId={}", orderId);
     }
 
 }

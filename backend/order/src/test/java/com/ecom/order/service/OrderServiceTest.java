@@ -71,7 +71,6 @@ class OrderServiceTest {
         OrderRequest.Address addr = new OrderRequest.Address("street", "city", "zip", "country");
         OrderRequest req = OrderRequest.builder()
                 .cartId(1L)
-                .paymentDetails(pay)
                 .address(addr)
                 .build();
 
@@ -111,7 +110,7 @@ class OrderServiceTest {
     void placeOrder_paymentSuccess_callsCompleteCart_and_returnsPaymentDetails() {
         OrderRequest.PaymentDetails pay = new OrderRequest.PaymentDetails("card");
         OrderRequest.Address addr = new OrderRequest.Address("street", "city", "zip", "country");
-        OrderRequest req = OrderRequest.builder().cartId(1L).paymentDetails(pay).address(addr).build();
+        OrderRequest req = OrderRequest.builder().cartId(1L).address(addr).build();
 
         CustomerDetails customer = new CustomerDetails("cust-1", "ext-1", "Fn", "Ln", "mail@example.com", null, null, true, null);
         when(customerService.getCustomerDetails(anyString())).thenReturn(customer);
@@ -144,7 +143,7 @@ class OrderServiceTest {
     void placeOrder_paymentFails_callsReleaseReservation_and_returnsPaymentFailed() {
         OrderRequest.PaymentDetails pay = new OrderRequest.PaymentDetails("card");
         OrderRequest.Address addr = new OrderRequest.Address("street", "city", "zip", "country");
-        OrderRequest req = OrderRequest.builder().cartId(1L).paymentDetails(pay).address(addr).build();
+        OrderRequest req = OrderRequest.builder().cartId(1L).address(addr).build();
 
         CustomerDetails customer = new CustomerDetails("cust-1", "ext-1", "Fn", "Ln", "mail@example.com", null, null, true, null);
         when(customerService.getCustomerDetails(anyString())).thenReturn(customer);

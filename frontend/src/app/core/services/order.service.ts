@@ -17,12 +17,9 @@ export class OrderService {
             city: string;
             postalCode: string;
             country: string;
-        },
-        paymentDetails: {
-            paymentMethod: string
         }
     ): Observable<PlaceOrderResponseAPI> {
-        const request: PlaceOrderRequestAPI = { cartId, address, paymentDetails }
+        const request: PlaceOrderRequestAPI = { cartId, address }
         return this.http.post<PlaceOrderResponseAPI>(this.orderServiceURL, request);
     }
 
@@ -50,6 +47,10 @@ export class OrderService {
 
     confirmPayment(orderId: string): Observable<any> {
         return this.http.post<any>(`${this.orderServiceURL}/${orderId}/confirm-payment`, {});
+    }
+
+    cancelOrder(orderId: string): Observable<void> {
+        return this.http.post<void>(`${this.orderServiceURL}/${orderId}/cancel`, {});
     }
 
 }

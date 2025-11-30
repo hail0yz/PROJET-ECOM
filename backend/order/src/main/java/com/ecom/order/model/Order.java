@@ -56,6 +56,9 @@ public class Order {
 
     private Long cartId;
 
+    @Version
+    private Long version;
+
     @LastModifiedDate
     @Column(insertable = false)
     private LocalDateTime modifiedDate;

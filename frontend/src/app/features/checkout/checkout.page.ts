@@ -31,7 +31,6 @@ export class CheckoutPage implements OnInit {
   checkoutForm!: FormGroup;
   loading = signal(false);
   error = signal<string | null>(null);
-  paymentMethods = ['VISA', 'MASTERCARD', 'PAYPAL', 'CASH_ON_DELIVERY'];
 
   // Stripe-related
   private stripe: Stripe | null = null;
@@ -54,14 +53,13 @@ export class CheckoutPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cartService.getCartAsObservable().subscribe({
-      next: (cart) => {
-        this.cart.set(cart);
-        if (!cart || cart.items.length === 0) {
-          this.router.navigate(['/cart']);
-        }
-      }
-    });
+    // Vérifier le panier initial une seule fois
+    const initialCart = this.cartService.getCurrentCart();
+    if (!initialCart || initialCart.items.length === 0) {
+      this.router.navigate(['/cart']);
+      return;
+    }
+    this.cart.set(initialCart);
   }
 
   initForm(): void {
@@ -71,15 +69,12 @@ export class CheckoutPage implements OnInit {
         city: ['', [Validators.required, Validators.minLength(2)]],
         postalCode: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]],
         country: ['', [Validators.required, Validators.minLength(2)]]
-      }),
-      paymentDetails: this.fb.group({
-        paymentMethod: ['CREDIT_CARD', [Validators.required]]
       })
     });
   }
 
   getTotal(): number {
-    return this.cartService.getTotal();
+    return this.cartService.getCartTotal(this.cart()!);
   }
 
   placeOrder(): void {
@@ -107,16 +102,12 @@ export class CheckoutPage implements OnInit {
       country: formValue.address.country
     };
 
-    const paymentDetails = {
-      paymentMethod: formValue.paymentDetails.paymentMethod
-    };
-
-    this.orderService.placeOrder(cart.id, address, paymentDetails).subscribe({
+    this.orderService.placeOrder(cart.id, address).subscribe({
       next: async (response) => {
+        this.cartService.refreshCart();
+
         const clientSecret = response?.paymentDetails?.clientSecret;
-        // store order id so we can sync payment result to backend
         this.orderId = response?.orderId ?? null;
-        // store server-side payment id returned by the order API
         this.paymentId = response?.paymentDetails?.paymentId ?? null;
         if (clientSecret) {
           this.clientSecret = clientSecret;
@@ -152,7 +143,6 @@ export class CheckoutPage implements OnInit {
         this.loading.set(false);
         this.error.set(null);
         this.toastr.success('Order placed successfully!');
-        this.cartService.clearCart();
         this.router.navigate(['/orders', response.orderId || 'success']);
       },
       error: (error) => {
@@ -191,7 +181,6 @@ export class CheckoutPage implements OnInit {
       }
 
       if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-        this.toastr.success('Payment succeeded');
         const paymentIntentId = result.paymentIntent.id;
         const paymentStatus = result.paymentIntent.status;
         const transactionId = result.paymentIntent.id;
@@ -200,7 +189,7 @@ export class CheckoutPage implements OnInit {
           // Prefer calling order endpoint so order state is updated by the orders service
           this.orderService.confirmPayment(this.orderId).subscribe({
             next: () => {
-              this.cartService.clearCart();
+              this.toastr.success('Payment succeeded');
               this.awaitingPayment.set(false);
               this.loading.set(false);
               this.router.navigate(['/orders', this.orderId || 'success']);
@@ -221,7 +210,6 @@ export class CheckoutPage implements OnInit {
             transactionId
           }).subscribe({
             next: () => {
-              this.cartService.clearCart();
               this.awaitingPayment.set(false);
               this.loading.set(false);
               this.router.navigate(['/orders', this.orderId || 'success']);

@@ -5,7 +5,8 @@ export enum OrderStatus {
     PAYMENT_PENDING = 'PAYMENT_PENDING',
     CANCELLED = 'CANCELLED',
     COMPLETED = 'COMPLETED',
-    PROCESSING = 'PROCESSING'
+    PROCESSING = 'PROCESSING',
+    RESERVED = 'RESERVED'
 }
 
 export interface PlaceOrderRequestAPI {
@@ -16,9 +17,6 @@ export interface PlaceOrderRequestAPI {
         city: string;
         postalCode: string;
         country: string;
-    },
-    paymentDetails: {
-        paymentMethod: string;
     }
 }
 

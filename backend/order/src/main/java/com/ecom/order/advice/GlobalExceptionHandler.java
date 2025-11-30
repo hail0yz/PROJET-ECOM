@@ -145,6 +145,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<APIErrorResponse> handle(IllegalArgumentException e) {
+        APIErrorResponse error = APIErrorResponse.builder()
+                .message(e.getMessage())
+                .status(BAD_REQUEST.value())
+                .error("ILLEGAL_ARGUMENT")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<APIErrorResponse> handle(IllegalStateException e) {
+        APIErrorResponse error = APIErrorResponse.builder()
+                .error("ILLEGAL_STATE")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @Value
     @Builder
     public static class APIErrorResponse {

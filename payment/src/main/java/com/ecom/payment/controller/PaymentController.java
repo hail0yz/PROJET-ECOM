@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecom.payment.dto.CancelPaymentResponse;
 import com.ecom.payment.dto.CreatePaymentRequest;
 import com.ecom.payment.dto.PaymentDTO;
 import com.ecom.payment.dto.PaymentResponse;
@@ -55,9 +56,9 @@ public class PaymentController {
     }
 
     @PutMapping("/{paymentId}/cancel")
-    public ResponseEntity<Map<String, String>> cancelPayment(@PathVariable Integer paymentId) {
-        paymentService.cancelPayment(paymentId);
-        return ResponseEntity.ok(Map.of("message", "Payment cancelled successfully"));
+    public ResponseEntity<CancelPaymentResponse> cancelPayment(@PathVariable Integer paymentId) {
+        CancelPaymentResponse response = paymentService.cancelPayment(paymentId);
+        return ResponseEntity.ok(response);
     }
     
     @GetMapping("/{paymentId}/sync")

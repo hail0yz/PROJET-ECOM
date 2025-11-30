@@ -25,11 +25,6 @@ public class CreatePaymentRequest {
     private BigDecimal amount;
 
 
-    @NotBlank(message = "Payment method is required")
-
-    private String paymentMethod;
-
-
     @Email(message = "Invalid email format")
 
     @NotBlank(message = "Customer email is required")
@@ -59,8 +54,6 @@ public class CreatePaymentRequest {
 
         this.amount = amount;
 
-        this.paymentMethod = paymentMethod;
-
         this.customerEmail = customerEmail;
 
         this.description = description;
@@ -76,10 +69,6 @@ public class CreatePaymentRequest {
 
     public BigDecimal getAmount() {
         return amount;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
     }
 
     public String getCustomerEmail() {
@@ -103,10 +92,6 @@ public class CreatePaymentRequest {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public void setCustomerEmail(String customerEmail) {
