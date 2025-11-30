@@ -124,7 +124,9 @@ export class CheckoutPage implements OnInit {
             this.stripe = await loadStripe(environment.stripePublicKey as string);
             if (!this.stripe) throw new Error('Failed to load Stripe');
             this.elements = this.stripe.elements();
-            this.card = this.elements.create('card');
+            this.card = this.elements.create('card', {
+              hidePostalCode: true
+            });
 
             setTimeout(() => {
               const el = document.getElementById('card-element');

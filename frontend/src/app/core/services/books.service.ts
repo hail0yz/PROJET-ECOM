@@ -63,7 +63,7 @@ export const MOCK_BOOKS: Book[] = [
 @Injectable({ providedIn: 'root' })
 export class BooksService {
 
-  private bookServiceURL = `${environment.apiBaseUrl}/api/v1/books`;
+  private bookServiceURL = `${environment.apiBaseUrl}/api/books`;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -120,12 +120,12 @@ export class BooksService {
         observer.complete();
       });
     }
-    
+
     // Remove duplicates
     const uniqueIds = [...new Set(ids)];
-    
+
     // Fetch all books in parallel
-    const requests = uniqueIds.map(id => 
+    const requests = uniqueIds.map(id =>
       this.getBookById(id).pipe(
         catchError((error: HttpErrorResponse) => {
           console.warn(`Failed to fetch book with id ${id}:`, error);
@@ -137,7 +137,7 @@ export class BooksService {
         })
       )
     );
-    
+
     return forkJoin(requests).pipe(
       map(books => books.filter((book): book is Book => book !== null))
     );
