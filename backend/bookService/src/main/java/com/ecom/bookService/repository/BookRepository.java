@@ -24,4 +24,6 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
 
     boolean existsByIsbn13(String isbn13);
 
+    boolean existsByIsbn10(String isbn);
+
 }

@@ -143,4 +143,13 @@ export class BooksService {
     );
   }
 
+  public createBook(formData: FormData): Observable<{ id: number }> {
+    return this.http.post<{ id: number }>(this.bookServiceURL, formData).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Failed to create book:', error);
+        return throwError(() => new Error(error.message || 'Failed to create book'));
+      })
+    );
+  }
+
 }

@@ -1,0 +1,170 @@
+<admin-layout>
+    <div class="h-full flex-1 flex-col gap-8 p-8 md:flex">
+        <div class="flex items-center justify-between gap-2">
+            <div class="flex flex-col gap-1">
+                <h2 class="text-2xl font-semibold tracking-tight">Ajouter un produit</h2>
+                <p class="text-muted-foreground">
+                    Remplissez le formulaire ci-dessous pour ajouter un nouveau livre à votre boutique.
+                </p>
+            </div>
+        </div>
+
+        <form [formGroup]="bookForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <div class="rounded-lg border border-gray-200 p-6">
+                <h3 class="text-lg font-medium mb-4">Informations générales</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- ISBN 10 -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">ISBN 10 *</label>
+                        <input formControlName="isbn10" type="text"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="1234567890" />
+                        @if(bookForm.get('isbn10')?.touched && bookForm.get('isbn10')?.hasError('required')) {
+                        <span class="text-sm text-red-600">L'ISBN 10 est requis</span>
+                        }
+                        @if(bookForm.get('isbn10')?.touched && bookForm.get('isbn10')?.hasError('pattern')) {
+                        <span class="text-sm text-red-600">L'ISBN 10 doit contenir 10 chiffres</span>
+                        }
+                    </div>
+
+                    <!-- ISBN 13 -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">ISBN 13</label>
+                        <input formControlName="isbn13" type="text"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="1234567890123" />
+                        @if(bookForm.get('isbn13')?.touched && bookForm.get('isbn13')?.hasError('pattern')) {
+                        <span class="text-sm text-red-600">L'ISBN 13 doit contenir 13 chiffres</span>
+                        }
+                    </div>
+
+                    <!-- Titre -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">Titre *</label>
+                        <input formControlName="title" type="text"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Titre du livre" />
+                        @if(bookForm.get('title')?.touched && bookForm.get('title')?.hasError('required')) {
+                        <span class="text-sm text-red-600">Le titre est requis</span>
+                        }
+                    </div>
+
+                    <!-- Auteur -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">Auteur *</label>
+                        <input formControlName="author" type="text"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Nom de l'auteur" />
+                        @if(bookForm.get('author')?.touched && bookForm.get('author')?.hasError('required')) {
+                        <span class="text-sm text-red-600">L'auteur est requis</span>
+                        }
+                    </div>
+
+                    <!-- Catégorie -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">Catégorie *</label>
+                        <select formControlName="category"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Sélectionner une catégorie</option>
+                            @for(category of categories(); track category.id) {
+                            <option [value]="category.id">{{ category.name }}</option>
+                            }
+                        </select>
+                        @if(bookForm.get('category')?.touched && bookForm.get('category')?.hasError('required')) {
+                        <span class="text-sm text-red-600">La catégorie est requise</span>
+                        }
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">Stock initial *</label>
+                        <input formControlName="stock" type="number"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="0" />
+                        @if(bookForm.get('stock')?.touched && bookForm.get('stock')?.hasError('required')) {
+                        <span class="text-sm text-red-600">Le stock est requis</span>
+                        }
+                    </div>
+
+                    <!-- Prix -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium">Prix *</label>
+                        <input formControlName="price" type="number" step="0.01"
+                            class="flex h-9 w-full rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="0.00" />
+                        @if(bookForm.get('price')?.touched && bookForm.get('price')?.hasError('required')) {
+                        <span class="text-sm text-red-600">Le prix est requis</span>
+                        }
+                        @if(bookForm.get('price')?.touched && bookForm.get('price')?.hasError('min')) {
+                        <span class="text-sm text-red-600">Le prix doit être supérieur à 0</span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="flex flex-col gap-2 mt-4">
+                    <label class="text-sm font-medium">Description</label>
+                    <textarea formControlName="summary" rows="4"
+                        class="flex w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Description du livre"></textarea>
+                </div>
+            </div>
+
+            <!-- Upload Image -->
+            <div class="rounded-lg border border-gray-200 p-6">
+                <h3 class="text-lg font-medium mb-4">Image du livre</h3>
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4">
+                        <label
+                            class="cursor-pointer inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="mr-2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                            Choisir une image *
+                            <input type="file" class="hidden" accept="image/*" (change)="onFileSelected($event)"
+                                required />
+                        </label>
+                        @if(selectedFile) {
+                        <span class="text-sm text-gray-600">{{ selectedFile.name }}</span>
+                        }
+                    </div>
+
+                    <!-- Preview image -->
+                    @if(imageUrl()) {
+                    <div class="relative w-48 h-64">
+                        <img [src]="imageUrl()" alt="Preview" class="w-full h-full object-cover rounded-md border" />
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-4">
+                <button type="submit" [disabled]="loading()"
+                    class="inline-flex items-center justify-center px-6 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    @if(loading()) {
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Création...
+                    } @else {
+                    Créer le produit
+                    }
+                </button>
+                <button type="button" (click)="cancel()" [disabled]="loading()"
+                    class="inline-flex items-center justify-center px-6 py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 transition-colors">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</admin-layout>

@@ -4,8 +4,10 @@ import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
+import com.ecom.bookService.dto.CreateBookRequest;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.CategoryName;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,4 +21,5 @@ public interface BookService {
     public List<Book> getAllBooksByCategory(String categoryEnum);
     Page<BookDTO> getPagedBooks(BookFilter filter, int page, int size);
     BulkBookValidationResponse validateProducts(BulkBookValidationRequest request);
+    Long createBook(CreateBookRequest request, MultipartFile image);
 }
