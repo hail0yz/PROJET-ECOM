@@ -21,6 +21,7 @@ import { CartItem } from '@/app/core/models/cart.model';
 export class ProductDetailPage implements OnInit {
     bookId!: number;
     book?: Book;
+    loading = signal(true);
     addingToCart = signal(false);
     quantity = signal(1);
     showSuccessMessage = signal(false);
@@ -40,6 +41,9 @@ export class ProductDetailPage implements OnInit {
     }
 
     loadBook(bookId: number) {
+        this.loading.set(true);
+        this.errorMessage.set(null);
+
         this.booksService.getBookById(bookId).subscribe({
             next: (book) => {
                 this.book = book;
@@ -50,9 +54,13 @@ export class ProductDetailPage implements OnInit {
                     const cartQuantity = this.cartService.getItemQuantity(bookId);
                     this.quantity.set(cartQuantity);
                 }
+
+                this.loading.set(false);
             },
             error: (error) => {
                 console.error('Error fetching book details:', error);
+                this.errorMessage.set(error.message || 'Échec du chargement du produit');
+                this.loading.set(false);
             }
         });
     }

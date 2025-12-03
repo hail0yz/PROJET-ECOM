@@ -67,8 +67,7 @@ export class BooksService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  public getAllBooks(options: { page?: number, size?: number, search?: string }): Observable<Page<Book>> {
-    console.log('getAllBooks called with options:', options);
+  public getAllBooks(options: { page?: number, size?: number, search?: string, category?: number }): Observable<Page<Book>> {
     const size = options.size ?? 10;
     const page = options.page ? options.page - 1 : 0; // Backend pages are 0-indexed
 
@@ -80,8 +79,10 @@ export class BooksService {
       params = params.set('search', options.search);
     }
 
+    if (options.category) {
+      params = params.set('categoryId', options.category.toString());
+    }
     console.log('Fetching books with params:', params.toString());
-
     return this.http.get<Page<Book>>(this.bookServiceURL, { params })
       .pipe(
         catchError((error: HttpErrorResponse) => {

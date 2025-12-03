@@ -22,6 +22,7 @@ export class ProductListPage implements OnInit {
   categories = signal<Category[]>([]);
   loadingBooks = signal<boolean>(true);
   loadingCategories = signal<boolean>(true);
+  error = signal<string | null>(null);
 
   searchText: string = '';
 
@@ -41,8 +42,6 @@ export class ProductListPage implements OnInit {
     size: 9
   });
 
-  numProducts = 0;
-  errorMessage = '';
   readonly Math = Math;
 
   constructor(
@@ -81,23 +80,31 @@ export class ProductListPage implements OnInit {
     this.categoriesService.getCategories().subscribe({
       next: (categories) => {
         this.categories.set(categories);
+        this.loadingCategories.set(false);
       },
       error: (err) => {
+        console.error('Error loading categories:', err);
         this.categories.set([]);
-        this.errorMessage = err.message || 'Failed to load categories';
-      },
-      complete: () => this.loadingCategories.set(false)
+        this.error.set(err.message || 'Échec du chargement des catégories');
+        this.loadingCategories.set(false);
+      }
     });
   }
 
   loadBooks(filter: BookFilters): void {
+    this.loadingBooks.set(true);
+    this.error.set(null);
+
     this.booksService.getAllBooks(filter).subscribe({
       next: (response) => {
         this.pagedBooks.set(response);
         this.loadingBooks.set(false);
       },
       error: (err) => {
-        this.errorMessage = err.message || 'Failed to load books';
+        console.error('Error loading books:', err);
+        this.error.set(err.message || 'Échec du chargement des livres');
+        this.loadingBooks.set(false);
+        this.pagedBooks.set(null);
       }
     });
   }

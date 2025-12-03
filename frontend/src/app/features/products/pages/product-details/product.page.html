@@ -1,8 +1,76 @@
 <app-navbar></app-navbar>
 
-@if(book) {
 <main
     class="container max-w-screen-xl min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] mx-auto px-4 py-8 space-y-6">
+
+    @if(loading()) {
+    <!-- Loading Skeleton -->
+    <div class="space-y-6">
+        <!-- Breadcrumb Skeleton -->
+        <div class="h-4 bg-gray-200 rounded w-64 animate-pulse"></div>
+
+        <div class="grid items-start gap-8 md:grid-cols-2 lg:gap-12">
+            <!-- Image Skeleton -->
+            <div class="w-full flex justify-center">
+                <div class="aspect-4/3 h-[410px] w-full rounded-lg bg-gray-200 animate-pulse"></div>
+            </div>
+
+            <!-- Details Skeleton -->
+            <div class="grid gap-5">
+                <div class="space-y-3">
+                    <div class="h-8 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                    <div class="h-6 bg-gray-200 rounded w-1/4 animate-pulse"></div>
+                </div>
+                <div class="h-10 bg-gray-200 rounded w-32 animate-pulse"></div>
+                <div class="space-y-2">
+                    <div class="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                    <div class="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                    <div class="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                </div>
+                <div class="space-y-3">
+                    <div class="h-6 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    <div class="h-12 bg-gray-200 rounded w-full animate-pulse"></div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1 h-12 bg-gray-200 rounded animate-pulse"></div>
+                    <div class="h-12 w-12 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    } @else if(errorMessage()) {
+    <!-- Error State -->
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+            <div class="flex items-start gap-4">
+                <svg class="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-red-800 mb-1">Produit introuvable</h3>
+                    <p class="text-red-700">{{ errorMessage() }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-4 justify-center mt-6">
+            <button (click)="loadBook(bookId)"
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm hover:shadow-md">
+                <svg class="inline-block w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Réessayer
+            </button>
+            <button (click)="goBack()"
+                class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                Retour aux produits
+            </button>
+        </div>
+    </div>
+    } @else if(book) {
+    <!-- Product Details -->
     <div>
         <product-details-breadcrumb [category]="book.category" [productName]="book.title"></product-details-breadcrumb>
     </div>
@@ -125,11 +193,7 @@
             </div>
         </div>
     </div>
+    }
 </main>
-} @else {
-<div class="w-full min-h-[calc(100vh_-_var(--header-height)_-_var(--footer-height))] flex items-center justify-center">
-    <loading />
-</div>
-}
 
 <app-footer></app-footer>
