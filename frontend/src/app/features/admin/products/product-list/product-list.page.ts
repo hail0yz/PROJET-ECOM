@@ -5,12 +5,12 @@ import { Book, BookFilters } from '@/app/core/models/book.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Page } from '@/app/core/models/page.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'admin-product-list',
   standalone: true,
-  imports: [AdminLayoutComponent, CommonModule, FormsModule],
+  imports: [AdminLayoutComponent, CommonModule, FormsModule, RouterLink],
   templateUrl: './product-list.page.html',
 })
 export class AdminProductListPage implements OnInit {
