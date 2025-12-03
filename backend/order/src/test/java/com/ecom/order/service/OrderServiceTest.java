@@ -174,6 +174,7 @@ class OrderServiceTest {
         UUID id = UUID.randomUUID();
         Order order = Order.builder().id(id).paymentInfo(null).build();
         order.setPaymentInfo(new PaymentInfo(123L, "card"));
+        order.setStatus(OrderStatus.PAYMENT_PENDING);
 
         when(orderRepo.findById(id)).thenReturn(Optional.of(order));
 
