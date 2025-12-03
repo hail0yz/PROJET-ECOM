@@ -1,33 +1,34 @@
 package com.ecom.bookService.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.ecom.bookService.model.Category;
-import com.ecom.bookService.repository.CategoryRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
+import com.ecom.bookService.dto.CreateBookRequest;
 import com.ecom.bookService.mapper.BookMapper;
 import com.ecom.bookService.model.Book;
-import com.ecom.bookService.model.CategoryName;
+import com.ecom.bookService.model.BookInventory;
+import com.ecom.bookService.model.Category;
 import com.ecom.bookService.repository.BookRepository;
+import com.ecom.bookService.repository.CategoryRepository;
 import com.ecom.bookService.util.BookSpecificationUtils;
 import static java.util.Collections.emptySet;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +36,8 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final ImageService imageService;
+    private final CategoryRepository categoryRepository;
 
     public Long addBook(BookDTO bookDTO) {
 
@@ -160,6 +160,45 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Long createBook(CreateBookRequest request, MultipartFile image) {
+        if (bookRepository.existsByIsbn10(request.isbn10())) {
+            throw new EntityExistsException("Book with ISBN-10 " + request.isbn10() + " already exists");
+        }
+
+        if (request.isbn13() != null && bookRepository.existsByIsbn13(request.isbn13())) {
+            throw new EntityExistsException("Book with ISBN-13 " + request.isbn13() + " already exists");
+        }
+
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+
+        String thumbnail = imageService.uploadImage(image);
+
+        BookInventory inventory = BookInventory.builder()
+                .availableQuantity(request.initialStock())
+                .reservedQuantity(0)
+                .minimumStockLevel(10)
+                .build();
+
+        Book book = Book.builder()
+                .title(request.title())
+                .summary(request.description())
+                .category(category)
+                .author(request.author())
+                .thumbnail(thumbnail)
+                .inventory(inventory)
+                .price(request.price())
+                .build();
+
+        inventory.setBook(book);
+
+        Book saved = bookRepository.save(book);
+
+        return saved.getBookId();
     }
 
 }

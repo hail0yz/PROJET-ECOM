@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ecom.bookService.dto.APIErrorResponse;
 import com.ecom.bookService.exception.EntityNotFoundException;
+import com.ecom.bookService.exception.ImageUploadFailedException;
 import com.ecom.bookService.exception.InsufficientAvailableStockException;
 
 @RestControllerAdvice
@@ -82,6 +83,39 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<APIErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        APIErrorResponse error = APIErrorResponse.builder()
+                .error("ILLEGAL_ARGUMENT")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<APIErrorResponse> handle(IllegalStateException e) {
+        APIErrorResponse error = APIErrorResponse.builder()
+                .error("ILLEGAL_STATE")
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ImageUploadFailedException.class)
+    public ResponseEntity<APIErrorResponse> handle(ImageUploadFailedException e) {
+        APIErrorResponse error = APIErrorResponse.builder()
+                .error("IMAGE_UPLOAD_FAILED")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

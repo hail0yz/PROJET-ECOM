@@ -37,4 +37,8 @@ export class NavbarComponent implements OnInit {
         return this.keycloak.hasRealmRole('USER');
     }
 
+    isAdmin(): boolean {
+        return this.keycloak.hasRealmRole('ADMIN');
+    }
+
 }

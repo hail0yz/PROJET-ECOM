@@ -14,6 +14,10 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+/**
+ * The name 'BookInventory' is retained temporarily for simplicity and to avoid extensive refactoring,
+ * but it should ideally be renamed to 'BookStock' or 'Stock' to better reflect its purpose.
+ */
 @Entity
 @Table(name="book_inventories")
 @Getter

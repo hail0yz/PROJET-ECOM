@@ -9,25 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
+import com.ecom.bookService.dto.CreateBookRequest;
 import com.ecom.bookService.model.Book;
-import com.ecom.bookService.model.CategoryName;
 import com.ecom.bookService.service.BookService;
 import com.ecom.bookService.service.BookServiceImpl;
 
@@ -46,18 +39,18 @@ public class BookController {
 
     /**
      * GET /api/v1/books
-     *      => example with a filter: GET /api/v1/books?search=
-     *
+     * => example with a filter: GET /api/v1/books?search=
+     * <p>
      * Returns a list of books regarding optional filters
      *
-     * @param search Optional keyword to search in a book's title, summary or author
+     * @param search     Optional keyword to search in a book's title, summary or author
      * @param minPrice
      * @param maxPrice
      * @param categoryId Optional category ID to filter books belonging to a specific category
      * @param direction
      * @param sortBy
-     * @param page Optional page number, with 0 the default value (ie the first page)
-     * @param size Optional page size (ie number of books per page), with 10 the default value
+     * @param page       Optional page number, with 0 the default value (ie the first page)
+     * @param size       Optional page size (ie number of books per page), with 10 the default value
      * @return A Page of BookDTO containing the books for the requested page number
      */
     @GetMapping
@@ -86,7 +79,7 @@ public class BookController {
 
     /**
      * GET /api/v1/books/title/:title
-     *
+     * <p>
      * Returns a list of books whose title matches the one given in parameter
      *
      * @param title A title
@@ -96,7 +89,7 @@ public class BookController {
     public ResponseEntity<?> getAllBooksByTitle(@PathVariable String title) {
         List<Book> books = bookService.getAllBooksByTitle(title);
 
-        if(books.isEmpty()) {
+        if (books.isEmpty()) {
             return new ResponseEntity<>("Nothing found for " + title, HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(books);
@@ -105,7 +98,7 @@ public class BookController {
 
     /**
      * GET /api/v1/books/:id
-     *
+     * <p>
      * Returns a book whose id matches the one given in parameter
      *
      * @param id The id of a book
@@ -114,7 +107,7 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         BookDTO book = bookService.getBookById(id);
-        if(book == null) {
+        if (book == null) {
             return new ResponseEntity<>("Nothing found for id book " + id, HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(book);
@@ -123,7 +116,7 @@ public class BookController {
 
     /**
      * GET /api/v1/category/:categoryName
-     *
+     * <p>
      * Returns a list of books whose category name matches the one given in parameter
      *
      * @param categoryName The name of a category
@@ -134,7 +127,7 @@ public class BookController {
 
         List<Book> books = bookService.getAllBooksByCategory(categoryName);
 
-        if(books.isEmpty()) {
+        if (books.isEmpty()) {
             return new ResponseEntity<>("Nothing found for " + categoryName, HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(books);
@@ -150,13 +143,13 @@ public class BookController {
 
     /**
      * POST /api/v1/books
-     *
+     * <p>
      * Creates a new book
      *
      * @param bookDTO The book data to create
      * @return A ResponseEntity containing the created book ID
      */
-    @PostMapping
+    //@PostMapping
     public ResponseEntity<Long> createBook(@RequestBody @Valid BookDTO bookDTO) {
         Long bookId = bookServiceImpl.addBook(bookDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookId);
@@ -164,10 +157,10 @@ public class BookController {
 
     /**
      * PUT /api/v1/books/:id
-     *
+     * <p>
      * Updates an existing book
      *
-     * @param id The id of the book to update
+     * @param id      The id of the book to update
      * @param bookDTO The updated book data
      * @return A ResponseEntity containing the updated book
      */
@@ -179,7 +172,7 @@ public class BookController {
 
     /**
      * DELETE /api/v1/books/:id
-     *
+     * <p>
      * Deletes a book
      *
      * @param id The id of the book to delete
@@ -189,6 +182,18 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookServiceImpl.deleteBook(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = {"", "/"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BookId> createBook(
+            @RequestPart @Valid CreateBookRequest request,
+            @RequestPart MultipartFile image
+    ) {
+        Long bookId = bookService.createBook(request, image);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BookId(bookId));
+    }
+
+    public record BookId(Long id) {
     }
 
 }

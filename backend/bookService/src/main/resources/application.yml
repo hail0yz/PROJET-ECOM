@@ -7,6 +7,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/realms/ecom
+
+imgbb:
+  api-key: ${IMGBB_API_KEY:bb9f543cd4f7839a528f7ae45364dafc}
 
 eureka:
   instance:
