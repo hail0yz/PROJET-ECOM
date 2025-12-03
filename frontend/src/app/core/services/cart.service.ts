@@ -64,7 +64,11 @@ export class CartService {
   }
 
   getTotal(): number {
-    return this.cartSubject.value.items
+    return this.getCartTotal(this.cartSubject.value);
+  }
+
+  getCartTotal(cart: Cart): number {
+    return cart.items
       .reduce((sum, item) => sum + item.book.price * item.quantity, 0);
   }
 
@@ -285,6 +289,11 @@ export class CartService {
             return updatedCart;
           }),
           catchError(err => {
+            // Si le panier n'existe plus (404), créer un nouveau panier
+            if (err.status === 404) {
+              console.warn('Cart not found (deleted after order), creating new cart');
+              return this.createCartWithItem(item);
+            }
             this.setLoading(false);
             return this.handleBackendError('add item', err);
           })
@@ -292,7 +301,7 @@ export class CartService {
 
     }
 
-    // Cart exists - create cart with items
+    // Cart doesn't exist - create cart with items
     return this.createCartWithItem(item);
   }
 
@@ -381,6 +390,14 @@ export class CartService {
           return updatedCart;
         }),
         catchError(err => {
+          // Si le panier n'existe plus (404), réinitialiser le panier
+          if (err.status === 404) {
+            console.warn('Cart not found (deleted after order), resetting cart');
+            const emptyCart: Cart = { id: 0, items: [], local: false, persisted: false };
+            this.cartSubject.next(emptyCart);
+            this.setLoading(false);
+            return of(emptyCart);
+          }
           this.setLoading(false);
           return this.handleBackendError('update quantity', err);
         })
@@ -407,6 +424,14 @@ export class CartService {
           return updatedCart;
         }),
         catchError(err => {
+          // Si le panier n'existe plus (404), réinitialiser le panier
+          if (err.status === 404) {
+            console.warn('Cart not found (deleted after order), resetting cart');
+            const emptyCart: Cart = { id: 0, items: [], local: false, persisted: false };
+            this.cartSubject.next(emptyCart);
+            this.setLoading(false);
+            return of(emptyCart);
+          }
           this.setLoading(false);
           return this.handleBackendError('remove item', err)
         })

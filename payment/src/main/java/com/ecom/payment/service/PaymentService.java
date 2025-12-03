@@ -55,7 +55,6 @@ public class PaymentService {
             Payment payment = Payment.builder()
                     .orderId(request.getOrderId())
                     .amount(request.getAmount())
-                    .paymentMethod(request.getPaymentMethod())
                     .status(PaymentStatus.PENDING)
                     .transactionId(transactionId)
                     .stripePaymentIntentId(paymentIntent.getId())
@@ -259,9 +258,9 @@ public class PaymentService {
     }
     
     @Transactional
-    public void cancelPayment(Integer paymentId) {
+    public CancelPaymentResponse cancelPayment(Integer paymentId) {
         log.info("Cancelling payment with ID: {}", paymentId);
-        
+
         Payment payment = findPaymentById(paymentId);
         validatePaymentForCancellation(payment);
         
@@ -274,15 +273,20 @@ public class PaymentService {
             payment.setStatus(PaymentStatus.CANCELLED);
             payment.setFailureReason("Cancelled by user");
             paymentRepository.save(payment);
-            
+
             log.info("Payment cancelled successfully - ID: {}", paymentId);
-            
+            return CancelPaymentResponse.builder()
+                    .canceled(true)
+                    .build();
         } catch (StripeException e) {
             log.error("Stripe error while cancelling payment: {}", e.getMessage(), e);
-            // Continuer l'annulation même si Stripe échoue
             payment.setStatus(PaymentStatus.CANCELLED);
             payment.setFailureReason("Cancelled by user (Stripe cancellation failed)");
             paymentRepository.save(payment);
+            return CancelPaymentResponse.builder()
+                    .canceled(true)
+                    .message("Payment cancelled locally, but Stripe cancellation failed: " + e.getMessage())
+                    .build();
         }
     }
     

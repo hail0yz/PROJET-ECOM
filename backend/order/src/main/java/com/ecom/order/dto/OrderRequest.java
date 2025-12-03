@@ -20,10 +20,6 @@ public class OrderRequest {
     @Valid
     private Address address;
 
-    @NotNull
-    @Valid
-    private PaymentDetails paymentDetails;
-
     public record Address(
             @NotBlank String street,
             @NotBlank String city,
