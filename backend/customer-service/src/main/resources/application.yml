@@ -40,3 +40,23 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    com.ecom.customerservice: INFO
+
+server:
+  port: 8080
