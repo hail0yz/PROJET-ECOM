@@ -73,7 +73,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -127,7 +127,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       - name: Build and push Frontend image
         uses: docker/build-push-action@v5
@@ -185,6 +185,7 @@ jobs:
             KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD }}
             SONAR_DB_PASSWORD=${{ secrets.SONAR_DB_PASSWORD }}
             PUBLIC_IP=${{ secrets.AZURE_VM_HOST }}
+            GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
             EOF
 
             # Pull latest images
@@ -193,8 +194,8 @@ jobs:
             # Start/Update containers (only restarts services with new images)
             docker-compose -f docker-compose.prod.yml up -d
             
-            # Clean up old images
-            docker image prune -af
+            # Clean up old images (only unused ones)
+            docker image prune -f
             
             # Wait for services to start
             sleep 60
