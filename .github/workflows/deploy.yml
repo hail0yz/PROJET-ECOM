@@ -204,10 +204,10 @@ jobs:
             EOF
 
             # Pull latest images
-            docker-compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml pull
             
             # Start/Update containers (only restarts services with new images)
-            docker-compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml up -d
             
             # Clean up old images (only unused ones)
             docker image prune -f
@@ -216,7 +216,7 @@ jobs:
             sleep 60
 
             # Check status
-            docker-compose -f docker-compose.prod.yml ps
+            docker compose -f docker-compose.prod.yml ps
 
             echo "Deployment completed successfully!"
 
@@ -231,7 +231,7 @@ jobs:
             
             # Check if all services are running
             echo "Services status:"
-            docker-compose -f docker-compose.prod.yml ps
+            docker compose -f docker-compose.prod.yml ps
 
             # Check API Gateway health
             curl -f http://localhost:8080/actuator/health || echo "API Gateway health check failed"
