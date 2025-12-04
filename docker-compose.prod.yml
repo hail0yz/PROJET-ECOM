@@ -1,0 +1,290 @@
+services:
+
+  cart-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - cart-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: carts_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  order-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - order-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: orders_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  book-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - book-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: books_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  payment-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - payment-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  customer-postgres:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - customer-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: customers_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  postgres-keycloak:
+    image: postgres:13.22-alpine3.21
+    volumes:
+      - postgres-keycloak:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-k3ycl0ak}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres-keycloak
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:-k3ycl0ak}
+      KC_HOSTNAME: ${PUBLIC_IP:-localhost}
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HEALTH_ENABLED: true
+      KC_PROXY: edge
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - "8088:8080"
+    volumes:
+      - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json
+    depends_on:
+      postgres-keycloak:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ecom-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  registry-server:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/registry-server:latest
+    pull_policy: always
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    restart: unless-stopped
+    networks:
+      - ecom-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api-gateway:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/api-gateway:latest
+    pull_policy: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - KEYCLOAK_URL=http://keycloak:8080
+    depends_on:
+      - registry-server
+      - keycloak
+    restart: unless-stopped
+    networks:
+      - ecom-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  book-service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/book-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://book-postgres:5432/books_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-password}
+    depends_on:
+      book-postgres:
+        condition: service_healthy
+      registry-server:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  customer-service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/customer-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://customer-postgres:5432/customers_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-password}
+    depends_on:
+      customer-postgres:
+        condition: service_healthy
+      registry-server:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  cart-service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/cart-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cart-postgres:5432/carts_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-password}
+    depends_on:
+      cart-postgres:
+        condition: service_healthy
+      registry-server:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  order-service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/order-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-postgres:5432/orders_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-password}
+    depends_on:
+      order-postgres:
+        condition: service_healthy
+      registry-server:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  payment-service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/payment-service:latest
+    pull_policy: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://payment-postgres:5432/payment_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-password}
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+    depends_on:
+      payment-postgres:
+        condition: service_healthy
+      registry-server:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/frontend:latest
+    pull_policy: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+    networks:
+      - ecom-network
+
+volumes:
+  cart-postgres:
+  customer-postgres:
+  order-postgres:
+  book-postgres:
+  payment-postgres:
+  postgres-keycloak:
+
+networks:
+  ecom-network:
+    driver: bridge
