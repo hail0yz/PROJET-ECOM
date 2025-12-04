@@ -268,14 +268,35 @@ services:
   frontend:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/frontend:latest
     pull_policy: always
-    ports:
-      - "80:80"
-      - "443:443"
+    expose:
+      - "80"
     depends_on:
       - api-gateway
     restart: unless-stopped
     networks:
       - ecom-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - api-gateway
+      - registry-server
+      - keycloak
+    restart: unless-stopped
+    networks:
+      - ecom-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   cart-postgres:
