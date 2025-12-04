@@ -46,6 +46,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Set repository owner to lowercase
+        id: lowercase
+        run: echo "owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -69,11 +73,15 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.service.name }}
+          images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner }}/${{ matrix.service.name }}
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
             type=raw,value=latest
+          flavor: |
+            prefix=${{ github.repository_owner }},onlatest=true
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -94,6 +102,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set repository owner to lowercase
+        id: lowercase
+        run: echo "owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -123,7 +135,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/frontend
+          images: ${{ env.REGISTRY }}/${{ steps.lowercase.outputs.owner }}/frontend
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
@@ -178,6 +190,9 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Create .env file from secrets
+            # Convert repository owner to lowercase
+            REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            
             cat > .env << EOF
             STRIPE_API_KEY=${{ secrets.STRIPE_API_KEY }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
@@ -185,7 +200,7 @@ jobs:
             KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD }}
             SONAR_DB_PASSWORD=${{ secrets.SONAR_DB_PASSWORD }}
             PUBLIC_IP=${{ secrets.AZURE_VM_HOST }}
-            GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
+            GITHUB_REPOSITORY_OWNER=${REPO_OWNER}
             EOF
 
             # Pull latest images
