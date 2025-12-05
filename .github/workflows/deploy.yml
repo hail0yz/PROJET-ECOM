@@ -204,15 +204,7 @@ jobs:
 
             docker compose -f docker-compose.prod.yml pull
             
-            docker compose -f docker-compose.prod.yml up -d --force-recreate nginx
-
-            # === Installation Certbot (une seule fois) ===
-            if ! command -v certbot &> /dev/null; then
-              sudo apt update && sudo apt install -y certbot
-            fi
-
-            # === Création du dossier webroot pour Certbot ===
-            # sudo mkdir -p /var/www/certbot
+            docker compose -f docker-compose.prod.yml up -d
 
             docker compose -f docker-compose.prod.yml restart nginx
 
