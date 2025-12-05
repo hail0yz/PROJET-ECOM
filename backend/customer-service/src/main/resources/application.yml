@@ -54,7 +54,7 @@ spring:
 logging:
   level:
     root: WARN
-    com.ecom.customerservice: INFO
+    org.ecom.customerservice: INFO
 
 server:
   port: 8080
