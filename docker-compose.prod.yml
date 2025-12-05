@@ -203,6 +203,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://customer-postgres:5432/customers_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-password}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
     depends_on:
       customer-postgres:
         condition: service_healthy
