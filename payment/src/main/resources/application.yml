@@ -46,3 +46,8 @@ logging:
 
 server:
   port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://registry-server:8761/eureka/}

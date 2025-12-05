@@ -50,3 +50,14 @@ logging:
 
 server:
   port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka:eureka@registry-server:8761/eureka/}
+
+security:
+  oauth2:
+    resourceserver:
+      jwt:
+        issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak:8088/realms/ecom}

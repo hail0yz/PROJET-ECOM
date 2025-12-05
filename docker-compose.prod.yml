@@ -145,7 +145,7 @@ services:
     ports:
       - "8761:8761"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
     restart: unless-stopped
     networks:
       - ecom-network
@@ -161,7 +161,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
       - KEYCLOAK_URL=http://keycloak:8080
     depends_on:
@@ -180,7 +180,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/book-service:latest
     pull_policy: missing
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://book-postgres:5432/books_db
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -198,7 +198,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/customer-service:latest
     pull_policy: missing
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://customer-postgres:5432/customers_db
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -216,7 +216,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/cart-service:latest
     pull_policy: missing
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://cart-postgres:5432/carts_db
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -234,7 +234,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/order-service:latest
     pull_policy: missing
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://order-postgres:5432/orders_db
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -252,7 +252,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/payment-service:latest
     pull_policy: missing
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://payment-postgres:5432/payment_db
       - SPRING_DATASOURCE_USERNAME=postgres
