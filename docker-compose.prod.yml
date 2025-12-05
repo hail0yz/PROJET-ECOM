@@ -116,6 +116,7 @@ services:
       KC_HEALTH_ENABLED: true
       KC_PROXY_HEADERS: xforwarded
       KC_PROXY: edge
+      KC_HOSTNAME: ecom.francecentral.cloudapp.azure.com
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
     command:
