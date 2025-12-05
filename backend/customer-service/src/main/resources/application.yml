@@ -66,4 +66,4 @@ eureka:
 
 keycloak:
   realm: ecom
-  url: ${KEYCLOAK_ISSUER_URI:http://keycloak:8080}
+  url: ${KEYCLOAK_ISSUER_URI:http://keycloak:8080/keycloak}
