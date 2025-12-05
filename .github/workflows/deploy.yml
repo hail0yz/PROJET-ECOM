@@ -78,8 +78,6 @@ jobs:
             type=ref,event=branch
             type=sha,prefix={{branch}}-
             type=raw,value=latest
-          flavor: |
-            prefix=${{ github.repository_owner }},onlatest=true
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 

@@ -114,6 +114,7 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
+      KC_HTTP_RELATIVE_PATH: /keycloak
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
       KC_HEALTH_ENABLED: true
@@ -121,6 +122,7 @@ services:
     command:
       - start-dev
       - --import-realm
+      - --http-relative-path=/keycloak
     ports:
       - "8088:8080"
     volumes:
@@ -139,7 +141,7 @@ services:
 
   registry-server:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/registry-server:latest
-    pull_policy: always
+    pull_policy: missing
     ports:
       - "8761:8761"
     environment:
@@ -155,7 +157,7 @@ services:
 
   api-gateway:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/api-gateway:latest
-    pull_policy: always
+    pull_policy: missing
     ports:
       - "8080:8080"
     environment:
@@ -176,7 +178,7 @@ services:
 
   book-service:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/book-service:latest
-    pull_policy: always
+    pull_policy: missing
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
@@ -194,7 +196,7 @@ services:
 
   customer-service:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/customer-service:latest
-    pull_policy: always
+    pull_policy: missing
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
@@ -212,7 +214,7 @@ services:
 
   cart-service:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/cart-service:latest
-    pull_policy: always
+    pull_policy: missing
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
@@ -230,7 +232,7 @@ services:
 
   order-service:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/order-service:latest
-    pull_policy: always
+    pull_policy: missing
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
@@ -248,7 +250,7 @@ services:
 
   payment-service:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/payment-service:latest
-    pull_policy: always
+    pull_policy: missing
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry-server:8761/eureka/
@@ -267,7 +269,7 @@ services:
 
   frontend:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-hail0yz}/frontend:latest
-    pull_policy: always
+    pull_policy: missing
     expose:
       - "80"
     depends_on:
