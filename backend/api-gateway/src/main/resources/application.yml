@@ -107,15 +107,13 @@ spring:
   config:
     activate:
       on-profile: docker
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka:eureka@registry-server:8761/eureka/}
-
-spring:
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak:8088/realms/ecom}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka:eureka@registry-server:8761/eureka/}
