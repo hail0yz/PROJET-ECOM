@@ -66,4 +66,4 @@ eureka:
 
 keycloak:
   realm: ecom
-  url: ${KEYCLOAK_ISSUER_URI:http://ecom.francecentral.cloudapp.azure.com/keycloak}
+  url: https://ecom.francecentral.cloudapp.azure.com/keycloak
