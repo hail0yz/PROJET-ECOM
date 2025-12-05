@@ -114,7 +114,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
       KC_HEALTH_ENABLED: true
       KC_PROXY_HEADERS: xforwarded
-      KC_PROXY: edge
+      KC_PROXY: passthrough
       KC_HOSTNAME: ecom.francecentral.cloudapp.azure.com
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
