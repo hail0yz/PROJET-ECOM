@@ -1,7 +1,5 @@
 FROM nginx:alpine
 
-RUN apk add --no-cache openssl
-
 # Copier le build du frontend (Angular 19 génère dans dist/frontend/browser)
 COPY dist/frontend/browser /usr/share/nginx/html
 
@@ -9,12 +7,7 @@ COPY dist/frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Créer le dossier pour les certificats SSL
-RUN mkdir -p /etc/nginx/ssl /var/www/certbot
-
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/nginx/ssl/selfsigned.key \
-    -out /etc/nginx/ssl/selfsigned.crt \
-    -subj "/C=FR/ST=Paris/L=Paris/O=MyCompany/OU=IT/CN=*.cloudapp.azure.com"
+RUN mkdir -p /etc/nginx/ssl
 
 # Exposer les ports 80 et 443
 EXPOSE 80 443
