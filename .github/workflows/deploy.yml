@@ -197,6 +197,7 @@ jobs:
             KEYCLOAK_ADMIN_PASSWORD=${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
             KEYCLOAK_DB_PASSWORD=${{ secrets.KEYCLOAK_DB_PASSWORD }}
             SONAR_DB_PASSWORD=${{ secrets.SONAR_DB_PASSWORD }}
+            KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}
             PUBLIC_IP=${{ secrets.AZURE_VM_HOST }}
             GITHUB_REPOSITORY_OWNER=${REPO_OWNER}
             EOF
