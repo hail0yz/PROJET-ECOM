@@ -279,7 +279,10 @@ services:
       - ecom-network
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx-reverse-proxy
     ports:
       - "80:80"
       - "443:443"
