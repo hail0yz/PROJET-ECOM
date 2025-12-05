@@ -201,19 +201,16 @@ jobs:
             GITHUB_REPOSITORY_OWNER=${REPO_OWNER}
             EOF
 
-            # Pull latest images
             docker compose -f docker-compose.prod.yml pull
             
-            # Start/Update containers (only restarts services with new images)
             docker compose -f docker-compose.prod.yml up -d
+
+            docker compose -f docker-compose.prod.yml restart nginx
             
-            # Clean up old images (only unused ones)
             docker image prune -f
             
-            # Wait for services to start
             sleep 60
 
-            # Check status
             docker compose -f docker-compose.prod.yml ps
 
             echo "Deployment completed successfully!"
