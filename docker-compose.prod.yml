@@ -286,6 +286,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot-webroot:/var/www/certbot
     depends_on:
       - frontend
       - api-gateway
@@ -299,6 +300,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    command: /bin/sh -c "/etc/nginx/ssl/generate-certs.sh && nginx -g 'daemon off;'"
 
 volumes:
   cart-postgres:
@@ -307,6 +309,7 @@ volumes:
   book-postgres:
   payment-postgres:
   postgres-keycloak:
+  certbot-webroot:
 
 networks:
   ecom-network:
