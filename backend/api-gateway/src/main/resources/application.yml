@@ -111,7 +111,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak:8088/realms/ecom}
+          issuer-uri: https://ecom.francecentral.cloudapp.azure.com/keycloak/realms/ecom
 
 eureka:
   client:
