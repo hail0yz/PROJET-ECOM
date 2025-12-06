@@ -9,18 +9,16 @@ services=(
   "customer-service"
   "order"
   "cart-service"
-  "notification"
+  "$payment"
 )
 
 all_services=(
   "$registry"
   "$api_gateway"
-  "$payment"
   "bookService"
   "customer-service"
   "order"
   "cart-service"
-  "notification"
 )
 
 ROOT_DIR="$(pwd)"
