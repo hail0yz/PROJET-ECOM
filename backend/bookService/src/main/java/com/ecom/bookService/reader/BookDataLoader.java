@@ -144,7 +144,7 @@ public class BookDataLoader implements CommandLineRunner {
         book.setTitle(record.getTitle().trim());
         book.setSubtitle(record.getSubtitle() != null ? record.getSubtitle().trim() : null);
         book.setAuthor(record.getAuthors().trim());
-        book.setPrice(BigDecimal.valueOf((rg.nextDouble() * 100) + 99));
+        book.setPrice(BigDecimal.valueOf(rg.nextInt(26) + 4.99));
         // TODO book.setCategories(record.getCategories().trim());
         book.setThumbnail(record.getThumbnail());
         book.setSummary(record.getDescription());
