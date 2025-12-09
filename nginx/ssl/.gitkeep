@@ -1,0 +1,7 @@
+# Ce dossier contiendra les certificats SSL
+# Pour générer vos certificats avec Let's Encrypt:
+# sudo certbot --nginx -d votre-domaine.com
+
+# Les fichiers suivants seront générés:
+# - fullchain.pem
+# - privkey.pem

@@ -40,3 +40,30 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    org.ecom.customerservice: INFO
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka:eureka@registry-server:8761/eureka/}
+
+keycloak:
+  realm: ecom
+  url: https://ecom.francecentral.cloudapp.azure.com/keycloak

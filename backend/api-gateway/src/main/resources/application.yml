@@ -101,3 +101,19 @@ spring.security:
 logging:
   level:
     org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: TRACE
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://ecom.francecentral.cloudapp.azure.com/keycloak/realms/ecom
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka:eureka@registry-server:8761/eureka/}

@@ -28,3 +28,31 @@ server:
   port: 0
   compression:
     enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://ecom.francecentral.cloudapp.azure.com/keycloak/realms/ecom
+
+logging:
+  level:
+    root: WARN
+    com.ecom.order: INFO
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka:eureka@registry-server:8761/eureka/}

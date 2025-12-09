@@ -26,3 +26,28 @@ server:
   port: 0
   compression:
     enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    com.ecom.payment: INFO
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://registry-server:8761/eureka/}
