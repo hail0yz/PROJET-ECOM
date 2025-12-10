@@ -118,7 +118,11 @@ class TicketServiceTest {
 
     @Test
     void createTicket_shouldCreateTicketAndReturnId_whenCustomerExists() {
-        var request = new CreateTicketRequest("Subject", "Description...");
+        CreateTicketRequest request = CreateTicketRequest.builder()
+                .subject("Subject")
+                .description("Description...")
+                .type(Ticket.Type.OTHER)
+                .build();
 
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(customer));
 
@@ -142,7 +146,11 @@ class TicketServiceTest {
 
     @Test
     void createTicket_shouldThrowException_whenCustomerDoesNotExist() {
-        CreateTicketRequest request = new CreateTicketRequest("Bug", "Details");
+        CreateTicketRequest request = CreateTicketRequest.builder()
+                .subject("Subject")
+                .description("Description...")
+                .type(Ticket.Type.OTHER)
+                .build();
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> ticketService.createTicket(CUSTOMER_ID, request));

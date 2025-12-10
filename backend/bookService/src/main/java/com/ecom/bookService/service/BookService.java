@@ -2,6 +2,7 @@ package com.ecom.bookService.service;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
+import com.ecom.bookService.dto.BookStatsResponse;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.dto.CreateBookRequest;
@@ -22,4 +23,5 @@ public interface BookService {
     Page<BookDTO> getPagedBooks(BookFilter filter, int page, int size);
     BulkBookValidationResponse validateProducts(BulkBookValidationRequest request);
     Long createBook(CreateBookRequest request, MultipartFile image);
+    BookStatsResponse getBookStats();
 }

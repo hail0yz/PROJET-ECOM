@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import com.ecom.order.cart.CartDetails;
 import com.ecom.order.customer.CustomerDetails;
 import com.ecom.order.dto.OrderRequest;
 import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.OrderStatsResponse;
 import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.exception.EntityNotFoundException;
 import com.ecom.order.exception.OrderAlreadyExistsException;
@@ -271,11 +273,9 @@ public class OrderService {
                 .map(orderMapper::fromOrder);
     }
 
-    public List<OrderResponse> findAllOrders() {
-        return this.orderRepo.findAll()
-                .stream()
-                .map(this.orderMapper::fromOrder)
-                .collect(Collectors.toList());
+    public Page<OrderResponse> findAllOrders(int page, int size) {
+        return this.orderRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")))
+                .map(this.orderMapper::fromOrder);
     }
 
     public OrderResponse findById(UUID id) {
@@ -387,6 +387,15 @@ public class OrderService {
         orderRepo.save(order);
 
         log.info("Order cancelled successfully orderId={}", orderId);
+    }
+
+    public OrderStatsResponse getOrderStats() {
+        var stats = new OrderStatsResponse();
+
+        stats.setTotalOrders(orderRepo.count());
+        stats.setTotalRevenue(orderRepo.getTotalRevenue());
+
+        return stats;
     }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import Keycloak from 'keycloak-js';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,9 +15,51 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './ticket.page.html'
 })
 export class TicketDetailsUserPage implements OnInit {
+  priorities = [
+    { value: 'LOW', label: 'Basse', color: 'bg-gray-400' },
+    { value: 'MEDIUM', label: 'Moyenne', color: 'bg-blue-300' },
+    { value: 'HIGH', label: 'Haute', color: 'bg-orange-500' },
+    { value: 'URGENT', label: 'Urgente', color: 'bg-red-500' }
+  ];
+
+  types = [
+    { value: 'ORDER_ISSUE', label: 'Problème de commande' },
+    { value: 'PAYMENT_ISSUE', label: 'Problème de paiement' },
+    { value: 'PRODUCT_QUERY', label: 'Problème de produit' },
+    { value: 'ACCOUNT_ISSUE', label: 'Problème de compte' },
+    { value: 'FEEDBACK', label: 'Retour d\'information' },
+    { value: 'OTHER', label: 'Autre' },
+  ];
+
+  getPriorityLabel(priority: string): { label: string, color: string } {
+    return this.priorities.find(p => p.value === priority) || { label: priority, color: 'bg-gray-200' };
+  }
+
+  getTypeLabel(type: string): { label: string, color?: string } {
+    return this.types.find(t => t.value === type) || { label: type };
+  }
+  private keycloak = inject(Keycloak)
   ticket: TicketAPI | null = null;
   loading = signal<boolean>(true);
   errorMessage: string = '';
+  newMessage: string = '';
+  publishing = signal<boolean>(false);
+
+  publishMessage() {
+    if (!this.ticket || !this.newMessage.trim()) return;
+    this.publishing.set(true);
+    this.ticketService.addMessage(this.ticket.id, { content: this.newMessage }).subscribe({
+      next: (msg) => {
+        this.loadTicketDetails(this.ticket!.id);
+        this.newMessage = '';
+        this.publishing.set(false);
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors de la publication du message.';
+        this.publishing.set(false);
+      }
+    });
+  }
 
   constructor(
     private ticketService: TicketService,
@@ -87,6 +129,10 @@ export class TicketDetailsUserPage implements OnInit {
 
   isAdminOrSupport(role: string): boolean {
     return role === 'ADMIN' || role === 'SUPPORT';
+  }
+
+  isMe(userId: string | number): boolean {
+    return String(this.keycloak.tokenParsed?.sub) === String(userId);
   }
 
 }

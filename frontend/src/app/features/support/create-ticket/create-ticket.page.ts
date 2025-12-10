@@ -18,17 +18,26 @@ export class CreateTicketPage {
   formData = {
     subject: '',
     description: '',
-    priority: 'medium',
+    priority: 'MEDIUM',
     category: '',
     customerId: ''
   };
 
   priorities = [
-    { value: 'low', label: 'Basse', color: 'bg-gray-400' },
-    { value: 'medium', label: 'Moyenne', color: 'bg-blue-500' },
-    { value: 'high', label: 'Haute', color: 'bg-orange-500' },
-    { value: 'urgent', label: 'Urgente', color: 'bg-red-500' }
+    { value: 'LOW', label: 'Basse', color: 'bg-gray-400' },
+    { value: 'MEDIUM', label: 'Moyenne', color: 'bg-blue-500' },
+    { value: 'HIGH', label: 'Haute', color: 'bg-orange-500' },
+    { value: 'URGENT', label: 'Urgente', color: 'bg-red-500' }
   ];
+
+  types = [
+    { value: 'ORDER_ISSUE', label: 'Problème de commande' },
+    { value: 'PAYMENT_ISSUE', label: 'Problème de paiement' },
+    { value: 'PRODUCT_QUERY', label: 'Problème de produit' },
+    { value: 'ACCOUNT_ISSUE', label: 'Problème de compte' },
+    { value: 'FEEDBACK', label: 'Retour d\'information' },
+    { value: 'OTHER', label: 'Autre' },
+  ]
 
   isSubmitting = false;
   showSuccess = false;
@@ -49,7 +58,7 @@ export class CreateTicketPage {
       subject: this.formData.subject,
       description: this.formData.description,
       priority: this.formData.priority,
-      category: this.formData.category,
+      type: this.formData.category,
       customerId: this.formData.customerId
     };
 

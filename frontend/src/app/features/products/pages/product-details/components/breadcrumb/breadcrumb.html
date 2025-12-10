@@ -15,7 +15,7 @@
         </li>
         @if (category) {
         <li class="inline-flex items-center gap-1.5">
-            <a class="hover:text-foreground transition-colors" [href]="'/categories/' + category.id">
+            <a class="hover:text-foreground transition-colors cursor-pointer" (click)="navigateToCategory()">
                 {{ category.name }}
             </a>
         </li>

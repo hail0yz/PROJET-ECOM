@@ -274,6 +274,7 @@ export class CartService {
     const currentCartId = currentCart.id;
 
     // Cart exists - add item to existing cart
+    console.log('add item to backend cart', currentCart);
     if (currentCart.persisted) {
       const entry: CartEntryAPI = {
         productId: item.book.id,
@@ -448,7 +449,7 @@ export class CartService {
       this.handleBackendError('Clear Cart', new Error('Cart does not exist. Cannot remove item.'))
     }
 
-    this.http.delete<void>(`${this.API_URL}/clear`)
+    this.http.post<void>(`${this.API_URL}/${currentCartId}/clear`, {})
       .pipe(
         tap(() => {
           const updatedCart: Cart = { ...currentCart, items: [] };

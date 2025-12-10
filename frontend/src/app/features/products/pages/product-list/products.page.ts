@@ -1,5 +1,6 @@
 import { Component, computed, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import Keycloak from 'keycloak-js';
 
 import { Book, BookFilters } from '@/app/core/models/book.model';
 import { Category } from '@/app/core/models/category.model';
@@ -10,6 +11,7 @@ import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BookCardComponent } from './components/book-card/book-card.component';
 import { Page } from '@/app/core/models/page.model';
+import { CartService } from '@/app/core/services/cart.service';
 
 @Component({
   selector: 'product-list-page',
@@ -23,6 +25,7 @@ export class ProductListPage implements OnInit {
   loadingBooks = signal<boolean>(true);
   loadingCategories = signal<boolean>(true);
   error = signal<string | null>(null);
+  showAuthModal = signal(false);
 
   searchText: string = '';
 
@@ -48,7 +51,9 @@ export class ProductListPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private booksService: BooksService,
-    private categoriesService: CategoriesService
+    private categoriesService: CategoriesService,
+    private cartService: CartService,
+    private keycloak: Keycloak
   ) { }
 
   ngOnInit(): void {
@@ -134,6 +139,28 @@ export class ProductListPage implements OnInit {
 
   onSearchClick(searchText: string) {
     this.updateFilters({ search: searchText.trim(), page: 1 });
+  }
+
+  closeModal(): void {
+    this.showAuthModal.set(false);
+  }
+
+  navigateToLogin(): void {
+    this.closeModal();
+    this.keycloak.login({
+      redirectUri: window.location.origin + this.router.url
+    });
+  }
+
+  navigateToRegister(): void {
+    this.closeModal();
+    this.router.navigate(['/signup'], {
+      queryParams: { returnUrl: this.router.url }
+    });
+  }
+
+  openModal = () => {
+    this.showAuthModal.set(true);
   }
 
 }

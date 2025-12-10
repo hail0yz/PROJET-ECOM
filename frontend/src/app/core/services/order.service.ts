@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PlaceOrderRequestAPI, PlaceOrderResponseAPI, OrderResponse } from '@/app/core/models/order.model';
+import { PlaceOrderRequestAPI, PlaceOrderResponseAPI, OrderResponse, OrderStatsAPI } from '@/app/core/models/order.model';
+import { Page } from '../models/page.model';
+
+interface OrderStats {
+    totalOrders: number;
+    totalRevenue: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -41,8 +47,11 @@ export class OrderService {
         return this.http.get<{ content: OrderResponse[], totalElements: number, totalPages: number }>(`${this.orderServiceURL}/me`, { params });
     }
 
-    getAllOrders(): Observable<OrderResponse[]> {
-        return this.http.get<OrderResponse[]>(this.orderServiceURL);
+    getAllOrders(page: number = 0, size: number = 10): Observable<Page<OrderResponse>> {
+        const params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+        return this.http.get<Page<OrderResponse>>(this.orderServiceURL, { params });
     }
 
     confirmPayment(orderId: string): Observable<any> {
@@ -51,6 +60,10 @@ export class OrderService {
 
     cancelOrder(orderId: string): Observable<void> {
         return this.http.post<void>(`${this.orderServiceURL}/${orderId}/cancel`, {});
+    }
+
+    getStats() {
+        return this.http.get<OrderStatsAPI>(`${this.orderServiceURL}/stats`);
     }
 
 }

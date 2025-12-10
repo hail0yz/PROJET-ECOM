@@ -27,3 +27,8 @@ export interface BookFilters {
     maxPrice?: number;
     category?: number;
 }
+
+export interface BookStatsAPI {
+    totalBooks: number;
+    totalCategories: number;
+}

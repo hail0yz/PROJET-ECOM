@@ -6,12 +6,12 @@ import { TicketService } from '@/app/core/services/ticket.service';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
 import { TicketAPI, TicketStatus } from '@/app/core/models/ticket.model';
 import { Page } from '@/app/core/models/page.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'ticket-list-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent],
+  imports: [CommonModule, RouterModule, FormsModule, NavbarComponent],
   templateUrl: './tickets.page.html'
 })
 export class TicketListUserPage implements OnInit {

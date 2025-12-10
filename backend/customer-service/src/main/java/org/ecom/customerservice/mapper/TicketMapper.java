@@ -25,6 +25,8 @@ public class TicketMapper {
                 .subject(ticket.getSubject())
                 .description(ticket.getDescription())
                 .status(ticket.getStatus())
+                .type(ticket.getType())
+                .priority(ticket.getPriority())
                 .createdAt(ticket.getCreatedAt())
                 .updatedAt(ticket.getUpdatedAt())
                 .build();
@@ -48,6 +50,8 @@ public class TicketMapper {
                 .subject(ticket.getSubject())
                 .description(ticket.getDescription())
                 .status(ticket.getStatus())
+                .type(ticket.getType())
+                .priority(ticket.getPriority())
                 .messages(messages)
                 .createdAt(ticket.getCreatedAt())
                 .updatedAt(ticket.getUpdatedAt())

@@ -127,7 +127,10 @@
             </div>
             <div class="flex items-baseline gap-2">
                 <span class="text-3xl font-bold">{{book.price | currency:'EUR'}}</span>
-                <!-- <span class="text-lg text-gray-500 line-through">{{book.price | currency:'EUR'}}</span> -->
+            </div>
+            <div class="text-sm text-gray-500">
+                Stock :
+                <span class="font-semibold text-gray-700">{{ book.stock !== undefined ? book.stock : '0' }}</span>
             </div>
             <!-- <div class="text-sm text-gray-500">498 products sold out</div> -->
             <div class="grid gap-4">
@@ -139,6 +142,7 @@
                     </label>
                     <p class="text-sm text-gray-500">{{ book.summary }}</p>
                 </div>
+                @if (book.stock !== undefined && book.stock !== 0) {
                 <div class="grid gap-2">
                     <label data-slot="label"
                         class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-base font-medium"
@@ -155,7 +159,7 @@
                             </svg>
                             <span class="sr-only">Decrease quantity</span>
                         </button>
-                        <input [value]="quantity()" (input)="onQuantityInput($event)"
+                        <input [disabled]="isInCart()" [value]="quantity()" (input)="onQuantityInput($event)"
                             class="text-center flex h-8 w-12 items-center justify-center rounded-md border border-gray-100 bg-white text-sm font-medium" />
 
                         <button (click)="incrementQuantity()" [disabled]="!canIncrementQuantity()"
@@ -170,6 +174,7 @@
                         </button>
                     </div>
                 </div>
+                }
                 <div class="flex flex-col gap-2 min-[400px]:flex-row">
                     <button (click)="addToCart()"
                         [disabled]="isInCart() || (book.stock !== undefined && book.stock === 0)"
@@ -182,12 +187,15 @@
                             <path d="M16 10a4 4 0 0 1-8 0"></path>
                         </svg>
                         {{ isInCart() ? 'Dans le panier' : (book.stock !== undefined && book.stock === 0) ? 'Rupture de
-                        stock' : 'Add to Cart' }}
+                        stock' : 'Ajouter au panier' }}
                     </button>
+                    @if ((book.stock != undefined && book.stock > 0) && !isInCart()) {
                     <button data-slot="button"
-                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 shadow-xs px-4 py-2 has-[&gt;svg]:px-3 h-12 flex-1 bg-blue-600 text-lg text-white hover:bg-blue-700">
-                        Buy Now
+                        class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 shadow-xs px-4 py-2 has-[&gt;svg]:px-3 h-12 flex-1 bg-blue-600 text-lg text-white hover:bg-blue-700"
+                        (click)="buyNow()">
+                        Acheter maintenant
                     </button>
+                    }
 
                 </div>
             </div>
@@ -197,3 +205,55 @@
 </main>
 
 <app-footer></app-footer>
+
+@if (showAuthModal()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 bg-opacity-50" (click)="closeModal()">
+
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 transform transition-all"
+        (click)="$event.stopPropagation()">
+
+        <!-- En-tête du modal -->
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Connexion requise</h2>
+            <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Icône -->
+        <div class="flex justify-center mb-4">
+            <div class="bg-blue-100 rounded-full p-3">
+                <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Message -->
+        <p class="text-gray-600 text-center mb-6">
+            Vous devez être connecté pour ajouter des produits au panier ou effectuer un achat.
+        </p>
+
+        <!-- Boutons d'action -->
+        <div class="flex flex-col gap-3">
+            <button (click)="navigateToLogin()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
+                Se connecter
+            </button>
+
+            <button (click)="navigateToRegister()"
+                class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200">
+                Créer un compte
+            </button>
+
+            <button (click)="closeModal()" class="w-full text-gray-600 hover:text-gray-800 font-medium py-2 transition">
+                Continuer sans se connecter
+            </button>
+        </div>
+    </div>
+</div>
+
+}

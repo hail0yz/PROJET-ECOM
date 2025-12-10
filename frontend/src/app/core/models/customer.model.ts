@@ -31,7 +31,6 @@ export interface UpdatePreferencesRequest {
 export interface UpdateProfileRequest {
     firstname: string;
     lastname: string;
-    email: string;
     phone?: string;
 }
 
@@ -42,4 +41,8 @@ export interface CustomerAPI {
     lastname: string;
     phone?: string;
     createdAt?: string;
+}
+
+export interface CustomerStatsAPI {
+    totalCustomers: number;
 }

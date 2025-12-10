@@ -95,7 +95,8 @@
                   </div>
                 </div>
                 <div class="ml-4 flex-shrink-0">
-                  <button class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                  <button [routerLink]="['/tickets', ticket.id]"
+                    class="text-blue-600 hover:text-blue-800 font-medium text-sm">
                     Voir détails →
                   </button>
                 </div>

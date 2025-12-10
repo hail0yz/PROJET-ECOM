@@ -125,7 +125,11 @@ export class ProfilePage implements OnInit {
     saveProfile() {
         if (!this.customerId || !this.profileForm.valid) return;
 
-        const profileData = this.profileForm.value;
+        const profileData = {
+            firstname: this.profileForm.value.firstname,
+            lastname: this.profileForm.value.lastname,
+            phone: this.profileForm.value.phone || null
+        };
         this.loading = true;
         this.profileError = null;
         this.successMessage = null;

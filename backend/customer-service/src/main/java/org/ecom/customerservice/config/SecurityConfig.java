@@ -3,11 +3,13 @@ package org.ecom.customerservice.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -33,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/tickets/{ticketId}/close").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPPORT")
                 .requestMatchers(HttpMethod.POST, "/api/v1/tickets/{ticketId}/status").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPPORT")
                 .requestMatchers(HttpMethod.GET, "/api/v1/tickets", "/api/v1/tickets/", "/api/v1/tickets/stats").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPPORT")
+                .requestMatchers(HttpMethod.GET, "/api/v1/customers/stats").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/tickets", "/api/v1/tickets/")
                     .hasAuthority("ROLE_USER")
                 .requestMatchers("/api/v1/tickets/me").hasAuthority("ROLE_USER"));

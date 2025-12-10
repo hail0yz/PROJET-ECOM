@@ -67,7 +67,7 @@ export class OrdersPage implements OnInit {
     }
 
     formatCurrency(amount: number): string {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
             currency: 'EUR'
         }).format(amount);

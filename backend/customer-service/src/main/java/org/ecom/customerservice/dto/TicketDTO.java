@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ecom.customerservice.model.Priority;
 import org.ecom.customerservice.model.Ticket;
 
 @Data
@@ -24,6 +25,10 @@ public class TicketDTO {
     private String description;
 
     private Ticket.Status status;
+
+    private Priority priority;
+    
+    private Ticket.Type type;
 
     private List<Message> messages;
 

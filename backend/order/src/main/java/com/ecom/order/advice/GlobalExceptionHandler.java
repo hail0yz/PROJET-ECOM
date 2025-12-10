@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrderAlreadyExistsException.class)
     public ResponseEntity<APIErrorResponse> handle(OrderAlreadyExistsException ex) {
-        HttpStatus status = HttpStatus.NOT_FOUND;
+        HttpStatus status = HttpStatus.CONFLICT;
         APIErrorResponse errorResponse = APIErrorResponse.builder()
                 .status(status.value())
                 .error("ORDER_ALREADY_EXISTS")

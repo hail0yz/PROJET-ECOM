@@ -51,3 +51,8 @@ export interface OrderResponse {
     updatedAt?: string;
     lines?: OrderLineResponse[];
 }
+
+export interface OrderStatsAPI {
+    totalOrders: number;
+    totalRevenue: number;
+}

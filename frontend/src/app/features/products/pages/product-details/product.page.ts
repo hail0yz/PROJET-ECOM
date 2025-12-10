@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { ToastService } from 'ngx-toastr-notifier';
+import Keycloak from 'keycloak-js';
 
 import { Book } from '@/app/core/models/book.model';
 import { BooksService } from '@/app/core/services/books.service';
@@ -26,13 +27,15 @@ export class ProductDetailPage implements OnInit {
     quantity = signal(1);
     showSuccessMessage = signal(false);
     errorMessage = signal<string | null>(null);
+    showAuthModal = signal(false);
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private booksService: BooksService,
         private cartService: CartService,
-        private toastr: ToastService
+        private toastr: ToastService,
+        private keycloak: Keycloak
     ) { }
 
     ngOnInit(): void {
@@ -75,10 +78,14 @@ export class ProductDetailPage implements OnInit {
     }
 
     canIncrementQuantity(): boolean {
-        return !!this.book && (!this.book.stock || this.quantity() < this.book.stock);
+        return !!this.book && !this.isInCart() && (!this.book.stock || this.quantity() < this.book.stock);
     }
 
     decrementQuantity(): void {
+        if (this.isInCart()) {
+            return;
+        }
+
         if (this.quantity() > 1) {
             this.quantity.update(q => q - 1);
         }
@@ -102,6 +109,11 @@ export class ProductDetailPage implements OnInit {
     }
 
     addToCart(): void {
+        if (!this.keycloak.authenticated) {
+            this.showAuthModal.set(true);
+            return;
+        }
+
         const currentBook = this.book;
         if (!currentBook) return;
 
@@ -157,6 +169,63 @@ export class ProductDetailPage implements OnInit {
         });
     }
 
+    buyNow(): void {
+        if (!this.keycloak.authenticated) {
+            this.showAuthModal.set(true);
+            return;
+        }
+
+        const currentBook = this.book;
+        if (!currentBook) return;
+
+        // Vérifier si le produit est disponible en stock
+        if (currentBook.stock !== undefined && currentBook.stock === 0) {
+            this.toastr.warning('Ce produit n\'est pas disponible en stock');
+            return;
+        }
+
+        // Vérifier si le produit est déjà dans le panier
+        if (this.isInCart()) {
+            this.toastr.info('Ce produit est déjà dans votre panier');
+            this.goToCart();
+            return;
+        }
+
+        this.addingToCart.set(true);
+        this.errorMessage.set(null);
+        this.showSuccessMessage.set(false);
+
+        const cartItem: CartItem = {
+            book: {
+                id: currentBook.id,
+                title: currentBook.title,
+                price: currentBook.price,
+                image: currentBook.thumbnail
+            },
+            quantity: this.quantity(),
+        };
+
+        this.cartService.addItem(cartItem).subscribe({
+            next: (cart) => {
+                this.addingToCart.set(false);
+                this.showSuccessMessage.set(true);
+                this.toastr.info("Book added to cart successfully");
+                setTimeout(() => {
+                    this.showSuccessMessage.set(false);
+                }, 3000);
+                this.quantity.set(1);
+                this.goToCart();
+            },
+            error: (err) => {
+                this.addingToCart.set(false);
+                this.errorMessage.set('Failed to add item to cart. Please try again.');
+                setTimeout(() => {
+                    this.errorMessage.set(null);
+                }, 5000);
+            }
+        });
+    }
+
     isInCart(): boolean {
         const currentBook = this.book;
         if (!currentBook) return false;
@@ -169,6 +238,24 @@ export class ProductDetailPage implements OnInit {
 
     goToCart(): void {
         this.router.navigate(['/cart']);
+    }
+
+    closeModal(): void {
+        this.showAuthModal.set(false);
+    }
+
+    navigateToLogin(): void {
+        this.closeModal();
+        this.keycloak.login({
+            redirectUri: window.location.origin + this.router.url
+        });
+    }
+
+    navigateToRegister(): void {
+        this.closeModal();
+        this.router.navigate(['/signup'], {
+            queryParams: { returnUrl: this.router.url }
+        });
     }
 
 }
