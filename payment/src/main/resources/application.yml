@@ -32,8 +32,6 @@ spring:
   config:
     activate:
       on-profile: docker
-
-spring:
   jpa:
     hibernate:
       ddl-auto: update
