@@ -24,7 +24,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/books", "/api/v1/books/").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/books/{id}").hasAuthority("ROLE_ADMIN") // delete book
                 .requestMatchers(HttpMethod.PUT, "/api/v1/books/{id}").hasAuthority("ROLE_ADMIN") // update book
-                .requestMatchers(HttpMethod.PUT, "/api/v1/books/{id}").hasAuthority("ROLE_ADMIN") // update book
                 .requestMatchers(HttpMethod.POST, "/api/v1/books/validate").permitAll()
                 .requestMatchers(HttpMethod.GET,
                         "/api/v1/books",

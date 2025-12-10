@@ -20,6 +20,7 @@ import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.dto.CreateBookRequest;
+import com.ecom.bookService.dto.UpdateBookRequest;
 import com.ecom.bookService.mapper.BookMapper;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.model.BookInventory;
@@ -72,29 +73,24 @@ public class BookServiceImpl implements BookService {
     }
 
     @Transactional
-    public Book updateBook(Long id, BookDTO dto) {
-
+    public Book updateBook(Long id, UpdateBookRequest request, MultipartFile image) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found"));
 
+        book.setTitle(request.getTitle());
+        book.setSummary(request.getSummary());
+        book.setPrice(request.getPrice());
+        book.setAuthor(request.getAuthor());
 
-        if (dto.getTitle() != null) book.setTitle(dto.getTitle());
-        if (dto.getAuthor() != null) book.setAuthor(dto.getAuthor());
-        if (dto.getPrice() != null) book.setPrice(dto.getPrice());
-        if (dto.getSummary() != null) book.setSummary(dto.getSummary());
-        if (dto.getIsbn10() != null) book.setIsbn10(dto.getIsbn10());
-        if (dto.getIsbn13() != null) book.setIsbn13(dto.getIsbn13());
-        if (dto.getThumbnail() != null) book.setThumbnail(dto.getThumbnail());
-        if (dto.getPublishedYear() != null) book.setPublishedYear(dto.getPublishedYear());
-        if (dto.getNumPages() != null) book.setNumPages(dto.getNumPages());
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+        book.setCategory(category);
 
-
-        if (dto.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(dto.getCategory().getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Category not found"));
-
-            book.setCategory(category);
+        if (image != null && !image.isEmpty()) {
+            String thumbnail = imageService.uploadImage(image);
+            book.setThumbnail(thumbnail);
         }
+
         return bookRepository.save(book);
     }
 

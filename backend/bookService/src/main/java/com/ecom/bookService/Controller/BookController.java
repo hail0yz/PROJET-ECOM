@@ -20,6 +20,7 @@ import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.dto.CreateBookRequest;
+import com.ecom.bookService.dto.UpdateBookRequest;
 import com.ecom.bookService.model.Book;
 import com.ecom.bookService.service.BookService;
 import com.ecom.bookService.service.BookServiceImpl;
@@ -155,19 +156,14 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookId);
     }
 
-    /**
-     * PUT /api/v1/books/:id
-     * <p>
-     * Updates an existing book
-     *
-     * @param id      The id of the book to update
-     * @param bookDTO The updated book data
-     * @return A ResponseEntity containing the updated book
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody @Valid BookDTO bookDTO) {
-        Book updatedBook = bookServiceImpl.updateBook(id, bookDTO);
-        return ResponseEntity.ok(updatedBook);
+    public ResponseEntity<Book> updateBook(
+        @PathVariable Long id,
+        @RequestPart @Valid UpdateBookRequest request,
+        @RequestPart(required = false) MultipartFile image
+    ) {
+        bookServiceImpl.updateBook(id, request, image);
+        return ResponseEntity.ok().build();
     }
 
     /**
