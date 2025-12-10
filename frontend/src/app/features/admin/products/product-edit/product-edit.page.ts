@@ -141,6 +141,7 @@ export class AdminProductEditPage implements OnInit {
 
             this.booksService.updateBook(this.bookId, formData).subscribe({
                 next: (response) => {
+                    this.loading.set(false);
                     this.toastr.success('Livre ajouté avec succès');
                 },
                 error: (err) => {
