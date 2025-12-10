@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import Keycloak from 'keycloak-js';
 
 import { TicketAPI, TicketStatus } from '@/app/core/models/ticket.model';
 import { TicketService } from '@/app/core/services/ticket.service';
@@ -16,6 +17,7 @@ import { AdminLayoutComponent } from '@/app/features/admin/layout/layout.compone
 })
 export class AdminTicketDetailsPage implements OnInit {
     readonly TicketStatus = TicketStatus;
+    private keycloak = inject(Keycloak);
     ticket = signal<TicketAPI | null>(null);
     loading = signal<boolean>(true);
     errorMessage = signal<string>('');
@@ -157,8 +159,7 @@ export class AdminTicketDetailsPage implements OnInit {
 
         this.ticketService.changeTicketStatus(this.ticket()!.id, newStatus).subscribe({
             next: (updatedTicket) => {
-                this.ticket.set(updatedTicket);
-                this.loading.set(false);
+                this.loadTicket(this.ticket()!.id);
             },
             error: (err) => {
                 const errorMsg = this.errorHandler.getErrorMessage(err, 'changement de statut');
@@ -181,6 +182,41 @@ export class AdminTicketDetailsPage implements OnInit {
 
     goBack() {
         this.router.navigate(['/admin/tickets']);
+    }
+
+    getMessageAuthorLabel(message: { role: string; authorId: string }): string {
+        if (this.keycloak.tokenParsed?.sub === message.authorId) {
+            return 'Moi';
+        }
+
+        return (message.role === 'ROLE_SUPPORT' || message.role === 'ROLE_ADMIN') ? 'Support' : 'Client';
+    }
+
+    priorities = [
+        { value: 'LOW', label: 'Basse', color: 'bg-gray-400' },
+        { value: 'MEDIUM', label: 'Moyenne', color: 'bg-blue-300' },
+        { value: 'HIGH', label: 'Haute', color: 'bg-orange-500' },
+        { value: 'URGENT', label: 'Urgente', color: 'bg-red-500' }
+    ];
+
+    types = [
+        { value: 'ORDER_ISSUE', label: 'Problème de commande' },
+        { value: 'PAYMENT_ISSUE', label: 'Problème de paiement' },
+        { value: 'PRODUCT_QUERY', label: 'Problème de produit' },
+        { value: 'ACCOUNT_ISSUE', label: 'Problème de compte' },
+        { value: 'FEEDBACK', label: 'Retour d\'information' },
+        { value: 'OTHER', label: 'Autre' },
+    ];
+
+    getPriorityLabel(priority: string = 'MEDIUM'): { label: string, color: string } {
+        return this.priorities.find(p => p.value === priority) || {
+            label: priority,
+            color: 'bg-blue-300'
+        };
+    }
+
+    getTypeLabel(type: string): { label: string, color?: string } {
+        return this.types.find(t => t.value === type) || { label: type };
     }
 
 }

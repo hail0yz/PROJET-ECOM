@@ -35,7 +35,7 @@ public class OrderMapper {
                         order.getDeliveryInfo().postalCode(),
                         order.getDeliveryInfo().country()
                 ))
-                //.payment_method(order.getPaymentInfo() != null ? order.getPaymentInfo().paymentMethod() : null)
+                .createdAt(order.getDate())
                 .build();
     }
 

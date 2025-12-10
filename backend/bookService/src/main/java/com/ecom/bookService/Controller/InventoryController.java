@@ -2,6 +2,7 @@ package com.ecom.bookService.Controller;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,9 +71,12 @@ public class InventoryController {
      * @return A ResponseEntity containing a list of all inventory items
      */
     @GetMapping("/admin")
-    public ResponseEntity<List<InventaireResponseDto>> getAllInventory() {
-        List<InventaireResponseDto> inventory = inventoryService.getAllInventory();
-        return ResponseEntity.ok(inventory);
+    public ResponseEntity<Page<InventaireResponseDto>> getAllInventory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search
+    ) {
+        return ResponseEntity.ok(inventoryService.getAllInventory(search, page, size));
     }
 
     /**

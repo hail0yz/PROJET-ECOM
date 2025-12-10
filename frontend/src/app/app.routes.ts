@@ -25,6 +25,7 @@ import { CategoriesPage } from '@/app/features/categories/categories.page';
 
 import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
 import { AdminProductEditPage } from './features/admin/products/product-edit/product-edit.page';
+import { LogoutPage } from './features/logout/logout.page';
 
 export const routes: Routes = [
     {
@@ -32,6 +33,10 @@ export const routes: Routes = [
         component: HomeComponent,
         data: { public: true },
         canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'logout',
+        component: LogoutPage
     },
     {
         path: 'categories',

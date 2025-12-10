@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
+import com.ecom.bookService.dto.BookStatsResponse;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.dto.CreateBookRequest;
@@ -187,6 +188,12 @@ public class BookController {
     ) {
         Long bookId = bookService.createBook(request, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BookId(bookId));
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<BookStatsResponse> getBookStats() {
+        BookStatsResponse stats = bookService.getBookStats();
+        return ResponseEntity.ok(stats);
     }
 
     public record BookId(Long id) {

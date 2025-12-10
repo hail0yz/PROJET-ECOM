@@ -2,7 +2,7 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Mes commandes</h1>
-        <p class="text-gray-600 mt-2">Voir l'historique de vos commandes</p>
+        <p class="text-gray-600 mt-2">Consultez l'historique de vos commandes</p>
     </div>
 
     @if(loading) {
@@ -41,11 +41,11 @@
             <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
         </svg>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">No orders yet</h3>
-        <p class="text-gray-600 mb-6">You haven't placed any orders yet.</p>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucune commande</h3>
+        <p class="text-gray-600 mb-6">Vous n'avez pas encore passé de commande.</p>
         <a routerLink="/products"
             class="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-blue-600 text-white shadow-xs hover:bg-blue-700 h-9 px-4 py-2">
-            Browse Products
+            Parcourir les produits
         </a>
     </div>
     } @else {
@@ -54,9 +54,9 @@
         <div class="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Order #{{ order.orderId.substring(0, 8) }}</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">Commande n°{{ order.orderId.substring(0, 8) }}</h3>
                     <p class="text-sm text-gray-500 mt-1">
-                        Placed on {{ formatDate(order.createdAt) }}
+                        Passée le {{ formatDate(order.createdAt) }}
                     </p>
                 </div>
                 <div class="text-right">
@@ -70,13 +70,10 @@
                 </div>
             </div>
 
-            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                <div class="text-sm text-gray-600">
-                    <span class="font-medium">Payment Method:</span> {{ order.payment_method || 'N/A' }}
-                </div>
+            <div class="flex justify-end items-center pt-4 border-t border-gray-200">
                 <button (click)="viewOrderDetails(order.orderId)"
                     class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">
-                    View Details
+                    Voir plus
                 </button>
             </div>
         </div>

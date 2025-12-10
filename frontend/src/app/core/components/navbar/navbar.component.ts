@@ -26,7 +26,9 @@ export class NavbarComponent implements OnInit {
     }
 
     logout() {
-        this.keycloak.logout();
+        this.keycloak.logout({
+            redirectUri: window.location.origin
+        });
     }
 
     toggleMenu() {

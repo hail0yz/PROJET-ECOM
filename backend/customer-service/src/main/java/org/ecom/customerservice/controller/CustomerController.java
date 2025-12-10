@@ -26,6 +26,8 @@ import org.ecom.customerservice.dto.CustomerDTO;
 import org.ecom.customerservice.dto.CustomerDetailsDTO;
 import org.ecom.customerservice.dto.CustomerPreferencesDTO;
 import org.ecom.customerservice.dto.CustomerProfileDTO;
+import org.ecom.customerservice.dto.CustomerStatsResponse;
+import org.ecom.customerservice.dto.TicketStatsResponse;
 import org.ecom.customerservice.dto.UpdatePreferencesRequest;
 import org.ecom.customerservice.dto.UpdateProfileRequest;
 import org.ecom.customerservice.service.CustomerService;
@@ -74,7 +76,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "200", description = "Customer details retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Customer not found")
     })
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') || (hasAuthority('ROLE_USER') && @customerService.canAccessCustomerProfile(#customerId))")
     @GetMapping("/{customerId}/details")
     public ResponseEntity<CustomerDetailsDTO> getCustomerDetails(@PathVariable String customerId) {
         return ResponseEntity.ok(customerService.getCustomerDetails(customerId));
@@ -131,6 +133,13 @@ public class CustomerController {
     ) {
         // TODO customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/stats")
+    @Operation(summary = "Get customer statistics (admin/support only)")
+    public ResponseEntity<CustomerStatsResponse> getCustomerStats() {
+        CustomerStatsResponse stats = customerService.getCustomerStats();
+        return ResponseEntity.ok(stats);
     }
 
 }

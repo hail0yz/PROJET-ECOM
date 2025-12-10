@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@/app/environment';
+import { Page } from '../models/page.model';
 
 export interface InventoryResponseDTO {
     id: number;
@@ -40,8 +41,16 @@ export class InventoryService {
 
     constructor(private http: HttpClient) { }
 
-    getAllInventory(): Observable<InventoryResponseDTO[]> {
-        return this.http.get<InventoryResponseDTO[]>(`${this.apiUrl}/admin`);
+    getAllInventory(search: string | null, page: number, size: number): Observable<Page<InventoryResponseDTO>> {
+        let params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+
+        if (search) {
+            params = params.set('search', search);
+        }
+
+        return this.http.get<Page<InventoryResponseDTO>>(`${this.apiUrl}/admin`, { params });
     }
 
     getInventoryById(id: number): Observable<InventoryDTO> {

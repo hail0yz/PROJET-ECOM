@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from '../layout/layout.component';
 import { InventoryService, InventoryResponseDTO } from '@/app/core/services/inventory.service';
 import { catchError, finalize, of } from 'rxjs';
+import { Page } from '@/app/core/models/page.model';
 
 @Component({
     selector: 'admin-inventory',
@@ -14,8 +15,10 @@ import { catchError, finalize, of } from 'rxjs';
 })
 export class AdminInventoryPage implements OnInit {
     private inventoryService = inject(InventoryService);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
 
-    inventoryItems: InventoryResponseDTO[] = [];
+    pagedInventories = signal<Page<InventoryResponseDTO> | null>(null);
     loading = false;
     error: string | null = null;
     searchTitle = '';
@@ -28,6 +31,17 @@ export class AdminInventoryPage implements OnInit {
     addingStockItem: InventoryResponseDTO | null = null;
     stockQuantityToAdd: number = 0;
 
+    pages = computed(() => {
+        if (!this.pagedInventories()) return [];
+        const totalPages = this.pagedInventories()!.totalPages;
+        const current = this.pagedInventories()!.number; // 0-based index
+
+        const start = Math.max(0, current - 2);
+        const end = Math.min(totalPages - 1, current + 2);
+
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i + 1);
+    });
+
     ngOnInit() {
         this.loadInventory();
     }
@@ -36,41 +50,23 @@ export class AdminInventoryPage implements OnInit {
         this.loading = true;
         this.error = null;
 
-        this.inventoryService.getAllInventory()
-            .pipe(
-                catchError(err => {
-                    this.error = 'Failed to load inventory';
-                    console.error(err);
-                    return of([]);
-                }),
-                finalize(() => this.loading = false)
-            )
-            .subscribe(items => {
-                this.inventoryItems = items;
-            });
-    }
+        this.route.queryParams.subscribe(params => {
+            const page = (+params['page'] || 1) - 1;
+            const size = +params['size'] || 9;
+            this.inventoryService.getAllInventory(this.searchTitle, page, size)
+                .pipe(
+                    catchError(err => {
+                        this.error = 'Failed to load inventory';
+                        console.error(err);
+                        return of(null);
+                    }),
+                    finalize(() => this.loading = false)
+                )
+                .subscribe(page => {
+                    this.pagedInventories.set(page);
+                });
+        });
 
-    searchInventory() {
-        if (!this.searchTitle.trim()) {
-            this.loadInventory();
-            return;
-        }
-
-        this.loading = true;
-        this.error = null;
-
-        this.inventoryService.searchInventoryByTitle(this.searchTitle)
-            .pipe(
-                catchError(err => {
-                    this.error = 'Failed to search inventory';
-                    console.error(err);
-                    return of([]);
-                }),
-                finalize(() => this.loading = false)
-            )
-            .subscribe(items => {
-                this.inventoryItems = items;
-            });
     }
 
     getAvailableStock(item: InventoryResponseDTO): number {
@@ -150,5 +146,20 @@ export class AdminInventoryPage implements OnInit {
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleDateString();
     }
+
+    goToPage(page: number) {
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { page, search: this.searchTitle }
+        });
+    }
+
+    filter() {
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { page: (this.pagedInventories()?.number || 0), search: this.searchTitle }
+        });
+    }
+
 }
 

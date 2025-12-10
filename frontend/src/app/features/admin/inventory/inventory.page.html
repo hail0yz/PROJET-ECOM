@@ -9,9 +9,8 @@
                 <div class="flex gap-2">
                     <input type="text" [(ngModel)]="searchTitle" placeholder="Search by book title..."
                         class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        (keyup.enter)="searchInventory()">
-                    <button (click)="searchInventory()"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        (keyup.enter)="filter()">
+                    <button (click)="filter()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                         Search
                     </button>
                     @if(searchTitle) {
@@ -24,7 +23,7 @@
             </div>
         </div>
 
-        @if(loading && inventoryItems.length === 0) {
+        @if(loading && (pagedInventories()?.content || []).length === 0) {
         <div class="flex justify-center items-center py-12">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         </div>
@@ -32,7 +31,7 @@
         <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
             {{ error }}
         </div>
-        } @else if(inventoryItems.length === 0) {
+        } @else if((pagedInventories()?.content || []).length === 0) {
         <div class="bg-white rounded-lg shadow p-12 text-center">
             <p class="text-gray-600">No inventory items found</p>
         </div>
@@ -49,8 +48,6 @@
                             Reserved</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Available Stock</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min
-                            Level</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -62,7 +59,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @for(item of inventoryItems; track item.id) {
+                    @for(item of pagedInventories()?.content; track item.id) {
                     <tr class="hover:bg-gray-50" [class.bg-red-50]="isLowStock(item)">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">
@@ -80,9 +77,6 @@
                                 [class.text-red-600]="isLowStock(item)">
                                 {{ getAvailableStock(item) }}
                             </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ item.minimumStockLevel }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if(isLowStock(item)) {
@@ -150,7 +144,7 @@
 
         <!-- Add Stock Modal -->
         @if(addingStockItem) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        <div class="fixed inset-0 bg-white/80 bg-opacity-50 flex items-center justify-center z-50"
             (click)="closeAddStockModal()">
             <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" (click)="$event.stopPropagation()">
                 <h2 class="text-2xl font-bold mb-4">Add Stock</h2>
@@ -174,6 +168,80 @@
                     </button>
                 </div>
             </div>
+        </div>
+        }
+
+        @if (!loading) {
+        <div class="flex items-center justify-between px-2 mt-5">
+            <div class="text-muted-foreground flex-1 text-sm">
+                {{ pagedInventories()?.size }} sur {{ pagedInventories()?.totalElements }} ligne(s) sélectionnée(s).
+            </div>
+
+            @if (pagedInventories()?.content?.length) {
+            <nav class="flex justify-center">
+                <ul data-slot="pagination-content" class="flex flex-row items-center gap-1">
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pl-2.5"
+                            [disabled]="pagedInventories()?.first" aria-label="Go to previous page" type="button"
+                            (click)="goToPage(1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevrons-left-icon lucide-chevrons-left">
+                                <path d="m11 17-5-5 5-5" />
+                                <path d="m18 17-5-5 5-5" />
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5"
+                            [disabled]="pagedInventories()?.first" aria-label="Go to previous page" type="button"
+                            (click)="goToPage(pagedInventories()!.number - 1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-left">
+                                <path d="m15 18-6-6 6-6"></path>
+                            </svg>
+                        </button>
+                    </li>
+
+                    @for(p of pages(); track p) {
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 size-9"
+                            [class.bg-accent]="p === pagedInventories()!.number + 1"
+                            [class.text-accent-foreground]="p === pagedInventories()!.number + 1" (click)="goToPage(p)">
+                            {{ p }}
+                        </button>
+                    </li>
+                    }
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
+                            [disabled]="pagedInventories()?.last" (click)="goToPage(pagedInventories()!.number + 1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevron-right">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 h-9 py-2 has-[&gt;svg]:px-3 gap-1 px-2.5 sm:pr-2.5"
+                            [disabled]="pagedInventories()?.last" (click)="goToPage(pagedInventories()!.totalPages)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-chevrons-right-icon lucide-chevrons-right">
+                                <path d="m6 17 5-5-5-5" />
+                                <path d="m13 17 5-5-5-5" />
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            }
         </div>
         }
     </div>

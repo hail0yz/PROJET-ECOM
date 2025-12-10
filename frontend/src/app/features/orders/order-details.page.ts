@@ -166,7 +166,7 @@ export class OrderDetailsPage implements OnInit {
 
     formatDate(dateString?: string): string {
         if (!dateString) return 'N/A';
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString('fr-FR', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -176,9 +176,9 @@ export class OrderDetailsPage implements OnInit {
     }
 
     formatCurrency(amount: number): string {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
-            currency: 'USD'
+            currency: 'EUR'
         }).format(amount);
     }
 

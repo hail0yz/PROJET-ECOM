@@ -11,12 +11,15 @@ import java.util.stream.Collectors;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import com.ecom.bookService.dto.BookDTO;
+import com.ecom.bookService.dto.BookFilter;
 import com.ecom.bookService.dto.CreateInvetoryExistedBookDto;
 import com.ecom.bookService.dto.InventaireDto;
 import com.ecom.bookService.dto.InventaireResponseDto;
@@ -36,6 +39,7 @@ import com.ecom.bookService.repository.BookInventoryRepository;
 import com.ecom.bookService.repository.BookRepository;
 import com.ecom.bookService.repository.StockReservationItemRepository;
 import com.ecom.bookService.repository.StockReservationRepository;
+import com.ecom.bookService.util.BookSpecificationUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -188,10 +192,12 @@ public class InventoryService {
     }
 
     //get all inventaire
-    public List<InventaireResponseDto> getAllInventory() {
-        return this.bookInventoryRepository.findAll().stream()
-                .map(BookInvetoryMapper::toResponseInv)
-                .collect(Collectors.toList());
+    public Page<InventaireResponseDto> getAllInventory(String filter, int page, int size) {
+        BookFilter filter1 = BookFilter.builder()
+                .search(filter)
+                .build();
+        return bookRepository.findAll(BookSpecificationUtils.filter(filter1), PageRequest.of(page, size))
+                .map(book -> BookInvetoryMapper.toResponseInv(book.getInventory()));
     }
 
     //get all inventaire by category

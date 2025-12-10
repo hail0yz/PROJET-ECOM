@@ -2,145 +2,151 @@
     <div class="flex flex-1 flex-col">
         <div class="@container/main flex flex-1 flex-col gap-2">
             <div class="min-h-[calc(100vh_-_var(--header-height))] flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div
-                    class="grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-                    <div
-                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
-                        <div data-slot="card-header"
-                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
-                            <div data-slot="card-description" class="text-muted-foreground text-sm">Total
-                                Revenue
+                @if (loading()) {
+                <div class="px-4 lg:px-6 flex items-center justify-center gap-4">
+                    @for (i of [1,2,3,4]; track i) {
+                    <div class="w-full h-25 bg-gray-200 rounded animate-pulse"></div>
+                    }
+                </div>
+                } @else if (errorMessage()) {
+                <div class="px-4 lg:px-6 flex flex-col items-center justify-center gap-4">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6 w-full max-w-2xl">
+                        <div class="flex items-start gap-4">
+                            <svg class="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-red-800 mb-1">
+                                    Une erreur est survenue
+                                </h3>
+                                <p class="text-red-700">{{ errorMessage() }}</p>
                             </div>
-                            <div data-slot="card-title"
-                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">$1,250.00
-                            </div>
-                            <div class="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
-                                <span
-                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up ">
-                                        <path d="M3 17l6 -6l4 4l8 -8"></path>
-                                        <path d="M14 7l7 0l0 7"></path>
-                                    </svg>
-                                    +12.5%
-                                </span>
-                            </div>
-                        </div>
-                        <div data-slot="card-footer"
-                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
-                            <div class="line-clamp-1 flex gap-2 font-medium">Trending up this month <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up size-4">
-                                    <path d="M3 17l6 -6l4 4l8 -8"></path>
-                                    <path d="M14 7l7 0l0 7"></path>
-                                </svg>
-                            </div>
-                            <div class="text-muted-foreground">Visitors for the last 6 months</div>
-                        </div>
-                    </div>
-                    <div
-                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
-                        <div data-slot="card-header"
-                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
-                            <div data-slot="card-description" class="text-muted-foreground text-sm">
-                                New Customers
-                            </div>
-                            <div data-slot="card-title"
-                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">1,234</div>
-                            <div class="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
-                                <span
-                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-down ">
-                                        <path d="M3 7l6 6l4 -4l8 8"></path>
-                                        <path d="M21 10l0 7l-7 0"></path>
-                                    </svg>
-                                    -20%
-                                </span>
-                            </div>
-                        </div>
-                        <div data-slot="card-footer"
-                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
-                            <div class="line-clamp-1 flex gap-2 font-medium">Down 20% this period <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-down size-4">
-                                    <path d="M3 7l6 6l4 -4l8 8"></path>
-                                    <path d="M21 10l0 7l-7 0"></path>
-                                </svg></div>
-                            <div class="text-muted-foreground">Acquisition needs attention</div>
-                        </div>
-                    </div>
-                    <div
-                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
-                        <div data-slot="card-header"
-                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
-                            <div data-slot="card-description" class="text-muted-foreground text-sm">Active
-                                Accounts</div>
-                            <div data-slot="card-title"
-                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">45,678</div>
-                            <div data-slot="card-action"
-                                class="col-start-2 row-span-2 row-start-1 self-start justify-self-end"><span
-                                    data-slot="badge"
-                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground"><svg
-                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up ">
-                                        <path d="M3 17l6 -6l4 4l8 -8"></path>
-                                        <path d="M14 7l7 0l0 7"></path>
-                                    </svg>+12.5%</span></div>
-                        </div>
-                        <div data-slot="card-footer"
-                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
-                            <div class="line-clamp-1 flex gap-2 font-medium">Strong user retention <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up size-4">
-                                    <path d="M3 17l6 -6l4 4l8 -8"></path>
-                                    <path d="M14 7l7 0l0 7"></path>
-                                </svg></div>
-                            <div class="text-muted-foreground">Engagement exceed targets</div>
-                        </div>
-                    </div>
-                    <div
-                        class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
-                        <div data-slot="card-header"
-                            class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6">
-                            <div data-slot="card-description" class="text-muted-foreground text-sm">Growth Rate
-                            </div>
-                            <div data-slot="card-title"
-                                class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">4.5%</div>
-                            <div data-slot="card-action"
-                                class="col-start-2 row-span-2 row-start-1 self-start justify-self-end"><span
-                                    data-slot="badge"
-                                    class="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up ">
-                                        <path d="M3 17l6 -6l4 4l8 -8"></path>
-                                        <path d="M14 7l7 0l0 7"></path>
-                                    </svg>
-                                    +4.5%
-                                </span>
-                            </div>
-                        </div>
-                        <div data-slot="card-footer"
-                            class="flex px-6 [.border-t]:pt-6 flex-col items-start gap-1.5 text-sm">
-                            <div class="line-clamp-1 flex gap-2 font-medium">Steady performance increase <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="tabler-icon tabler-icon-trending-up size-4">
-                                    <path d="M3 17l6 -6l4 4l8 -8"></path>
-                                    <path d="M14 7l7 0l0 7"></path>
-                                </svg></div>
-                            <div class="text-muted-foreground">Meets growth projections</div>
                         </div>
                     </div>
                 </div>
-                <div class="px-4 lg:px-6">
+                } @else {
+                <div class="px-4 lg:px-6 mb-8">
+                    <h2 class="text-2xl font-bold mb-6">Statistiques</h2>
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                        <!-- Revenu Total -->
+                        <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                            <div class="p-5">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 p-3 bg-green-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-5 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Revenu Total</dt>
+                                            <dd class="flex items-baseline">
+                                                <div class="text-2xl font-semibold text-gray-900">{{
+                                                    aggregatedStats().totalRevenue |
+                                                    number:'1.0-0' }} €</div>
+                                                <!-- <span class="ml-2 text-sm font-medium text-green-600">+{{
+                                                stats.revenueGrowth }}%</span> -->
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Commandes -->
+                        <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                            <div class="p-5">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 p-3 bg-blue-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-5 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Total des Commandes
+                                            </dt>
+                                            <dd class="flex items-baseline">
+                                                <div class="text-2xl font-semibold text-gray-900">{{
+                                                    aggregatedStats().totalOrders }}
+                                                </div>
+                                                <!-- <span class="ml-2 text-sm font-medium text-green-600">+{{ stats.ordersGrowth
+                                                }}%</span> -->
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Clients -->
+                        <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                            <div class="p-5">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 p-3 bg-purple-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-5 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Total des Clients
+                                            </dt>
+                                            <dd class="flex items-baseline">
+                                                <div class="text-2xl font-semibold text-gray-900">{{
+                                                    aggregatedStats().totalCustomers |
+                                                    number:'1.0-0' }}</div>
+                                                <!-- <span class="ml-2 text-sm font-medium text-green-600">+{{
+                                                stats.customersGrowth }}%</span> -->
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Produits -->
+                        <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                            <div class="p-5">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 p-3 bg-orange-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-5 w-0 flex-1">
+                                        <dl>
+                                            <dt class="text-sm font-medium text-gray-500 truncate">Total des Produits
+                                            </dt>
+                                            <dd class="flex items-baseline">
+                                                <div class="text-2xl font-semibold text-gray-900">{{
+                                                    aggregatedStats().totalBooks
+                                                    }}
+                                                </div>
+                                                <!-- <span class="ml-2 text-sm font-medium text-red-600">{{
+                                                stats.productsGrowth
+                                                }}%</span> -->
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <!-- <div class="px-4 lg:px-6">
                     <div data-slot="card"
                         class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-gray-200 py-6 shadow-sm @container/card">
                         <div data-slot="card-header"
@@ -426,7 +432,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

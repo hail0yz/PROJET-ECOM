@@ -239,12 +239,16 @@ public class CartService {
         log.info("Cleared cart for userId={}", userId);
     }
 
+    @Transactional
     public void clearCartById(Long cartId) {
         Cart cart = cartRepository.findByIdAndStatus(cartId, CartStatus.OPEN)
                 .orElseThrow(() -> new EntityNotFoundException("Cart not found"));
 
         List<CartItem> items = cart.getItems();
         cartItemRepository.deleteAll(items);
+
+        cart.getItems().clear();
+        cartRepository.save(cart);
     }
 
     private Cart getCartByUser(String userId) {

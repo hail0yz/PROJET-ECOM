@@ -3,6 +3,8 @@ export interface TicketAPI {
     subject: string;
     description: string;
     status: TicketStatus;
+    priority?: string;
+    type?: string;
     customerId?: string;
     messages?: TicketMessageAPI[];
     createdAt?: string;

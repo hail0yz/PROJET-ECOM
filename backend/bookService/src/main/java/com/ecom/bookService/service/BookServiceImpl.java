@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.bookService.dto.BookDTO;
 import com.ecom.bookService.dto.BookFilter;
+import com.ecom.bookService.dto.BookStatsResponse;
 import com.ecom.bookService.dto.BulkBookValidationRequest;
 import com.ecom.bookService.dto.BulkBookValidationResponse;
 import com.ecom.bookService.dto.CreateBookRequest;
@@ -195,6 +196,14 @@ public class BookServiceImpl implements BookService {
         Book saved = bookRepository.save(book);
 
         return saved.getBookId();
+    }
+
+    @Override
+    public BookStatsResponse getBookStats() {
+        var stats = new BookStatsResponse();
+        stats.setTotalBooks(bookRepository.count());
+        stats.setTotalCategories(categoryRepository.count());
+        return stats;
     }
 
 }

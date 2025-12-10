@@ -101,11 +101,17 @@ public class TicketService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found : " + customerId));
 
+        Priority priority = request.priority() == null
+                ? Priority.MEDIUM
+                : request.priority();
+
         Ticket ticket = Ticket.builder()
                 .customer(customer)
                 .subject(request.subject())
                 .description(request.description())
                 .status(Ticket.Status.OPEN)
+                .priority(priority)
+                .type(request.type())
                 .build();
 
         Ticket saved = ticketRepository.save(ticket);
@@ -176,9 +182,12 @@ public class TicketService {
                 throw new AccessDeniedException("Customer does not own the ticket");
             }
         }
-
-        if (!isSupportOrAdmin(roles)) {
+        else if (!isSupportOrAdmin(roles)) {
             throw new AccessDeniedException("User is not allowed to add messages to tickets");
+        }
+
+        if (ticket.getStatus() == Ticket.Status.CLOSED || Ticket.Status.RESOLVED == ticket.getStatus()) {
+            throw new IllegalStateException("Cannot add message to a closed/resolved ticket");
         }
 
         TicketMessage message = TicketMessage.builder()

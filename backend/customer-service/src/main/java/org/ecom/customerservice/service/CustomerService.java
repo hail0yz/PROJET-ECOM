@@ -15,6 +15,7 @@ import org.ecom.customerservice.dto.CustomerDTO;
 import org.ecom.customerservice.dto.CustomerDetailsDTO;
 import org.ecom.customerservice.dto.CustomerPreferencesDTO;
 import org.ecom.customerservice.dto.CustomerProfileDTO;
+import org.ecom.customerservice.dto.CustomerStatsResponse;
 import org.ecom.customerservice.dto.UpdatePreferencesRequest;
 import org.ecom.customerservice.dto.UpdateProfileRequest;
 import org.ecom.customerservice.exception.EntityNotFoundException;
@@ -68,7 +69,6 @@ public class CustomerService {
 
         customer.setFirstname(request.firstname());
         customer.setLastname(request.lastname());
-        customer.setEmail(request.email());
 
         if (request.phone() != null && !request.phone().isBlank()) {
             String email = Optional.ofNullable(customer.getContact())
@@ -133,6 +133,14 @@ public class CustomerService {
     private Customer findCustomerById(String id) {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+    }
+
+    public CustomerStatsResponse getCustomerStats() {
+        var stats = new CustomerStatsResponse();
+
+        stats.setTotalCustomers(customerRepository.count());
+
+        return stats;
     }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import Keycloak from 'keycloak-js';
 
 import { FooterComponent } from '@/app/core/components/footer/footer.component';
 import { NavbarComponent } from '@/app/core/components/navbar/navbar.component';
@@ -22,7 +23,9 @@ export class CartPage implements OnInit {
 
   constructor(
     private cartService: CartService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private keycloak: Keycloak,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -127,6 +130,22 @@ export class CartPage implements OnInit {
           complete: () => console.log('wiw')
         })
     }
+  }
+
+  isAuthenticated() {
+    return this.keycloak.authenticated;
+  }
+
+  navigateToLogin(): void {
+    this.keycloak.login({
+      redirectUri: window.location.origin + this.router.url
+    });
+  }
+
+  navigateToRegister(): void {
+    this.router.navigate(['/signup'], {
+      queryParams: { returnUrl: this.router.url }
+    });
   }
 
 }

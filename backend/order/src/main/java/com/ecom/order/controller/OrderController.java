@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.order.dto.OrderRequest;
 import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.dto.OrderStatsResponse;
 import com.ecom.order.dto.PlaceOrderResponse;
 import com.ecom.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,14 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> findAll() {
-        return ResponseEntity.ok(this.orderService.findAllOrders());
+    public ResponseEntity<Page<OrderResponse>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        if (page < 0) {
+            page = 0;
+        }
+        return ResponseEntity.ok(this.orderService.findAllOrders(page, size));
     }
 
     @PreAuthorize("@orderService.isOrderOwner(#orderId, authentication.principal.getClaim('sub'))")
@@ -66,6 +73,7 @@ public class OrderController {
         return ResponseEntity.ok(this.orderService.getCustomerOrders(customerId, page, size));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/me")
     public ResponseEntity<Page<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal(expression = "subject") String customerId,
@@ -91,6 +99,12 @@ public class OrderController {
     ) {
         this.orderService.cancelOrder(orderId, userId);
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/stats")
+    public ResponseEntity<OrderStatsResponse> getStats() {
+        return ResponseEntity.ok(this.orderService.getOrderStats());
     }
 
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -24,6 +25,7 @@ public class OrderResponse {
     private List<OrderLineResponse> lines;
     private OrderStatus status;
     private DeliveryInfo deliveryInfo;
+    private LocalDateTime createdAt;
 
     public record DeliveryInfo(
             String address1,

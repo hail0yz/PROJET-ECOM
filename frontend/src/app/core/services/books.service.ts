@@ -1,4 +1,4 @@
-import { Book } from '@/app/core/models/book.model';
+import { Book, BookStatsAPI } from '@/app/core/models/book.model';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, throwError } from 'rxjs';
@@ -154,6 +154,10 @@ export class BooksService {
         return throwError(() => new Error(error.message || 'Failed to create book'));
       })
     );
+  }
+
+  public getStats(): Observable<BookStatsAPI> {
+    return this.http.get<BookStatsAPI>(`${this.bookServiceURL}/stats`);
   }
 
 }

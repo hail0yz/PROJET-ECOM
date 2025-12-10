@@ -33,6 +33,17 @@
                 </span>
               </div>
               <h2 class="text-xl text-gray-700 mb-3">{{ ticket.subject }}</h2>
+              <div class="flex flex-wrap gap-4 mb-3">
+                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold"
+                  [ngClass]="getPriorityLabel(ticket.priority || '')?.color">
+                  Priorité : {{ getPriorityLabel(ticket.priority || '')?.label || ticket.priority || 'N/A' }}
+
+                </span>
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-purple-100 text-purple-800">
+                  Type : {{ getTypeLabel(ticket.type || '').label || ticket.type || 'N/A' }}
+                </span>
+              </div>
               <div class="flex items-center gap-6 text-sm text-gray-500">
                 @if (ticket.createdAt) {
                 <span>Créé le: {{ formatDate(ticket.createdAt) }}</span>
@@ -60,10 +71,11 @@
           <div class="space-y-4 mb-6">
             @if (ticket.messages) {
             @for(message of ticket.messages; track message.id) {
-            <div class="border-l-4 pl-4 py-3 border-gray-300 bg-gray-50">
+            <div class="border-l-4 p-4 py-3 border-gray-300 bg-gray-50">
               <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
-                  <span class="font-semibold text-gray-900">{{ message.authorId }}</span>
+                  <span class="font-semibold text-gray-900">{{ isMe(message.authorId) ? 'Moi' : message.authorId
+                    }}</span>
                   @if (isAdminOrSupport(message.role)) {
                   <span class="px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full">
                     Staff
@@ -83,31 +95,40 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               Ajouter un commentaire
             </label>
-            <textarea rows="4"
+            <textarea rows="4" [(ngModel)]="newMessage" [disabled]="publishing()"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               placeholder="Écrivez votre commentaire ici..."></textarea>
             <div class="mt-3 flex justify-end gap-2">
-              <button
+              <button type="button" (click)="newMessage = ''" [disabled]="publishing()"
                 class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                 Annuler
               </button>
-              <button
+              <button type="button" (click)="publishMessage()" [disabled]="publishing() || !newMessage.trim()"
                 class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                Publier le commentaire
+                <span *ngIf="publishing()" class="flex items-center gap-2">
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                  Publication...
+                </span>
+                <span *ngIf="!publishing()">Publier le commentaire</span>
               </button>
             </div>
           </div>
         </div>
 
         <!-- Activity Timeline -->
-        <div class="bg-white shadow rounded-lg p-6">
+        <!-- <div class="bg-white shadow rounded-lg p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">Historique</h3>
           <div class="space-y-4">
             <div class="flex gap-3">
               <div class="flex-shrink-0 w-2 bg-gray-300 rounded-full"></div>
               <div class="flex-1 pb-4">
                 <p class="text-sm text-gray-700">
-                  <strong>Système</strong> a changé le statut en <strong>{{ getStatusLabel(ticket.status) }}</strong>
+                  <strong>Système</strong> a mis à jour le ticket
                 </p>
                 @if (ticket.updatedAt) {
                 <p class="text-xs text-gray-500 mt-1">{{ formatDate(ticket.updatedAt) }}</p>
@@ -117,13 +138,16 @@
             <div class="flex gap-3">
               <div class="flex-shrink-0 w-2 bg-green-500 rounded-full"></div>
               <div class="flex-1 pb-4">
+                <p class="text-sm text-gray-700">
+                  <strong>Système</strong> a créé le ticket
+                </p>
                 @if (ticket.createdAt) {
                 <p class="text-xs text-gray-500 mt-1">{{ formatDate(ticket.createdAt) }}</p>
                 }
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     }

@@ -67,7 +67,7 @@
         <p>{{ error() }}</p>
     </div>
     <button (click)="goBack()" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-        Back to Orders
+        Retour aux commandes
     </button>
     } @else if(order()) {
     <div class="mb-6">
@@ -75,20 +75,20 @@
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-            Back to Orders
+            Retour aux commandes
         </button>
-        <h1 class="text-3xl font-bold text-gray-900">Order Details</h1>
-        <p class="text-gray-600 mt-2">Order #{{ order()!.orderId.substring(0, 8) }}</p>
+        <h1 class="text-3xl font-bold text-gray-900">Détail de la commande</h1>
+        <p class="text-gray-600 mt-2">Commande n°{{ order()!.orderId.substring(0, 8) }}</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Order Information -->
+        <!-- Informations de la commande -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Order Items -->
             <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-semibold mb-4">Order Items</h2>
+                <h2 class="text-xl font-semibold mb-4">Articles de la commande</h2>
                 @if(orderItems().length === 0) {
-                <p class="text-gray-600">No items found in this order.</p>
+                <p class="text-gray-600">Aucun article trouvé dans cette commande.</p>
                 } @else {
                 <div class="space-y-4">
                     @for(item of orderItems(); track item.book.id) {
@@ -104,13 +104,13 @@
                             </svg>
                         </div>
                         } -->
-                        <div class="flex-1">
+                        <div [routerLink]="['/products', item.book.id]" class="flex-1 cursor-pointer">
                             <h3 class="text-lg font-medium text-gray-900">{{ item.book.title }}</h3>
                             @if(item.book.author) {
-                            <p class="text-sm text-gray-500 mt-1">by {{ item.book.author }}</p>
+                            <p class="text-sm text-gray-500 mt-1">par {{ item.book.author }}</p>
                             }
                             <div class="mt-2 flex items-center space-x-4">
-                                <span class="text-sm text-gray-600">Quantity: {{ item.quantity }}</span>
+                                <span class="text-sm text-gray-600">Quantité : {{ item.quantity }}</span>
                                 <span class="text-sm font-medium text-gray-900">{{ formatCurrency(item.price) }}</span>
                             </div>
                         </div>
@@ -124,16 +124,16 @@
         <!-- Order Summary -->
         <div class="lg:col-span-1">
             <div class="bg-white rounded-lg shadow p-6 sticky top-4">
-                <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+                <h2 class="text-xl font-semibold mb-4">Résumé de la commande</h2>
 
                 <div class="space-y-3 mb-4">
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Order ID</span>
+                        <span class="text-gray-600">ID commande</span>
                         <span class="font-medium text-gray-900">{{ order()!.orderId }}</span>
                     </div>
                     @if(order()!.reference) {
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Reference</span>
+                        <span class="text-gray-600">Référence</span>
                         <span class="font-medium text-gray-900">{{ order()!.reference }}</span>
                     </div>
                     }
@@ -142,7 +142,7 @@
                         <span class="font-medium text-gray-900">{{ formatDate(order()!.createdAt) }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Status</span>
+                        <span class="text-gray-600">Statut</span>
                         @if(order()!.status) {
                         <span
                             [class]="'inline-block px-2 py-1 text-xs font-medium rounded-full ' + getStatusClass(order()!.status)">
@@ -152,21 +152,21 @@
                         <span class="text-gray-500">N/A</span>
                         }
                     </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">Payment Method</span>
+                    <!-- <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Moyen de paiement</span>
                         <span class="font-medium text-gray-900">{{ order()!.payment_method || 'N/A' }}</span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="border-t border-gray-200 pt-4 space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Subtotal</span>
+                        <span class="text-sm text-gray-600">Sous-total</span>
                         <span class="text-sm font-medium text-gray-900">{{ formatCurrency(getTotal()) }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Shipping</span>
-                        <span class="text-sm font-medium text-gray-900">Free</span>
-                    </div>
+                    <!-- <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Livraison</span>
+                        <span class="text-sm font-medium text-gray-900">Offerte</span>
+                    </div> -->
                     <div class="flex justify-between items-center pt-2 border-t border-gray-200">
                         <span class="text-lg font-semibold text-gray-900">Total</span>
                         <span class="text-lg font-semibold text-gray-900">{{ formatCurrency(order()!.amount) }}</span>
