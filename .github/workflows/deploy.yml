@@ -165,21 +165,6 @@ jobs:
           cp -r keycloak deploy/
           cp -r scripts deploy/
 
-      - name: Verify secrets are set
-        run: |
-          if [ -z "${{ secrets.AZURE_VM_HOST }}" ]; then
-            echo "ERROR: AZURE_VM_HOST is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.AZURE_VM_SSH_KEY }}" ]; then
-            echo "ERROR: AZURE_VM_SSH_KEY is not set"
-            exit 1
-          fi
-          echo "Secrets are configured"
-          echo "Host: ${{ secrets.AZURE_VM_HOST }}"
-          echo "key: ${{ secrets.AZURE_VM_SSH_KEY }}"
-          echo "Key length: $(echo '${{ secrets.AZURE_VM_SSH_KEY }}' | wc -c) chars"
-
       - name: Copy files to Azure VM
         uses: appleboy/scp-action@v1
         with:

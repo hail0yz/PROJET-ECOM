@@ -24,6 +24,7 @@ import { CreateTicketPage } from './features/support/create-ticket/create-ticket
 import { CategoriesPage } from '@/app/features/categories/categories.page';
 
 import { canActivateAuthRole } from '@/app/core/guards/auth.guard';
+import { AdminProductEditPage } from './features/admin/products/product-edit/product-edit.page';
 
 export const routes: Routes = [
     {
@@ -117,6 +118,14 @@ export const routes: Routes = [
             role: ['ADMIN']
         },
         component: AdminProductCreatePage,
+        canActivate: [canActivateAuthRole]
+    },
+    {
+        path: 'admin/products/:id',
+        data: {
+            role: ['ADMIN']
+        },
+        component: AdminProductEditPage,
         canActivate: [canActivateAuthRole]
     },
     {

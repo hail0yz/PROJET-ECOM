@@ -92,10 +92,13 @@ export class BooksService {
       );
   }
 
-  /*
-  getBestSellersBooks(): Book[] {
-    return MOCK_BOOKS;
-  }*/
+  public updateBook(bookId: number, formData: FormData): Observable<void> {
+    return this.http.put<void>(`${this.bookServiceURL}/${bookId}`, formData).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Server error:', error);
+        return throwError(() => new Error(error.message || 'Server error'));
+      }));
+  }
 
   async getBooks(): Promise<Book[]> {
     return MOCK_BOOKS;

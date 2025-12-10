@@ -96,9 +96,19 @@
                                         </button>
                                     </th>
                                     <th data-slot="table-head"
-                                        class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]"
+                                        class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap"
                                         colspan="1">
                                         <div class="flex items-center gap-2">ID</div>
+                                    </th>
+                                    <th data-slot="table-head"
+                                        class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap"
+                                        colspan="1">
+                                        <div class="flex items-center gap-2">ISBN 10</div>
+                                    </th>
+                                    <th data-slot="table-head"
+                                        class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap"
+                                        colspan="1">
+                                        <div class="flex items-center gap-2">ISBN 13</div>
                                     </th>
                                     <th data-slot="table-head"
                                         class="text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&amp;:has([role=checkbox])]:pr-0 [&amp;&gt;[role=checkbox]]:translate-y-[2px]"
@@ -213,14 +223,18 @@
                                     <td class="p-2 align-middle whitespace-nowrap">
                                         <div class="w-[80px]">#{{ book.id }}</div>
                                     </td>
+                                    <td class="p-2 align-middle whitespace-nowrap">{{ book.isbn10 }}</td>
+                                    <td class="p-2 align-middle whitespace-nowrap">{{ book.isbn13 }}</td>
                                     <td class="p-2 align-middle whitespace-nowrap">{{ book.title }}</td>
                                     <td class="p-2 align-middle whitespace-nowrap">{{ book.author }}</td>
                                     <td class="p-2 align-middle whitespace-nowrap">{{ book.category?.name }}</td>
                                     <td class="p-2 align-middle whitespace-nowrap">{{ book.publishedYear }}</td>
                                     <td class="p-2 align-middle whitespace-nowrap">
                                         <div class="flex items-center gap-2">
-                                            <button
-                                                class="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-blue-700 text-primary-foreground shadow-xs hover:bg-blue-700/90 h-8 rounded-md gap-1.5 px-3">Modifier</button>
+                                            <a [routerLink]="['/admin/products', book.id]"
+                                                class="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-blue-700 text-primary-foreground shadow-xs hover:bg-blue-700/90 h-8 rounded-md gap-1.5 px-3">
+                                                Modifier
+                                            </a>
                                             <!-- <button
                                             class="cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-destructive text-primary-foreground shadow-xs hover:bg-destructive/90 h-8 rounded-md gap-1.5 px-3">Supprimer</button> -->
                                         </div>
