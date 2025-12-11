@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 
 import { Page, PageRequest } from '@/app/core/models/page.model';
 import { TicketAPI, TicketStatsAPI } from '@/app/core/models/ticket.model';
+import { environment } from '@/app/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TicketService {
-    private apiUrl = 'http://localhost:8080/api/tickets';
+    private apiUrl = `${environment.apiBaseUrl}/api/tickets`;
 
     constructor(private http: HttpClient) { }
 
