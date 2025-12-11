@@ -70,10 +70,10 @@ public class CustomerService {
         customer.setFirstname(request.firstname());
         customer.setLastname(request.lastname());
 
+        String email = Optional.ofNullable(customer.getContact())
+                .map(Contact::getEmail)
+                .orElse(null);
         if (request.phone() != null && !request.phone().isBlank()) {
-            String email = Optional.ofNullable(customer.getContact())
-                    .map(Contact::getEmail)
-                    .orElse(null);
             customer.setContact(new Contact(email, new PhoneNumber(null, request.phone())));
         }
         else {
