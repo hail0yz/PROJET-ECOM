@@ -76,6 +76,9 @@ public class CustomerService {
                     .orElse(null);
             customer.setContact(new Contact(email, new PhoneNumber(null, request.phone())));
         }
+        else {
+            customer.setContact(new Contact(email, new PhoneNumber(null, null)));
+        }
 
         Customer updatedCustomer = customerRepository.save(customer);
         log.info("Customer profile updated: {}", customerId);
