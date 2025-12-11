@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PlaceOrderRequestAPI, PlaceOrderResponseAPI, OrderResponse, OrderStatsAPI } from '@/app/core/models/order.model';
 import { Page } from '../models/page.model';
+import { environment } from '@/app/environment';
 
 interface OrderStats {
     totalOrders: number;
