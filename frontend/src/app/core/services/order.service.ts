@@ -12,7 +12,7 @@ interface OrderStats {
 @Injectable({ providedIn: 'root' })
 export class OrderService {
 
-    private orderServiceURL = "http://localhost:8080/api/orders";
+    private readonly orderServiceURL = `${environment.apiBaseUrl}/api/orders`;
 
     constructor(private http: HttpClient) { }
 
