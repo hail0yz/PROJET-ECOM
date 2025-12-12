@@ -50,6 +50,10 @@ Those scripts can also be run separately if needed:
 
 A list of available ports for each service is provided in the "Backend" section below.
 
+# Link to the site
+
+https://ecom.francecentral.cloudapp.azure.com/
+
 # Project Structure
 The project is structured as follows:
 
@@ -122,6 +126,3 @@ You can get all payments with:
 ```bash
 curl http://localhost:8080/api/payments
 ```
-
-# Extensions
-TODO if any...
