@@ -182,6 +182,8 @@ public class BookServiceImpl implements BookService {
                 .build();
 
         Book book = Book.builder()
+                .isbn10(request.isbn10())
+                .isbn13(request.isbn13())
                 .title(request.title())
                 .summary(request.description())
                 .category(category)
